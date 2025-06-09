@@ -58,7 +58,16 @@ class RssChart(RssBase):
         formula = self.create_formula()
         print(f"RSS関数: {formula}")
         self.ws.Cells(1, 1).Formula = formula
-        data = self.ws.Range(self.ws.Cells(3, 4), self.ws.Cells(self.number + 2, 10)).Value
+        while True:
+            try:
+                # Excelのセルからデータを取得
+                data = self.ws.Range(self.ws.Cells(3, 4), self.ws.Cells(self.number + 2, 10)).Value
+                if data is None or all(cell is None for row in data for cell in row):
+                    raise ValueError("取得したデータがすべてNullです。再試行します。")
+                break
+            except Exception as e:
+                print("再試行中...", e)
+                time.sleep(1)
         df = pd.DataFrame(data, columns=["date", "time", "Open", "High", "Low", "Close", "Volume"])
         df["date"] = pd.to_datetime(df["date"] + " " + df["time"])
         df.set_index("date", inplace=True)
@@ -81,19 +90,9 @@ def main():
     number = 50  # 表示本数
 
     rss_chart = RssChart(ws, stock_code, bar, number)
-    while True:
-        try:
-            df = rss_chart.get_dataframe()
-            # 取得時のラグですべてNullの場合は再試行
-            if df.isnull().all().all():
-                raise ValueError("取得したデータがすべてNullです。再試行します。")
-            break
-        except Exception as e:
-            print("再試行中...", e)
-            time.sleep(1)
-
+    df = rss_chart.get_dataframe()
+    # データフレームを表示
     print(df)
-
 
 if __name__ == "__main__":
     main()
