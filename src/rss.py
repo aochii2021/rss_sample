@@ -5,6 +5,21 @@ import time                 #時間調整用
 # 抽象クラス
 from abc import ABC, abstractmethod
 
+
+# データ範囲用のデータクラス
+from dataclasses import dataclass
+@dataclass
+class DataRange:
+    start_row: int
+    start_col: int
+    end_row: int
+    end_col: int
+
+    def __post_init__(self):
+        if self.start_row > self.end_row or self.start_col > self.end_col:
+            raise ValueError("start_row must be less than or equal to end_row and start_col must be less than or equal to end_col")
+
+
 class RssBase(ABC):
     @abstractmethod
     def __init__(self):
@@ -28,27 +43,56 @@ class RssBase(ABC):
         """
         pass
 
+    # 配信中かどうかを判定するメソッド
+    @abstractmethod
+    def is_valid(self) -> bool:
+        """
+        抽象メソッド: 配信中かどうかを判定する
+        :return: True if valid, False otherwise
+        """
+        pass
 
-class RssChart(RssBase):
-    def __init__(self, ws, stock_code: str, bar: str, number: int):
+
+class RssList(RssBase):
+    def __init__(self, ws, stock_code: str, number: int, data_range: DataRange, header_row: int):
         """
         コンストラクタ
         :param ws: Excelのワークシートオブジェクト
         :param stock_code: 銘柄コード
-        :param bar: チャートの種類（例：日足、週足など）
         :param number: 取得するデータの数
         """
         self.ws = ws
         self.stock_code = stock_code
-        self.bar = bar
         self.number = number
+        self.range = ws.Range(
+            ws.Cells(data_range.start_row, data_range.start_col),
+            ws.Cells(data_range.end_row, data_range.end_col)
+        )
+        self.headers = [cell.Value for cell in self.ws.Range(
+            self.ws.Cells(header_row, data_range.start_col),
+            self.ws.Cells(header_row, data_range.end_col)
+        )]
+        print(f"RSS関数のヘッダー: {self.headers}")
 
     def create_formula(self) -> str:
         """
         RSS関数を作成する
         :return: RSS関数の文字列
         """
-        return f'=RssChart(,{self.stock_code}, "{self.bar}", {self.number})'
+        pass
+
+    def is_valid(self) -> bool:
+        """
+        配信中かどうかを判定する
+        :return: True if valid, False otherwise
+        """
+        try:
+            status_str = self.ws.Cells(1, 1).Value
+            status = status_str.split('=>')[-1].strip()
+            return status == "配信中"
+        except Exception as e:
+            print(f"Error checking validity: {e}")
+            return False
 
     def get_dataframe(self) -> pd.DataFrame:
         """
@@ -57,21 +101,35 @@ class RssChart(RssBase):
         """
         formula = self.create_formula()
         print(f"RSS関数: {formula}")
+        # シート全体をクリア
+        self.ws.Cells.ClearContents()
         self.ws.Cells(1, 1).Formula = formula
-        while True:
-            try:
-                # Excelのセルからデータを取得
-                data = self.ws.Range(self.ws.Cells(3, 4), self.ws.Cells(self.number + 2, 10)).Value
-                if data is None or all(cell is None for row in data for cell in row):
-                    raise ValueError("取得したデータがすべてNullです。再試行します。")
-                break
-            except Exception as e:
-                print("再試行中...", e)
-                time.sleep(1)
-        df = pd.DataFrame(data, columns=["date", "time", "Open", "High", "Low", "Close", "Volume"])
-        df["date"] = pd.to_datetime(df["date"] + " " + df["time"])
-        df.set_index("date", inplace=True)
+        # ステータスが「配信中」になるまで待機
+        while not self.is_valid():
+            print("RSS関数のステータスが「配信中」になるまで待機中...")
+            time.sleep(1)
+        # データを取得
+        data = self.range.Value
+
+        df = pd.DataFrame(data, columns=self.headers)
         return df
+
+
+class RssChart(RssList):
+    def __init__(self, ws, stock_code: str, bar: str, number: int, data_range: DataRange, header_row: int):
+        super().__init__(ws, stock_code, number, data_range, header_row)
+        self.bar = bar
+
+    def create_formula(self) -> str:
+        return f'=RssChart(,{self.stock_code}, "{self.bar}", {self.number})'
+
+
+class RssTickList(RssList):
+    def __init__(self, ws, stock_code: str, number: int, data_range: DataRange, header_row: int):
+        super().__init__(ws, stock_code, number, data_range, header_row)
+
+    def create_formula(self) -> str:
+        return f'=RssTickList(,{self.stock_code}, {self.number})'
 
 
 def main():
@@ -88,12 +146,21 @@ def main():
     stock_code = 7203  # トヨタ自動車の例
     bar = "D"  # 日足
     number = 50  # 表示本数
+    header_row = 2
+    rss_chart_range = DataRange(start_row=3, start_col=4, end_row=number + 2, end_col=10)
 
-    rss_chart = RssChart(ws, stock_code, bar, number)
+    rss_chart = RssChart(ws, stock_code, bar, number, rss_chart_range, header_row)
     df = rss_chart.get_dataframe()
     # データフレームを表示
     print(df)
 
+    # ティッカーの取得
+    rss_tick_list_range = DataRange(start_row=3, start_col=1, end_row=number + 2, end_col=3)
+    rss_tick_list = RssTickList(ws, stock_code, number, rss_tick_list_range, header_row)
+    tick_df = rss_tick_list.get_dataframe()
+    # データフレームを表示
+    print(tick_df)
+    
 if __name__ == "__main__":
     main()
 # このコードは、RSSを使用して株価チャートを取得し、Excelに表示するサンプルです。
