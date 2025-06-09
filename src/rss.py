@@ -1,5 +1,6 @@
 import win32com.client      #エクセル用
 import pandas as pd         #データフレーム用
+import time                 #時間調整用
 
 # 抽象クラス
 from abc import ABC, abstractmethod
@@ -47,7 +48,7 @@ class RssChart(RssBase):
         RSS関数を作成する
         :return: RSS関数の文字列
         """
-        return f'=RssChart("{self.stock_code}", "{self.bar}", {self.number})'
+        return f'=RssChart(,{self.stock_code}, "{self.bar}", {self.number})'
 
     def get_dataframe(self) -> pd.DataFrame:
         """
@@ -55,6 +56,7 @@ class RssChart(RssBase):
         :return: pandas DataFrame
         """
         formula = self.create_formula()
+        print(f"RSS関数: {formula}")
         self.ws.Cells(1, 1).Formula = formula
         data = self.ws.Range(self.ws.Cells(3, 4), self.ws.Cells(self.number + 2, 10)).Value
         df = pd.DataFrame(data, columns=["date", "time", "Open", "High", "Low", "Close", "Volume"])
@@ -74,13 +76,22 @@ def main():
     ws = xl.Worksheets('Sheet1')
 
     # 銘柄コード、足種、表示本数を設定
-    stock_code = "7203.T"  # トヨタ自動車の例
+    stock_code = 7203  # トヨタ自動車の例
     bar = "D"  # 日足
     number = 50  # 表示本数
 
     rss_chart = RssChart(ws, stock_code, bar, number)
-    df = rss_chart.get_dataframe()
-    
+    while True:
+        try:
+            df = rss_chart.get_dataframe()
+            # 取得時のラグですべてNullの場合は再試行
+            if df.isnull().all().all():
+                raise ValueError("取得したデータがすべてNullです。再試行します。")
+            break
+        except Exception as e:
+            print("再試行中...", e)
+            time.sleep(1)
+
     print(df)
 
 
