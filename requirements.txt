@@ -3,3 +3,4 @@ pywin32
 openpyxl
 matplotlib
 seaborn
+mplfinance
