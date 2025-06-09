@@ -68,11 +68,8 @@ class RssList(RssBase):
             ws.Cells(data_range.start_row, data_range.start_col),
             ws.Cells(data_range.end_row, data_range.end_col)
         )
-        self.headers = [cell.Value for cell in self.ws.Range(
-            self.ws.Cells(header_row, data_range.start_col),
-            self.ws.Cells(header_row, data_range.end_col)
-        )]
-        print(f"RSS関数のヘッダー: {self.headers}")
+        self.data_range = data_range
+        self.header_row = header_row
 
     def create_formula(self) -> str:
         """
@@ -94,6 +91,17 @@ class RssList(RssBase):
             print(f"Error checking validity: {e}")
             return False
 
+    def get_headers(self) -> list:
+        """
+        ヘッダーを取得する
+        :return: ヘッダーのリスト
+        """
+        self.headers = [cell.Value for cell in self.ws.Range(
+            self.ws.Cells(self.header_row, self.data_range.start_col),
+            self.ws.Cells(self.header_row, self.data_range.end_col)
+        )]
+        return self.headers 
+
     def get_dataframe(self) -> pd.DataFrame:
         """
         データフレームを取得する
@@ -109,9 +117,10 @@ class RssList(RssBase):
             print("RSS関数のステータスが「配信中」になるまで待機中...")
             time.sleep(1)
         # データを取得
+        headers = self.get_headers()
         data = self.range.Value
 
-        df = pd.DataFrame(data, columns=self.headers)
+        df = pd.DataFrame(data, columns=headers)
         return df
 
 
