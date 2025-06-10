@@ -6,7 +6,7 @@ import pandas as pd
 from dataclasses import fields
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from common.rss import RssChart, RssTickList, DataRange
+from common.rss import RssChart, RssTickList, DataRange, TickType
 from common.data import StockCodeMaster
 from common import common, columns
 
@@ -14,25 +14,27 @@ S_FILE_DIR = os.path.dirname(os.path.abspath(__file__))
 # 出力ディレクトリの設定
 S_OUTPUT_DIR = os.path.join(S_FILE_DIR, 'output')
 
-def get_all_stock_charts(ws, stock_code_master):
-    bar = "D"  # 日足
-    number = 100  # 表示本数
+def get_all_stock_charts(ws, tick_type: TickType, number: int, stock_code_master: StockCodeMaster):
+    bar = tick_type.value  # 足種
     header_row = 2
     # データクラスからカラム名を取得
-    date_col = [f.name for f in fields(columns.StockCodeMasterRecord) if f.name == "date"][0]
+    date_col = "日付"
     for stock_code in stock_code_master.get_all_codes():
         rss_chart_range = DataRange(start_row=3, start_col=4, end_row=number + 2, end_col=10)
         rss_chart = RssChart(ws, stock_code, bar, number, rss_chart_range, header_row)
         df = rss_chart.get_dataframe()
         print(f"df.columns: {df.columns}")  # デバッグ用
         if date_col in df.columns:
-            start_date = df[date_col].min()
-            end_date = df[date_col].max()
+            start_date = df[date_col][0] if not df.empty else None
+            end_date = df[date_col].iloc[-1] if not df.empty else None
+            # 日付のスラッシュを削除
+            start_date = start_date.replace('/', '') if start_date else None
+            end_date = end_date.replace('/', '') if end_date else None
         else:
             start_date = end_date = None
         print(f"銘柄コード: {stock_code}, 日付範囲: {start_date} - {end_date}")
         # save DataFrame to csv file
-        csv_file = os.path.join(S_OUTPUT_DIR, f"stock_chart_{stock_code}.csv")
+        csv_file = os.path.join(S_OUTPUT_DIR, f"stock_chart_{bar}_{stock_code}_{start_date}_{end_date}.csv")
         print(csv_file)
         df.to_csv(csv_file, index=False)
         print(f"Saved: {csv_file}")
@@ -55,7 +57,11 @@ def main():
     print(stock_code_master.get_all_codes())
 
     # 全銘柄のチャートを取得
-    get_all_stock_charts(ws, stock_code_master)
+    get_all_stock_charts(ws, TickType.MIN1, 3000, stock_code_master)
+    get_all_stock_charts(ws, TickType.MIN5 , 3000, stock_code_master)
+    get_all_stock_charts(ws, TickType.DAY, 1000, stock_code_master)
+    get_all_stock_charts(ws, TickType.WEEK, 100, stock_code_master)
+    get_all_stock_charts(ws, TickType.MONTH, 100, stock_code_master)
 
     # # ティッカーの取得
     # rss_tick_list_range = DataRange(start_row=3, start_col=1, end_row=number + 2, end_col=3)
