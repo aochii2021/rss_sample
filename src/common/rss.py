@@ -1,6 +1,7 @@
 import win32com.client      #エクセル用
 import pandas as pd         #データフレーム用
 import time                 #時間調整用
+from enum import Enum, auto  # 列挙型用
 
 # 抽象クラス
 from abc import ABC, abstractmethod
@@ -18,6 +19,24 @@ class DataRange:
     def __post_init__(self):
         if self.start_row > self.end_row or self.start_col > self.end_col:
             raise ValueError("start_row must be less than or equal to end_row and start_col must be less than or equal to end_col")
+
+
+class TickType(Enum):
+    MIN1 = "1M"
+    MIN2 = "2M"
+    MIN3 = "3M"
+    MIN4 = "4M"
+    MIN5 = "5M"
+    MIN10 = "10M"
+    MIN15 = "15M"
+    MIN30 = "30M"
+    MIN60 = "60M"
+    HOUR2 = "2H"
+    HOUR4 = "4H"
+    HOUR8 = "8H"
+    DAY = "D"
+    WEEK = "W"
+    MONTH = "M"
 
 
 class RssBase(ABC):
@@ -80,13 +99,13 @@ class RssList(RssBase):
 
     def is_valid(self) -> bool:
         """
-        配信中かどうかを判定する
+        取得結果が有効かどうかを判定する（ステータスが「応答待ち」以外）
         :return: True if valid, False otherwise
         """
         try:
             status_str = self.ws.Cells(1, 1).Value
             status = status_str.split('=>')[-1].strip()
-            return status == "配信中"
+            return status != "応答待ち"
         except Exception as e:
             print(f"Error checking validity: {e}")
             return False
@@ -112,9 +131,9 @@ class RssList(RssBase):
         # シート全体をクリア
         self.ws.Cells.ClearContents()
         self.ws.Cells(1, 1).Formula = formula
-        # ステータスが「配信中」になるまで待機
+        # ステータスが「応答待ち」以外になるまで待機
         while not self.is_valid():
-            print("RSS関数のステータスが「配信中」になるまで待機中...")
+            print("RSS関数のステータスが「応答待ち」以外になるまで待機中...")
             time.sleep(1)
         # データを取得
         headers = self.get_headers()
@@ -130,7 +149,7 @@ class RssChart(RssList):
         self.bar = bar
 
     def create_formula(self) -> str:
-        return f'=RssChart(,{self.stock_code}, "{self.bar}", {self.number})'
+        return f'=RssChart(,"{self.stock_code}", "{self.bar}", {self.number})'
 
 
 class RssTickList(RssList):
