@@ -160,6 +160,19 @@ class RssTickList(RssList):
         return f'=RssTickList(,{self.stock_code}, {self.number})'
 
 
+class RssTrendSma(RssList):
+    def __init__(self, ws, stock_code: str, bar: str, number: int, data_range: DataRange, header_row: int,
+                 window1: int = 5, window2: int = 25, window3: int = 75):
+        super().__init__(ws, stock_code, number, data_range, header_row)
+        self.bar = bar
+        self.window1 = window1
+        self.window2 = window2
+        self.window3 = window3
+
+    def create_formula(self) -> str:
+        return f'=RssTrendSMA(,"{self.stock_code}", "{self.bar}", {self.number}, {self.window1}, {self.window2}, {self.window3})'
+
+
 def main():
     try:
         xl = win32com.client.GetObject(Class="Excel.Application")  # 今、開いている空白のブック
