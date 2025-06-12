@@ -177,6 +177,9 @@ def main():
 
     # 上段: 価格チャート
     ax1.plot(df_stock_chart.index, df_stock_chart['終値'], label='終値', color='blue')
+    # ゴールデンクロスとデッドクロスの点を価格チャート上に表示
+    ax1.scatter(df_stock_chart.index[macd_data['ゴールデンクロス'] == 1], df_stock_chart['終値'][macd_data['ゴールデンクロス'] == 1], marker='o', color='green', label='Golden Cross')
+    ax1.scatter(df_stock_chart.index[macd_data['デッドクロス'] == 1], df_stock_chart['終値'][macd_data['デッドクロス'] == 1], marker='x', color='black', label='Dead Cross')
     ax1.set_title(f'銘柄コード {stock_code} の {bar} チャート')
     ax1.set_ylabel('価格')
     ax1.legend()
