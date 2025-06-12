@@ -172,17 +172,29 @@ def main():
     print("デッドクロスとゴールデンクロスの検出:")
     print(macd_data[['デッドクロス', 'ゴールデンクロス']])
 
-    # デッドクロスとゴールデンクロスのグラフを描画
-    plt.figure(figsize=(12, 6))
-    plt.plot(macd_data.index, macd_data['MACD'], label='MACD', color='blue')
-    plt.plot(macd_data.index, macd_data['シグナルライン'], label='Signal Line', color='red')
-    plt.scatter(macd_data.index[macd_data['デッドクロス'] == 1], macd_data['MACD'][macd_data['デッドクロス'] == 1], marker='x', color='black', label='Dead Cross')
-    plt.scatter(macd_data.index[macd_data['ゴールデンクロス'] == 1], macd_data['MACD'][macd_data['ゴールデンクロス'] == 1], marker='o', color='green', label='Golden Cross')
-    plt.title('MACD with Dead and Golden Crosses')
-    plt.xlabel('本数')
-    plt.ylabel('MACD')
-    plt.legend()
-    plt.savefig('macd_crosses_plot.png')
+    # --- 価格とMACDを1つのウィンドウに上下分割で描画 ---
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 8), sharex=True, gridspec_kw={'height_ratios': [2, 1]})
+
+    # 上段: 価格チャート
+    ax1.plot(df_stock_chart.index, df_stock_chart['終値'], label='終値', color='blue')
+    ax1.set_title(f'銘柄コード {stock_code} の {bar} チャート')
+    ax1.set_ylabel('価格')
+    ax1.legend()
+    ax1.grid()
+
+    # 下段: MACDとシグナルライン、クロス点
+    ax2.plot(macd_data.index, macd_data['MACD'], label='MACD', color='blue')
+    ax2.plot(macd_data.index, macd_data['シグナルライン'], label='Signal Line', color='red')
+    ax2.scatter(macd_data.index[macd_data['デッドクロス'] == 1], macd_data['MACD'][macd_data['デッドクロス'] == 1], marker='x', color='black', label='Dead Cross')
+    ax2.scatter(macd_data.index[macd_data['ゴールデンクロス'] == 1], macd_data['MACD'][macd_data['ゴールデンクロス'] == 1], marker='o', color='green', label='Golden Cross')
+    ax2.set_title('MACD with Dead and Golden Crosses')
+    ax2.set_xlabel('本数')
+    ax2.set_ylabel('MACD')
+    ax2.legend()
+    ax2.grid()
+
+    plt.tight_layout()
+    plt.savefig('price_macd_crosses_plot.png')
     plt.show()
 
     # ボリンジャーバンドを計算
