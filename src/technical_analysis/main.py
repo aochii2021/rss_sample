@@ -2,6 +2,8 @@ import os
 import sys
 import pandas as pd
 # import mplfinance as mpf
+import matplotlib
+matplotlib.rcParams['font.family'] = 'MS Gothic'  # または 'Meiryo' など
 from matplotlib import pyplot as plt
 import glob
 
