@@ -112,9 +112,9 @@ def main():
     print(all_data.head())
 
     # 銘柄の分足データを取得
-    stock_code = 7014  # 例として銘柄コード7014を使用
+    stock_code = 6526  # 例として銘柄コード6526を使用
     bar = TickType.MIN5.value  # 5分足
-    # ファイル検索（../get_rss_chart_data/output/stock_chart_DAY_7014_*.csv）
+    # ファイル検索（../get_rss_chart_data/output/stock_chart_MIN5_6526_*.csv）
     file_name = f'stock_chart_{bar}_{stock_code}_*.csv'
     S_RSS_CHART_DIR = os.path.dirname(S_FILE_DIR)
     file_list = glob.glob(os.path.join(S_RSS_CHART_DIR, 'get_rss_chart_data', 'output', file_name))
@@ -152,7 +152,8 @@ def main():
     print("価格帯別出来高:")
     print(volume_by_price)
     # MACDを計算
-    macd_data = calculate_macd(df_stock_chart, price_col='終値', short_window=12, long_window=26, signal_window=9, group_by_date=True)
+    group_by_date = True if bar != TickType.DAY.value and bar != TickType.WEEK.value and bar != TickType.MONTH.value else False
+    macd_data = calculate_macd(df_stock_chart, price_col='終値', short_window=12, long_window=26, signal_window=9, group_by_date=group_by_date)
     print("MACD:")
     print(macd_data[['MACD', 'シグナルライン']])
 
@@ -232,10 +233,14 @@ def main():
             trades = []
             for idx, row in group.iterrows():
                 price = df_stock_chart.loc[idx, '終値'] if idx in df_stock_chart.index else None
-                if row['ゴールデンクロス'] == 1 and position is None and price is not None:
+                # ボリンジャーバンドの-2σを取得
+                bb_minus2 = bollinger_data.loc[idx, '下限'] if idx in bollinger_data.index else None
+                # ゴールデンクロスかつ-2σ未満でない場合のみ買い
+                if row['ゴールデンクロス'] == 1 and position is None and price is not None and bb_minus2 is not None and price >= bb_minus2:
                     position = 'buy'
                     buy_price = price
                     trades.append({'type': 'buy', 'date': idx, 'price': buy_price})
+                # デッドクロスかつポジションがある場合のみ売り
                 elif row['デッドクロス'] == 1 and position == 'buy' and price is not None:
                     position = None
                     sell_price = price
