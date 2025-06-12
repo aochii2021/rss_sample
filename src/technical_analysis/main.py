@@ -112,9 +112,9 @@ def main():
     print(all_data.head())
 
     # 銘柄の分足データを取得
-    stock_code = 8136  # 例として銘柄コード8136を使用
-    bar = TickType.MIN1.value  # 1分足
-    # ファイル検索（../get_rss_chart_data/output/stock_chart_DAY_8136_*.csv）
+    stock_code = 7014  # 例として銘柄コード7014を使用
+    bar = TickType.MIN5.value  # 5分足
+    # ファイル検索（../get_rss_chart_data/output/stock_chart_DAY_7014_*.csv）
     file_name = f'stock_chart_{bar}_{stock_code}_*.csv'
     S_RSS_CHART_DIR = os.path.dirname(S_FILE_DIR)
     file_list = glob.glob(os.path.join(S_RSS_CHART_DIR, 'get_rss_chart_data', 'output', file_name))
@@ -152,7 +152,7 @@ def main():
     print("価格帯別出来高:")
     print(volume_by_price)
     # MACDを計算
-    macd_data = calculate_macd(df_stock_chart, price_col='終値', short_window=6, long_window=19, signal_window=9, group_by_date=True)
+    macd_data = calculate_macd(df_stock_chart, price_col='終値', short_window=12, long_window=26, signal_window=9, group_by_date=True)
     print("MACD:")
     print(macd_data[['MACD', 'シグナルライン']])
 
@@ -222,6 +222,42 @@ def main():
     plt.legend()
     plt.savefig('bollinger_bands_plot.png')
     plt.show()
+
+    # --- 日別で売買シミュレーション ---
+    if '日付' in df_stock_chart.columns:
+        trade_results = []
+        for date, group in macd_data.groupby('日付'):
+            position = None
+            buy_price = None
+            trades = []
+            for idx, row in group.iterrows():
+                price = df_stock_chart.loc[idx, '終値'] if idx in df_stock_chart.index else None
+                if row['ゴールデンクロス'] == 1 and position is None and price is not None:
+                    position = 'buy'
+                    buy_price = price
+                    trades.append({'type': 'buy', 'date': idx, 'price': buy_price})
+                elif row['デッドクロス'] == 1 and position == 'buy' and price is not None:
+                    position = None
+                    sell_price = price
+                    trades.append({'type': 'sell', 'date': idx, 'price': sell_price})
+                    trade_results.append({'date': date, 'buy': buy_price, 'sell': sell_price, 'profit': sell_price - buy_price})
+                    buy_price = None
+        # 日別損益のグラフ
+        if trade_results:
+            trade_df = pd.DataFrame(trade_results)
+            trade_df['cum_profit'] = trade_df['profit'].cumsum()
+            plt.figure(figsize=(12, 6))
+            plt.plot(trade_df['date'], trade_df['cum_profit'], marker='o', label='Cumulative Profit')
+            plt.title('日別MACDクロス売買シミュレーション累積損益')
+            plt.xlabel('日付')
+            plt.ylabel('累積損益')
+            plt.legend()
+            plt.grid()
+            plt.savefig('macd_cross_trade_cum_profit.png')
+            plt.show()
+            print(trade_df[['date', 'buy', 'sell', 'profit', 'cum_profit']])
+        else:
+            print('売買シグナルがありませんでした。')
 
 if __name__ == "__main__":
     main()
