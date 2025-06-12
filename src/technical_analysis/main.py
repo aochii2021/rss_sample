@@ -36,28 +36,35 @@ def calculate_volume_by_price(df: pd.DataFrame, price_col: str = '終値', volum
 
 
 # MACDを計算
-def calculate_macd(df: pd.DataFrame, price_col: str = '終値', short_window: int = 12, long_window: int = 26, signal_window: int = 9) -> pd.DataFrame:
+def calculate_macd(df: pd.DataFrame, price_col: str = '終値', short_window: int = 12, long_window: int = 26, signal_window: int = 9, group_by_date: bool = False) -> pd.DataFrame:
     """
-    MACDを計算する
+    MACDを計算する（日付ごとにグループ化も可能）
     :param df: 入力データフレーム
     :param price_col: 価格のカラム名
     :param short_window: 短期EMAの期間
     :param long_window: 長期EMAの期間
     :param signal_window: シグナルラインの期間
+    :param group_by_date: Trueなら日付ごとにMACDを計算
     :return: MACDとシグナルラインを含むデータフレーム
     """
     if price_col not in df.columns:
         raise ValueError(f"DataFrame must contain '{price_col}' column.")
-    
-    # 短期EMAと長期EMAを計算
-    df['短期EMA'] = df[price_col].ewm(span=short_window, adjust=False).mean()
-    df['長期EMA'] = df[price_col].ewm(span=long_window, adjust=False).mean()
-    
-    # MACDとシグナルラインを計算
-    df['MACD'] = df['短期EMA'] - df['長期EMA']
-    df['シグナルライン'] = df['MACD'].ewm(span=signal_window, adjust=False).mean()
-    
-    return df
+    result = df.copy()
+    if group_by_date and '日付' in result.columns:
+        def calc_group(group):
+            group = group.copy()
+            group['短期EMA'] = group[price_col].ewm(span=short_window, adjust=False).mean()
+            group['長期EMA'] = group[price_col].ewm(span=long_window, adjust=False).mean()
+            group['MACD'] = group['短期EMA'] - group['長期EMA']
+            group['シグナルライン'] = group['MACD'].ewm(span=signal_window, adjust=False).mean()
+            return group
+        result = result.groupby('日付', group_keys=False).apply(calc_group)
+    else:
+        result['短期EMA'] = result[price_col].ewm(span=short_window, adjust=False).mean()
+        result['長期EMA'] = result[price_col].ewm(span=long_window, adjust=False).mean()
+        result['MACD'] = result['短期EMA'] - result['長期EMA']
+        result['シグナルライン'] = result['MACD'].ewm(span=signal_window, adjust=False).mean()
+    return result
 
 
 # ボリンジャーバンドを計算
@@ -106,7 +113,7 @@ def main():
 
     # 銘柄の分足データを取得
     stock_code = 8136  # 例として銘柄コード8136を使用
-    bar = TickType.MIN1.value  # 日足
+    bar = TickType.MIN1.value  # 1分足
     # ファイル検索（../get_rss_chart_data/output/stock_chart_DAY_8136_*.csv）
     file_name = f'stock_chart_{bar}_{stock_code}_*.csv'
     S_RSS_CHART_DIR = os.path.dirname(S_FILE_DIR)
@@ -145,7 +152,7 @@ def main():
     print("価格帯別出来高:")
     print(volume_by_price)
     # MACDを計算
-    macd_data = calculate_macd(df_stock_chart, price_col='終値', short_window=6, long_window=19, signal_window=9)
+    macd_data = calculate_macd(df_stock_chart, price_col='終値', short_window=6, long_window=19, signal_window=9, group_by_date=True)
     print("MACD:")
     print(macd_data[['MACD', 'シグナルライン']])
 
