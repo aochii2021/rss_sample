@@ -6,6 +6,9 @@ import matplotlib
 matplotlib.rcParams['font.family'] = 'MS Gothic'  # または 'Meiryo' など
 from matplotlib import pyplot as plt
 import glob
+import plotly.graph_objs as go
+import plotly.offline as pyo
+import plotly.subplots as psub
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from common import common, columns
@@ -98,7 +101,7 @@ def main():
     
     # 銘柄コードの一覧を表示
     print("銘柄コード一覧:")
-    print(stock_code_master.get_all_codes())
+    # print(stock_code_master.get_all_codes())
     
     # 全銘柄のデータを取得
     all_data = stock_code_master.get_all()
@@ -112,9 +115,9 @@ def main():
     print(all_data.head())
 
     # 銘柄の分足データを取得
-    stock_code = 6526  # 例として銘柄コード6526を使用
+    stock_code = 7011  # 例として銘柄コード7011を使用
     bar = TickType.MIN5.value  # 5分足
-    # ファイル検索（../get_rss_chart_data/output/stock_chart_MIN5_6526_*.csv）
+    # ファイル検索（../get_rss_chart_data/output/stock_chart_MIN5_7011_*.csv）
     file_name = f'stock_chart_{bar}_{stock_code}_*.csv'
     S_RSS_CHART_DIR = os.path.dirname(S_FILE_DIR)
     file_list = glob.glob(os.path.join(S_RSS_CHART_DIR, 'get_rss_chart_data', 'output', file_name))
@@ -127,6 +130,10 @@ def main():
         os.path.join(S_FILE_DIR, 'output', file_list[0]),
         encoding='utf-8-sig'
     )
+
+    # 日付が2025/06/09のデータをフィルタリング
+    # if '日付' in df_stock_chart.columns:
+    #     df_stock_chart = df_stock_chart[df_stock_chart['日付'] == '2025/06/09']
 
     # チャートを描画
     df_stock_chart.sort_index(inplace=True)
@@ -212,57 +219,142 @@ def main():
     bollinger_data = calculate_bollinger_bands(df_stock_chart)
     print("ボリンジャーバンド:")
     print(bollinger_data[['移動平均', '上限', '下限']])
-    # ボリンジャーバンドのグラフを描画
-    plt.figure(figsize=(12, 6))
-    plt.plot(bollinger_data.index, bollinger_data['終値'], label='終値', color='blue')
-    plt.plot(bollinger_data.index, bollinger_data['移動平均'], label='移動平均', color='orange')
-    plt.fill_between(bollinger_data.index, bollinger_data['上限'], bollinger_data['下限'], color='lightgray', alpha=0.5, label='Bollinger Bands')
-    plt.title('Bollinger Bands')
-    plt.xlabel('本数')
-    plt.ylabel('価格')
-    plt.legend()
-    plt.savefig('bollinger_bands_plot.png')
-    plt.show()
 
-    # --- 日別で売買シミュレーション ---
-    if '日付' in df_stock_chart.columns:
-        trade_results = []
-        for date, group in macd_data.groupby('日付'):
-            position = None
-            buy_price = None
-            trades = []
-            for idx, row in group.iterrows():
-                price = df_stock_chart.loc[idx, '終値'] if idx in df_stock_chart.index else None
-                # ボリンジャーバンドの-2σを取得
-                bb_minus2 = bollinger_data.loc[idx, '下限'] if idx in bollinger_data.index else None
-                # ゴールデンクロスかつ-2σ未満でない場合のみ買い
-                if row['ゴールデンクロス'] == 1 and position is None and price is not None and bb_minus2 is not None and price >= bb_minus2:
-                    position = 'buy'
-                    buy_price = price
-                    trades.append({'type': 'buy', 'date': idx, 'price': buy_price})
-                # デッドクロスかつポジションがある場合のみ売り
-                elif row['デッドクロス'] == 1 and position == 'buy' and price is not None:
-                    position = None
-                    sell_price = price
-                    trades.append({'type': 'sell', 'date': idx, 'price': sell_price})
-                    trade_results.append({'date': date, 'buy': buy_price, 'sell': sell_price, 'profit': sell_price - buy_price})
-                    buy_price = None
-        # 日別損益のグラフ
-        if trade_results:
-            trade_df = pd.DataFrame(trade_results)
-            trade_df['cum_profit'] = trade_df['profit'].cumsum()
-            plt.figure(figsize=(12, 6))
-            plt.plot(trade_df['date'], trade_df['cum_profit'], marker='o', label='Cumulative Profit')
-            plt.title('日別MACDクロス売買シミュレーション累積損益')
-            plt.xlabel('日付')
-            plt.ylabel('累積損益')
-            plt.legend()
-            plt.grid()
-            plt.savefig('macd_cross_trade_cum_profit.png')
-            plt.show()
-            print(trade_df[['date', 'buy', 'sell', 'profit', 'cum_profit']])
+    # --- 売買シグナル判定・履歴・可視化を統合 ---
+    trade_on_cross_only = False  # True:クロスのみ, False:ボリンジャー条件も考慮
+    N = 5
+    position = 0
+    buy_points = []
+    sell_points = []
+    trade_results = []
+    buy_price = None
+    buy_time = None
+    for i in range(len(macd_data)):
+        # 日付・時刻取得
+        date_str = df_stock_chart.iloc[i]['日付'] if '日付' in df_stock_chart.columns else ''
+        time_str = df_stock_chart.iloc[i]['時刻'] if '時刻' in df_stock_chart.columns else ''
+        price = df_stock_chart.iloc[i]['終値']
+        bb_plus2 = bollinger_data.iloc[i]['上限'] if '上限' in bollinger_data.columns else None
+        bb_plus1 = bollinger_data.iloc[i]['移動平均'] + bollinger_data.iloc[i]['標準偏差'] if '移動平均' in bollinger_data.columns and '標準偏差' in bollinger_data.columns else None
+        if trade_on_cross_only:
+            buy_cond = macd_data['ゴールデンクロス'].iloc[i] == 1
+            sell_cond = macd_data['デッドクロス'].iloc[i] == 1
         else:
-            print('売買シグナルがありませんでした。')
+            buy_cond = (
+                (macd_data['ゴールデンクロス'].iloc[max(0, i-N+1):i+1].any()) and
+                (price > bb_plus2 if bb_plus2 is not None else False)
+            )
+            sell_cond = (
+                (macd_data['デッドクロス'].iloc[max(0, i-N+1):i+1].any()) or
+                (price < bb_plus1 if bb_plus1 is not None else False)
+            )
+        if position == 0 and buy_cond:
+            position = 1
+            buy_points.append(i)
+            buy_price = price
+            buy_time = time_str
+        elif position == 1 and sell_cond:
+            position = 0
+            sell_points.append(i)
+            sell_price = price
+            sell_time = time_str
+            trade_results.append({
+                'date': date_str,
+                'buy': buy_price,
+                'buy_time': buy_time,
+                'sell': sell_price,
+                'sell_time': sell_time,
+                'profit': sell_price - buy_price
+            })
+            buy_price = None
+            buy_time = None
+    # 損益累積和
+    if trade_results:
+        trade_df = pd.DataFrame(trade_results)
+        trade_df['cum_profit'] = trade_df['profit'].cumsum()
+        print(trade_df[['date', 'buy_time', 'buy', 'sell_time', 'sell', 'profit', 'cum_profit']])
+        plt.figure(figsize=(12, 6))
+        plt.plot(trade_df['date'] + ' ' + trade_df['buy_time'], trade_df['cum_profit'], marker='o', label='Cumulative Profit')
+        plt.title('MACDクロス売買シミュレーション累積損益')
+        plt.xlabel('日付・時刻')
+        plt.ylabel('累積損益')
+        plt.legend()
+        plt.grid()
+        plt.savefig('macd_cross_trade_cum_profit.png')
+        plt.show()
+    else:
+        print('売買シグナルがありませんでした。')
+
+    # --- Plotlyで価格・MACD・売買タイミングを可視化 ---
+    # 日付・時刻列が存在する場合はhover用に使う
+    if '日付' in df_stock_chart.columns and '時刻' in df_stock_chart.columns:
+        hover_text = df_stock_chart['日付'].astype(str) + ' ' + df_stock_chart['時刻'].astype(str)
+    elif '日付' in df_stock_chart.columns:
+        hover_text = df_stock_chart['日付'].astype(str)
+    elif '時刻' in df_stock_chart.columns:
+        hover_text = df_stock_chart['時刻'].astype(str)
+    else:
+        hover_text = df_stock_chart.index.astype(str)
+
+    # 価格チャート
+    price_trace = go.Scatter(
+        x=df_stock_chart.index,
+        y=df_stock_chart['終値'],
+        mode='lines',
+        name='終値',
+        text=hover_text,
+        hovertemplate='日付: %{text}<br>価格: %{y}<extra></extra>'
+    )
+    # 売買タイミング
+    buy_trace = go.Scatter(
+        x=df_stock_chart.index[buy_points],
+        y=df_stock_chart['終値'].iloc[buy_points],
+        mode='markers',
+        marker=dict(color='green', symbol='circle', size=10),
+        name='Buy',
+        text=hover_text.iloc[buy_points] if hasattr(hover_text, 'iloc') else None,
+        hovertemplate='買い<br>日付・時間: %{text}<br>価格: %{y}<extra></extra>'
+    )
+    sell_trace = go.Scatter(
+        x=df_stock_chart.index[sell_points],
+        y=df_stock_chart['終値'].iloc[sell_points],
+        mode='markers',
+        marker=dict(color='red', symbol='x', size=10),
+        name='Sell',
+        text=hover_text.iloc[sell_points] if hasattr(hover_text, 'iloc') else None,
+        hovertemplate='売り<br>日付・時間: %{text}<br>価格: %{y}<extra></extra>'
+    )
+    # MACD
+    macd_trace = go.Scatter(
+        x=macd_data.index,
+        y=macd_data['MACD'],
+        mode='lines',
+        name='MACD',
+        yaxis='y2',
+        text=hover_text,
+        hovertemplate='日付・時間: %{text}<br>MACD: %{y}<extra></extra>'
+    )
+    signal_trace = go.Scatter(
+        x=macd_data.index,
+        y=macd_data['シグナルライン'],
+        mode='lines',
+        name='Signal Line',
+        yaxis='y2',
+        text=hover_text,
+        hovertemplate='日付・時間: %{text}<br>Signal: %{y}<extra></extra>'
+    )
+    # レイアウト
+    layout = go.Layout(
+        title=f'銘柄コード {stock_code} の {bar} チャートとMACD/売買タイミング',
+        xaxis=dict(title='本数'),
+        yaxis=dict(title='価格'),
+        yaxis2=dict(title='MACD', overlaying='y', side='right', showgrid=False),
+        legend=dict(x=0, y=1.1, orientation='h'),
+        hovermode='x unified',
+        height=800
+    )
+    fig = go.Figure(data=[price_trace, buy_trace, sell_trace, macd_trace, signal_trace], layout=layout)
+    pyo.plot(fig, filename='price_macd_crosses_trade_points_plotly.html', auto_open=True)
 
 if __name__ == "__main__":
     main()
