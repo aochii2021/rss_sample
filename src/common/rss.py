@@ -217,7 +217,7 @@ class RssBase(ABC):
 
 
 class RssMarket(RssBase):
-    def __init__(self, ws, stock_code: str, item: MarketStatusItem):
+    def __init__(self, ws, stock_code: str, item_list: list[MarketStatusItem]):
         """
         コンストラクタ
         :param ws: Excelのワークシートオブジェクト
@@ -226,34 +226,41 @@ class RssMarket(RssBase):
         """
         self.ws = ws
         self.stock_code = stock_code
-        self.item = item
+        self.item_list = item_list
 
-    def create_formula(self) -> str:
-        return f'=RssMarket("{self.stock_code}", "{self.item.value}")'
+    def create_formula(self, item: MarketStatusItem) -> str:
+        return f'=RssMarket("{self.stock_code}", "{item.value}")'
 
-    def is_valid(self):
+    def is_valid(self) -> bool:
         try:
-            status = self.ws.Cells(1, 1).Value
-            return status != ""
+            for i, _ in enumerate(self.item_list):
+                status_str = self.ws.Cells(1, 1 + i).Value
+                if status_str == "":
+                    return False
+            return True
         except Exception as e:
             print(f"Error checking validity: {e}")
             return False
 
-    def get_item(self):
-        formula = self.create_formula()
-        print(f"RSS関数: {formula}")
+    def get_item(self) -> list[str]:
         # シート全体をクリア
         self.ws.Cells.ClearContents()
-        self.ws.Cells(1, 1).Formula = formula
+        for i, item in enumerate(self.item_list):
+            formula = self.create_formula(item)
+            print(f"RSS関数: {formula}")
+            self.ws.Cells(1, 1 + i).Formula = formula
         # 取得結果が有効になるまで待機
         while not self.is_valid():
             print("RSS関数のステータスが有効になるまで待機中...")
             time.sleep(1)
         # データを取得
-        item = self.ws.Cells(1, 1).Value
-        if item is None:
-            raise ValueError(f"RSS関数の結果が取得できませんでした: {self.stock_code}, {self.item.value}")
-        return item
+        items = []
+        for i, item in enumerate(self.item_list):
+            value = self.ws.Cells(1, 1 + i).Value
+            if value is None:
+                raise ValueError(f"RSS関数の結果が取得できませんでした: {self.stock_code}, {item.value}")
+            items.append(value)
+        return items
 
 
 class RssList(RssBase):
