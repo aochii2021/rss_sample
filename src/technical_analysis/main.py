@@ -95,6 +95,10 @@ def calculate_bollinger_bands(df: pd.DataFrame, price_col: str = '終値', windo
 
 
 def main():
+    # 出力ディレクトリのパスを作成
+    output_dir = os.path.join(S_FILE_DIR, 'output')
+    os.makedirs(output_dir, exist_ok=True)
+
     # 銘柄コードマスターの読み込み
     stock_code_master = StockCodeMaster()
     stock_code_master.load()
@@ -151,7 +155,7 @@ def main():
     plt.ylabel('価格')
     plt.legend()
     plt.grid()
-    plt.savefig('stock_chart_plot.png')
+    plt.savefig(os.path.join(output_dir, 'stock_chart_plot.png'))
     plt.show()
 
     # 価格帯別出来高を計算
@@ -172,7 +176,7 @@ def main():
     plt.xlabel('本数')
     plt.ylabel('MACD')
     plt.legend()
-    plt.savefig('macd_plot.png')
+    plt.savefig(os.path.join(output_dir, 'macd_plot.png'))
     plt.show()
 
     # デッドクロスとゴールデンクロスの検出
@@ -212,7 +216,7 @@ def main():
     ax2.grid()
 
     plt.tight_layout()
-    plt.savefig('price_macd_crosses_plot.png')
+    plt.savefig(os.path.join(output_dir, 'price_macd_crosses_plot.png'))
     plt.show()
 
     # ボリンジャーバンドを計算
@@ -280,7 +284,7 @@ def main():
         plt.ylabel('累積損益')
         plt.legend()
         plt.grid()
-        plt.savefig('macd_cross_trade_cum_profit.png')
+        plt.savefig(os.path.join(output_dir, 'macd_cross_trade_cum_profit.png'))
         plt.show()
     else:
         print('売買シグナルがありませんでした。')
@@ -354,7 +358,7 @@ def main():
         height=800
     )
     fig = go.Figure(data=[price_trace, buy_trace, sell_trace, macd_trace, signal_trace], layout=layout)
-    pyo.plot(fig, filename='price_macd_crosses_trade_points_plotly.html', auto_open=True)
+    pyo.plot(fig, filename=os.path.join(output_dir, 'price_macd_crosses_trade_points_plotly.html'), auto_open=True)
 
 if __name__ == "__main__":
     main()
