@@ -5,5 +5,8 @@ __pycache__/
 
 .env
 
-# Ignore output csv files
+# Ignore output files
 src/*/output/*.csv
+src/*/output/*.png
+src/*/output/*.json
+src/*/output/*.html
