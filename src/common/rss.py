@@ -190,7 +190,164 @@ class MarketStatusItem(Enum):
     LENDING_RATE_DATE = "貸株金利適用日"
 
 
-# ...existing code...
+class OrderTrigger(Enum):
+    """
+    発注トリガー
+    """
+    FALSE = 0               # 待機
+    TRUE = 1                # 発注
+
+
+class BuySellType(Enum):
+    """
+    売買区分
+    """
+    SELL = 1                # 売り
+    BUY = 3                 # 買い
+
+
+class OrderType(Enum):
+    """
+    注文区分
+    """
+    NORMAL = 0              # 通常注文
+    STOP = 1                # 逆指値付注文
+    STOP_WAIT = 2           # 逆指値付注文（待機中）
+
+
+class SorType(Enum):
+    """
+    SOR区分
+    """
+    NORMAL = 0              # 通常注文
+    SOR = 1                 # SOR注文
+
+
+class MarginType(Enum):
+    """
+    信用区分
+    """
+    SYSTEM = 1              # 制度信用（6か月）
+    GENERAL_NO_LIMIT = 2    # 一般信用（無制限）
+    GENERAL = 3             # 一般信用（14日）
+    GENERAL_ONE_DAY = 4     # 一般信用（1日）
+
+
+class PriceType(Enum):
+    """
+    価格区分
+    """
+    MARKET = 0              # 成行
+    LIMIT = 1               # 指値
+
+
+class ExecutionCondition(Enum):
+    """
+    執行条件
+    """
+    TODAY = 1               # 当日執行
+    THIS_WEEK = 2           # 今週執行
+    OPENING = 3             # 寄付
+    CLOSING = 4             # 引け
+    SCHEDULED = 5           # 期間指定
+    LIMIT_OR_MARKET = 6     # 大引不成
+    LIMIT_OR_NO = 7         # 不成
+
+
+class AccountType(Enum):
+    """
+    口座区分
+    """
+    SPECIFIC = 0            # 特定
+    GENERAL = 1             # 一般
+
+
+class StopConditionType(Enum):
+    """
+    逆指値条件区分
+    """
+    OVER = 1                # 以上
+    UNDER = 2               # 以下
+
+
+class StopPriceType(Enum):
+    """
+    逆指値価格区分
+    """
+    MARKET = 0              # 成行
+    LIMIT = 1               # 指値
+
+
+class SetOrderType(Enum):
+    """
+    セット注文区分
+    """
+    NORMAL = 0              # 通常
+    SET_ORDER = 1           # セット注文
+
+
+class SetOrderPriceType(Enum):
+    """
+    セット注文価格区分
+    """
+    LIMIT = 1               # 指値
+    SET_PRICE_WIDTH = 2     # 値幅指定
+
+
+@dataclass
+class MarginOpenOrderParam:
+    """
+    国内株式 信用新規 パラメータ
+    """
+    ordre_id: int
+    order_trigger: OrderTrigger
+    stock_code: str
+    buy_sell_type: BuySellType
+    order_type: OrderType
+    sor_type: SorType
+    margin_type: MarginType
+    order_num: int
+    price_type: PriceType
+    order_price: float
+    execution_condition: ExecutionCondition
+    order_deadline_date: str
+    account_type: AccountType
+    stop_condition_price: float
+    stop_condition_type: StopConditionType
+    stop_price_type: StopPriceType
+    stop_price: float
+    set_order_type: SetOrderType
+    set_order_price_type: SetOrderPriceType
+    set_order_price: float
+    set_order_execution_condition: ExecutionCondition
+    set_order_deadline_date: str
+
+
+@dataclass
+class MarginCloseOrderParam:
+    """
+    国内株式 信用返済 パラメータ
+    """
+    order_id: int
+    order_trigger: OrderTrigger
+    stock_code: str
+    buy_sell_type: BuySellType
+    order_type: OrderType
+    sor_type: SorType
+    margin_type: MarginType
+    order_num: int
+    price_type: PriceType
+    order_price: float
+    execution_condition: ExecutionCondition
+    order_deadline_date: str
+    account_type: AccountType
+    opening_date: str
+    opening_price: float
+    stop_condition_price: float
+    stop_condition_type: StopConditionType
+    stop_price_type: StopPriceType
+    stop_price: float
+
 
 class RssBase(ABC):
     @abstractmethod
@@ -397,6 +554,14 @@ class RssTrendSma(RssList):
 
     def create_formula(self) -> str:
         return f'=RssTrendSMA(,"{self.stock_code}", "{self.bar}", {self.number}, {self.window1}, {self.window2}, {self.window3})'
+
+
+class RssMarginOpenOrder(RssBase):
+    def __init__(self, ws, stock_code: str):
+        super().__init__(ws, stock_code)
+
+    def create_formula(self) -> str:
+        return f'=RssMarginOpenOrder(,"{self.stock_code}")'
 
 
 def main():
