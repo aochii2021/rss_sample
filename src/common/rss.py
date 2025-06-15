@@ -669,6 +669,72 @@ class RssTrendSma(RssList):
         return f'=RssTrendSMA(,"{self.stock_code}", "{self.bar}", {self.number}, {self.window1}, {self.window2}, {self.window3})'
 
 
+class RssOrderIDList(RssBase):
+    def __init__(self, ws):
+        """
+        コンストラクタ
+        :param ws: Excelのワークシートオブジェクト
+        """
+        self.ws = ws
+
+    def create_formula(self) -> str:
+        return f'=RssOrderIDList()'
+
+    def is_valid(self) -> bool:
+        """
+        取得結果が有効かどうかを判定する（ステータスが「応答待ち」以外）
+        :return: True if valid, False otherwise
+        """
+        try:
+            status_str = self.ws.Cells(1, 1).Value
+            status = status_str.split('=>')[-1].strip()
+            return status != "応答待ち"
+        except Exception as e:
+            print(f"Error checking validity: {e}")
+            return False
+
+    def get_dataframe(self) -> pd.DataFrame:
+        """
+        データフレームを取得する
+        :return: pandas DataFrame
+        """
+        formula = self.create_formula()
+        print(f"RSS関数: {formula}")
+        # シート全体をクリア
+        self.ws.Cells.ClearContents()
+        self.ws.Cells(1, 1).Formula = formula
+        # ステータスが「応答待ち」以外になるまで待機
+        while not self.is_valid():
+            print("RSS関数のステータスが「応答待ち」以外になるまで待機中...")
+            time.sleep(1)
+        # データを取得
+        headers = ["発注ID", "関数名", "発注日", "発注時刻", "注文番号", "発注結果"]
+        # データの行数を取得
+        last_row = self.ws.Cells(self.ws.Rows.Count, 1).End(-4162).Row  # xlUp
+        data = self.ws.Range(f"A3:F{last_row - 1}").Value
+        if data is None:
+            print("データが取得できませんでした。")
+            return pd.DataFrame(columns=headers)
+
+        df = pd.DataFrame(data, columns=headers)
+        return df
+
+    def get_next_order_id(self) -> int:
+        """
+        次の発注IDを取得する
+        :return: 次の発注ID
+        """
+        df = self.get_dataframe()
+        if df.empty:
+            return 1
+        # 発注IDの使われていない最小値を取得
+        used_ids = df['発注ID'].astype(int).tolist()
+        next_id = 1
+        while next_id in used_ids:
+            next_id += 1
+        return next_id
+
+
 class RssMarginOpenOrder(RssBase):
     def __init__(self, ws, param: MarginOpenOrderParam):
         self.ws = ws
@@ -750,6 +816,87 @@ class RssMarginOpenOrder(RssBase):
                 print("最大リトライ回数に達しました。注文が実行されませんでした。")
                 return False
         return True
+
+
+class RssMarginCloseOrder(RssBase):
+    def __init__(self, ws, param: MarginCloseOrderParam):
+        self.ws = ws
+        self.param = param
+
+    def create_formula(self) -> str:
+        param = self.param
+        # パラメータを検証
+        param.validate()
+        # 必要なパラメータを順番にリスト化
+        values = [
+            param.order_id,
+            param.order_trigger.value if param.order_trigger else "",
+            param.stock_code,
+            param.buy_sell_type.value if param.buy_sell_type else "",
+            param.order_type.value if param.order_type else "",
+            param.sor_type.value if param.sor_type else "",
+            param.margin_type.value if param.margin_type else "",
+            param.order_quantity,
+            param.price_type.value if param.price_type else "",
+            param.order_price if param.order_price is not None else "",
+            param.execution_condition.value if param.execution_condition else "",
+            param.order_deadline_date or "",
+            param.account_type.value if param.account_type else "",
+            param.opening_date or "",
+            str(param.opening_price) if param.opening_price is not None else "",
+            str(param.opening_market) if param.opening_market is not None else "",
+            param.stop_condition_price if param.stop_condition_price is not None else "",
+            param.stop_condition_type.value if param.stop_condition_type else "",
+            param.stop_price_type.value if param.stop_price_type else "",
+            str(param.stop_price) if param.stop_price is not None else ""
+        ]
+        # すべて文字列化
+        str_values = [str(v) for v in values]
+        # カンマ区切りで連結
+        formula = '=RssMarginCloseOrder({})'.format(
+            ', '.join('"{}"'.format(v) for v in str_values)
+        )
+        return formula
+
+    def is_valid(self) -> bool:
+        """
+        取得結果が有効かどうかを判定する（ステータスが「応答待ち」以外）
+        :return: True if valid, False otherwise
+        """
+        try:
+            status_str = self.ws.Cells(1, 1).Value
+            status = status_str.split('=>')[-1].strip()
+            return status != "応答待ち"
+        except Exception as e:
+            print(f"Error checking validity: {e}")
+            return False
+
+    def execute(self) -> bool:
+        """
+        注文を実行する
+        :return: bool
+        注文が成功した場合はTrue、失敗した場合はFalse
+        例外が発生した場合は、エラーメッセージを表示
+        """
+        formula = self.create_formula()
+        print(f"RSS関数: {formula}")
+        # Excelに数式を設定
+        self.ws.Range("A1").Formula = formula
+        # シート全体をクリア
+        self.ws.Cells.ClearContents()
+        self.ws.Cells(1, 1).Formula = formula
+        # ステータスが「応答待ち」以外になるまで待機
+        max_retries = 100
+        retries = 0
+        while not self.is_valid():
+            print("RSS関数のステータスが「応答待ち」以外になるまで待機中...")
+            time.sleep(1)
+            retries += 1
+            if retries >= max_retries:
+                print("最大リトライ回数に達しました。注文が実行されませんでした。")
+                return False
+        return True
+
 
 def main():
     try:
