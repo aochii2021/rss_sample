@@ -355,10 +355,10 @@ class MarginOpenOrderParam:
             errors.append("注文数量(order_quantity)は必須です。")
         # 9,10 価格区分・注文価格（注文区分が0または1の場合は必須）
         if self.order_type in [OrderType.NORMAL, OrderType.NORMAL_WITH_STOP]:
-            if not self.price_type:
+            if self.price_type is None:
                 errors.append("注文区分が通常注文または逆指値付き通常注文の場合、価格区分(price_type)は必須です。")
-            if self.order_price is None:
-                errors.append("注文区分が通常注文または逆指値付き通常注文の場合、注文価格(order_price)は必須です。")
+            if self.order_price is None and self.price_type is not PriceType.MARKET:
+                errors.append("注文区分が通常注文または逆指値付き通常注文の場合、且つ成行注文以外は注文価格(order_price)は必須です。")
         # 11 執行条件 必須
         if not self.execution_condition:
             errors.append("執行条件(execution_condition)は必須です。")
