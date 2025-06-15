@@ -9,6 +9,7 @@ from abc import ABC, abstractmethod
 
 # データ範囲用のデータクラス
 from dataclasses import dataclass
+from typing import Optional
 @dataclass
 class DataRange:
     start_row: int
@@ -211,7 +212,7 @@ class OrderType(Enum):
     注文区分
     """
     NORMAL = 0              # 通常注文
-    STOP = 1                # 逆指値付注文
+    NORMAL_WITH_STOP = 1    # 逆指値付注文
     STOP_WAIT = 2           # 逆指値付注文（待機中）
 
 
@@ -298,36 +299,98 @@ class SetOrderPriceType(Enum):
 class MarginOpenOrderParam:
     """
     国内株式 信用新規 パラメータ
+    必須・任意の情報をコメントで明示
     """
-    ordre_id: int
-    order_trigger: OrderTrigger
-    stock_code: str
-    buy_sell_type: BuySellType
-    order_type: OrderType
-    sor_type: SorType
-    margin_type: MarginType
-    order_num: int
-    price_type: PriceType
-    order_price: float
-    execution_condition: ExecutionCondition
-    order_deadline_date: str
-    account_type: AccountType
-    stop_condition_price: float
-    stop_condition_type: StopConditionType
-    stop_price_type: StopPriceType
-    stop_price: float
-    set_order_type: SetOrderType
-    set_order_price_type: SetOrderPriceType
-    set_order_price: float
-    set_order_execution_condition: ExecutionCondition
-    set_order_deadline_date: str
+    # 必須
+    order_id: int  # 発注ID（1以上の数値）
+    order_trigger: OrderTrigger  # 発注トリガー（0:待機, 1:発注）
+    stock_code: str  # 銘柄コード（例: 7203.T）
+    buy_sell_type: BuySellType  # 売買区分（1:売り, 3:買い）
+    order_type: OrderType  # 注文区分（0:通常, 1:逆指値付, 2:逆指値待機）
+    sor_type: SorType  # SOR区分（0:通常, 1:SOR）
+    margin_type: MarginType  # 信用区分（1:制度, 2:一般無制限, 3:一般14日, 4:一般いちにち）
+    order_quantity: int  # 注文数量
+    execution_condition: ExecutionCondition  # 執行条件（1:本日中 など）
+    account_type: AccountType  # 口座区分（0:特定, 1:一般）
+
+    # 任意
+    price_type: Optional[PriceType] = None  # 価格区分（0:成行, 1:指値）
+    order_price: Optional[float] = None  # 注文価格
+    order_deadline_date: Optional[str] = None  # 注文期限（YYYYMMDD）
+    stop_condition_price: Optional[float] = None  # 逆指値条件価格
+    stop_condition_type: Optional[StopConditionType] = None  # 逆指値条件区分（1:以上, 2:以下）
+    stop_price_type: Optional[StopPriceType] = None  # 逆指値価格区分（0:成行, 1:指値）
+    stop_price: Optional[float] = None  # 逆指値価格
+    set_order_type: Optional[SetOrderType] = None  # セット注文区分（0:通常, 1:セット）
+    set_order_price_type: Optional[SetOrderPriceType] = None  # セット注文価格区分（1:指値, 2:値幅指定）
+    set_order_price: Optional[float] = None  # セット注文価格
+    set_order_execution_condition: Optional[ExecutionCondition] = None  # セット注文執行条件
+    set_order_deadline_date: Optional[str] = None  # セット注文期限（YYYYMMDD）
+
+    def validate(self):
+        errors = []
+        # 1 発注ID 必須
+        if not self.order_id:
+            errors.append("発注ID(order_id)は必須です。")
+        # 2 発注トリガー 必須
+        if self.order_trigger is None:
+            errors.append("発注トリガー(order_trigger)は必須です。")
+        # 3 銘柄コード 必須
+        if not self.stock_code:
+            errors.append("銘柄コード(stock_code)は必須です。")
+        # 4 売買区分 必須
+        if not self.buy_sell_type:
+            errors.append("売買区分(buy_sell_type)は必須です。")
+        # 5 注文区分 必須
+        if not self.order_type:
+            errors.append("注文区分(order_type)は必須です。")
+        # 6 SOR区分 必須
+        if not self.sor_type:
+            errors.append("SOR区分(sor_type)は必須です。")
+        # 7 信用区分 必須
+        if not self.margin_type:
+            errors.append("信用区分(margin_type)は必須です。")
+        # 8 注文数量 必須
+        if not self.order_quantity:
+            errors.append("注文数量(order_quantity)は必須です。")
+        # 9,10 価格区分・注文価格（注文区分が0または1の場合は必須）
+        if self.order_type in [OrderType.NORMAL, OrderType.NORMAL_WITH_STOP]:
+            if not self.price_type:
+                errors.append("注文区分が通常注文または逆指値付き通常注文の場合、価格区分(price_type)は必須です。")
+            if self.price_type is None:
+                errors.append("注文区分が通常注文または逆指値付き通常注文の場合、注文価格(price)は必須です。")
+        # 11 執行条件 必須
+        if not self.execution_condition:
+            errors.append("執行条件(execution_condition)は必須です。")
+        # 12 注文期限（執行条件が5の場合は必須）
+        if self.execution_condition == ExecutionCondition.SCHEDULED and not self.order_deadline_date:
+            errors.append("執行条件が5:期間指定の場合、注文期限(order_deadline_date)は必須です。")
+        # 13 口座区分 必須
+        if not self.account_type:
+            errors.append("口座区分(account_type)は必須です。")
+        # 14-17 逆指値関連（注文区分が1または2の場合は必須）
+        if self.order_type in [OrderType.NORMAL, OrderType.NORMAL_WITH_STOP]:
+            if self.stop_price is None:
+                errors.append("注文区分が1または2の場合、逆指値条件価格(stop_price)は必須です。")
+            if not self.stop_price_type:
+                errors.append("注文区分が1または2の場合、逆指値条件区分(stop_price_type)は必須です。")
+            if not self.stop_price_type:
+                errors.append("注文区分が1または2の場合、逆指値価格区分(stop_price_type)は必須です。")
+            if self.stop_price is None:
+                errors.append("注文区分が1または2の場合、逆指値価格(stop_price)は必須です。")
+        # 18-20 セット注文関連（セット注文区分が1の場合は必須）
+        if self.set_order_type == SetOrderPriceType.LIMIT:
+            if not self.set_order_price_type:
+                errors.append("セット注文区分が1の場合、セット注文価格区分(set_order_price_type)は必須です。")
+            if self.set_order_price is None:
+                errors.append("セット注文区分が1の場合、セット注文価格(set_order_price)は必須です。")
+        if errors:
+            raise ValueError('\n'.join(errors))
 
 
 @dataclass
 class MarginCloseOrderParam:
-    """
-    国内株式 信用返済 パラメータ
-    """
+    # 必須
     order_id: int
     order_trigger: OrderTrigger
     stock_code: str
@@ -335,18 +398,68 @@ class MarginCloseOrderParam:
     order_type: OrderType
     sor_type: SorType
     margin_type: MarginType
-    order_num: int
-    price_type: PriceType
-    order_price: float
+    order_quantity: int
     execution_condition: ExecutionCondition
-    order_deadline_date: str
     account_type: AccountType
     opening_date: str
     opening_price: float
-    stop_condition_price: float
-    stop_condition_type: StopConditionType
-    stop_price_type: StopPriceType
-    stop_price: float
+    opening_market: int
+
+    # 任意
+    price_type: Optional[PriceType] = None
+    order_price: Optional[float] = None
+    order_deadline_date: Optional[str] = None
+    stop_condition_price: Optional[float] = None
+    stop_condition_type: Optional[StopConditionType] = None
+    stop_price_type: Optional[StopPriceType] = None
+    stop_price: Optional[float] = None
+
+    def validate(self):
+        errors = []
+        if not self.order_id:
+            errors.append("発注ID(order_id)は必須です。")
+        if self.order_trigger is None:
+            errors.append("発注トリガー(order_trigger)は必須です。")
+        if not self.stock_code:
+            errors.append("銘柄コード(stock_code)は必須です。")
+        if not self.buy_sell_type:
+            errors.append("売買区分(buy_sell_type)は必須です。")
+        if not self.order_type:
+            errors.append("注文区分(order_type)は必須です。")
+        if not self.sor_type:
+            errors.append("SOR区分(sor_type)は必須です。")
+        if not self.margin_type:
+            errors.append("信用区分(margin_type)は必須です。")
+        if not self.order_quantity:
+            errors.append("注文数量(order_quantity)は必須です。")
+        if self.order_type in [OrderType.NORMAL, OrderType.NORMAL_WITH_STOP]:
+            if not self.price_type:
+                errors.append("注文区分が通常注文または逆指値付き通常注文の場合、価格区分(price_type)は必須です。")
+            if self.price_type is None:
+                errors.append("注文区分が通常注文または逆指値付き通常注文の場合、注文価格(order_price)は必須です。")
+        if not self.execution_condition:
+            errors.append("執行条件(execution_condition)は必須です。")
+        if self.execution_condition == ExecutionCondition.SCHEDULED and not self.order_deadline_date:
+            errors.append("執行条件が5:期間指定の場合、注文期限(order_deadline_date)は必須です。")
+        if not self.account_type:
+            errors.append("口座区分(account_type)は必須です。")
+        if not self.opening_date:
+            errors.append("建日(opening_date)は必須です。")
+        if self.opening_price is None:
+            errors.append("建単価(opening_price)は必須です。")
+        if self.opening_market is None:
+            errors.append("建市場(opening_market)は必須です。")
+        if self.order_type in [OrderType.NORMAL_WITH_STOP, OrderType.STOP_WAIT]:
+            if self.stop_condition_price is None:
+                errors.append("注文区分が1または2の場合、逆指値条件価格(stop_condition_price)は必須です。")
+            if not self.stop_condition_type:
+                errors.append("注文区分が1または2の場合、逆指値条件区分(stop_condition_type)は必須です。")
+            if not self.stop_price_type:
+                errors.append("注文区分が1または2の場合、逆指値価格区分(stop_price_type)は必須です。")
+            if self.stop_price is None:
+                errors.append("注文区分が1または2の場合、逆指値価格(stop_price)は必須です。")
+        if errors:
+            raise ValueError('\n'.join(errors))
 
 
 class RssBase(ABC):
