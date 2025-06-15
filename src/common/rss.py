@@ -302,30 +302,30 @@ class MarginOpenOrderParam:
     必須・任意の情報をコメントで明示
     """
     # 必須
-    order_id: int  # 発注ID（1以上の数値）
-    order_trigger: OrderTrigger  # 発注トリガー（0:待機, 1:発注）
-    stock_code: str  # 銘柄コード（例: 7203.T）
-    buy_sell_type: BuySellType  # 売買区分（1:売り, 3:買い）
-    order_type: OrderType  # 注文区分（0:通常, 1:逆指値付, 2:逆指値待機）
-    sor_type: SorType  # SOR区分（0:通常, 1:SOR）
-    margin_type: MarginType  # 信用区分（1:制度, 2:一般無制限, 3:一般14日, 4:一般いちにち）
-    order_quantity: int  # 注文数量
-    execution_condition: ExecutionCondition  # 執行条件（1:本日中 など）
-    account_type: AccountType  # 口座区分（0:特定, 1:一般）
+    order_id: int                                                       #  1. 発注ID（1以上の数値）
+    order_trigger: OrderTrigger                                         #  2. 発注トリガー（0:待機, 1:発注）
+    stock_code: str                                                     #  3. 銘柄コード（例: 7203.T）
+    buy_sell_type: BuySellType                                          #  4. 売買区分（1:売り, 3:買い）
+    order_type: OrderType                                               #  5. 注文区分（0:通常, 1:逆指値付, 2:逆指値待機）
+    sor_type: SorType                                                   #  6. SOR区分（0:通常, 1:SOR）
+    margin_type: MarginType                                             #  7. 信用区分（1:制度, 2:一般無制限, 3:一般14日, 4:一般いちにち）
+    order_quantity: int                                                 #  8. 注文数量
+    execution_condition: ExecutionCondition                             # 11. 執行条件（1:本日中 など）
+    account_type: AccountType                                           # 13. 口座区分（0:特定, 1:一般）
 
     # 任意
-    price_type: Optional[PriceType] = None  # 価格区分（0:成行, 1:指値）
-    order_price: Optional[float] = None  # 注文価格
-    order_deadline_date: Optional[str] = None  # 注文期限（YYYYMMDD）
-    stop_condition_price: Optional[float] = None  # 逆指値条件価格
-    stop_condition_type: Optional[StopConditionType] = None  # 逆指値条件区分（1:以上, 2:以下）
-    stop_price_type: Optional[StopPriceType] = None  # 逆指値価格区分（0:成行, 1:指値）
-    stop_price: Optional[float] = None  # 逆指値価格
-    set_order_type: Optional[SetOrderType] = None  # セット注文区分（0:通常, 1:セット）
-    set_order_price_type: Optional[SetOrderPriceType] = None  # セット注文価格区分（1:指値, 2:値幅指定）
-    set_order_price: Optional[float] = None  # セット注文価格
-    set_order_execution_condition: Optional[ExecutionCondition] = None  # セット注文執行条件
-    set_order_deadline_date: Optional[str] = None  # セット注文期限（YYYYMMDD）
+    price_type: Optional[PriceType] = None                              #  9. 価格区分（0:成行, 1:指値）
+    order_price: Optional[float] = None                                 # 10. 注文価格
+    order_deadline_date: Optional[str] = None                           # 12. 注文期限（YYYYMMDD）
+    stop_condition_price: Optional[float] = None                        # 14. 逆指値条件価格
+    stop_condition_type: Optional[StopConditionType] = None             # 15. 逆指値条件区分（1:以上, 2:以下）
+    stop_price_type: Optional[StopPriceType] = None                     # 16. 逆指値価格区分（0:成行, 1:指値）
+    stop_price: Optional[float] = None                                  # 17. 逆指値価格
+    set_order_type: Optional[SetOrderType] = None                       # 18. セット注文区分（0:通常, 1:セット）
+    set_order_price_type: Optional[SetOrderPriceType] = None            # 19. セット注文価格区分（1:指値, 2:値幅指定）
+    set_order_price: Optional[float] = None                             # 20. セット注文価格
+    set_order_execution_condition: Optional[ExecutionCondition] = None  # 21. セット注文執行条件
+    set_order_deadline_date: Optional[str] = None                       # 22. セット注文期限（YYYYMMDD）
 
     def validate(self):
         errors = []
@@ -670,11 +670,48 @@ class RssTrendSma(RssList):
 
 
 class RssMarginOpenOrder(RssBase):
-    def __init__(self, ws, stock_code: str):
-        super().__init__(ws, stock_code)
+    def __init__(self, ws, param: MarginOpenOrderParam):
+        self.ws = ws
+        self.param = param
 
     def create_formula(self) -> str:
-        return f'=RssMarginOpenOrder(,"{self.stock_code}")'
+        param = self.param
+        # 必要なパラメータを順番にリスト化
+        values = [
+            param.order_id,
+            param.order_trigger.value if param.order_trigger else "",
+            param.stock_code,
+            param.buy_sell_type.value if param.buy_sell_type else "",
+            param.order_type.value if param.order_type else "",
+            param.sor_type.value if param.sor_type else "",
+            param.margin_type.value if param.margin_type else "",
+            param.order_quantity,
+            param.price_type.value if param.price_type else "",
+            param.order_price if param.order_price is not None else "",
+            param.execution_condition.value if param.execution_condition else "",
+            param.order_deadline_date or "",
+            param.account_type.value if param.account_type else "",
+            param.stop_condition_price if param.stop_condition_price is not None else "",
+            param.stop_condition_type.value if param.stop_condition_type else "",
+            param.stop_price_type.value if param.stop_price_type else "",
+            param.stop_price if param.stop_price is not None else "",
+            param.set_order_type.value if param.set_order_type else "",
+            param.set_order_price_type.value if param.set_order_price_type else "",
+            param.set_order_price if param.set_order_price is not None else "",
+            param.set_order_execution_condition.value if param.set_order_execution_condition else "",
+            param.set_order_deadline_date or "",
+        ]
+        # すべて文字列化
+        str_values = [str(v) for v in values]
+        # カンマ区切りで連結
+        # f-stringの入れ子をやめてformatで組み立て
+        formula = '=RssMarginOpenOrder({})'.format(
+            ', '.join('"{}"'.format(v) for v in str_values)
+        )
+        return formula
+
+    def is_valid(self):
+        pass
 
 
 def main():
