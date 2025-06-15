@@ -31,7 +31,7 @@ S_FILE_DIR = os.path.dirname(os.path.abspath(__file__))
 S_OUTPUT_DIR = os.path.join(S_FILE_DIR, 'output')
 
 default_margin_open_order = MarginOpenOrderParam(
-    order_id=1,
+    order_id=6,
     order_trigger=OrderTrigger.TRUE,
     stock_code="7203.T",
     buy_sell_type=BuySellType.BUY,
@@ -56,10 +56,17 @@ def main():
     xl.Visible = True
     ws = xl.Worksheets('Sheet1')
 
-    # 注文用インスタンス
+    # 新規注文用インスタンス
     rss_margin_open_order = RssMarginOpenOrder(ws, default_margin_open_order)
     print("Create formula")
     print(rss_margin_open_order.create_formula())
+    # 新規注文実行
+    if rss_margin_open_order.execute():
+        print("新規注文が成功しました。")
+    else:
+        print("新規注文が失敗しました。")
+
+    # 返済注文用インスタンス
 
 
 if __name__ == "__main__":

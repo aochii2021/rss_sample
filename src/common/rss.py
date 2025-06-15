@@ -712,9 +712,44 @@ class RssMarginOpenOrder(RssBase):
         )
         return formula
 
-    def is_valid(self):
-        pass
+    def is_valid(self) -> bool:
+        """
+        取得結果が有効かどうかを判定する（ステータスが「応答待ち」以外）
+        :return: True if valid, False otherwise
+        """
+        try:
+            status_str = self.ws.Cells(1, 1).Value
+            status = status_str.split('=>')[-1].strip()
+            return status != "応答待ち"
+        except Exception as e:
+            print(f"Error checking validity: {e}")
+            return False
 
+    def execute(self) -> bool:
+        """
+        注文を実行する
+        :return: bool
+        注文が成功した場合はTrue、失敗した場合はFalse
+        例外が発生した場合は、エラーメッセージを表示
+        """
+        formula = self.create_formula()
+        print(f"RSS関数: {formula}")
+        # Excelに数式を設定
+        self.ws.Range("A1").Formula = formula
+        # シート全体をクリア
+        self.ws.Cells.ClearContents()
+        self.ws.Cells(1, 1).Formula = formula
+        # ステータスが「応答待ち」以外になるまで待機
+        max_retries = 100
+        retries = 0
+        while not self.is_valid():
+            print("RSS関数のステータスが「応答待ち」以外になるまで待機中...")
+            time.sleep(1)
+            retries += 1
+            if retries >= max_retries:
+                print("最大リトライ回数に達しました。注文が実行されませんでした。")
+                return False
+        return True
 
 def main():
     try:
