@@ -281,7 +281,14 @@ class RssMarket(RssBase):
                 retries += 1
             time.sleep(2)  # 少し待機してからデータを取得
             # データを取得
-            data = self.range.Value
+            while True:
+                try:
+                    # データを取得
+                    data = self.range.Value
+                    break  # 成功したらループを抜ける
+                except Exception as e:
+                    print(f"Error getting range: {e}, 再試行中...")
+                    time.sleep(1)
             if data is None:
                 print("データが取得できませんでした。")
                 return pd.DataFrame(columns=headers)
