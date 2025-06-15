@@ -357,8 +357,8 @@ class MarginOpenOrderParam:
         if self.order_type in [OrderType.NORMAL, OrderType.NORMAL_WITH_STOP]:
             if not self.price_type:
                 errors.append("注文区分が通常注文または逆指値付き通常注文の場合、価格区分(price_type)は必須です。")
-            if self.price_type is None:
-                errors.append("注文区分が通常注文または逆指値付き通常注文の場合、注文価格(price)は必須です。")
+            if self.order_price is None:
+                errors.append("注文区分が通常注文または逆指値付き通常注文の場合、注文価格(order_price)は必須です。")
         # 11 執行条件 必須
         if not self.execution_condition:
             errors.append("執行条件(execution_condition)は必須です。")
@@ -369,11 +369,11 @@ class MarginOpenOrderParam:
         if not self.account_type:
             errors.append("口座区分(account_type)は必須です。")
         # 14-17 逆指値関連（注文区分が1または2の場合は必須）
-        if self.order_type in [OrderType.NORMAL, OrderType.NORMAL_WITH_STOP]:
-            if self.stop_price is None:
-                errors.append("注文区分が1または2の場合、逆指値条件価格(stop_price)は必須です。")
-            if not self.stop_price_type:
-                errors.append("注文区分が1または2の場合、逆指値条件区分(stop_price_type)は必須です。")
+        if self.order_type in [OrderType.STOP_WAIT, OrderType.NORMAL_WITH_STOP]:
+            if self.stop_condition_price is None:
+                errors.append("注文区分が1または2の場合、逆指値条件価格(stop_condition_price)は必須です。")
+            if not self.stop_condition_type:
+                errors.append("注文区分が1または2の場合、逆指値条件区分(stop_condition_type)は必須です。")
             if not self.stop_price_type:
                 errors.append("注文区分が1または2の場合、逆指値価格区分(stop_price_type)は必須です。")
             if self.stop_price is None:
@@ -676,6 +676,8 @@ class RssMarginOpenOrder(RssBase):
 
     def create_formula(self) -> str:
         param = self.param
+        # パラメータを検証
+        param.validate()
         # 必要なパラメータを順番にリスト化
         values = [
             param.order_id,
