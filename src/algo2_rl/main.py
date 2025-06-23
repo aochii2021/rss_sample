@@ -1,11 +1,18 @@
 # 強化学習による自動売買アルゴリズム（PPO/SAC対応）
 # 必要なライブラリ: stable-baselines3, gymnasium, numpy, pandas
+import os
 import numpy as np
 import pandas as pd
 import gymnasium as gym
 from gymnasium import spaces
 from stable_baselines3 import PPO
 # from stable_baselines3 import SAC  # SACを使いたい場合はこちら
+
+S_FILE_DIR = os.path.dirname(os.path.abspath(__file__))
+# 出力ディレクトリの設定
+S_OUTPUT_DIR = os.path.join(S_FILE_DIR, 'output')
+# 入力ディレクトリの設定
+S_INPUT_DIR = os.path.join(S_FILE_DIR, 'input')
 
 # --- 環境クラス定義 ---
 
@@ -16,10 +23,10 @@ class TradingEnv(gym.Env):
         self.df = df.reset_index(drop=True)
         self.initial_balance = initial_balance
         self.action_space = spaces.Discrete(3)  # 0:何もしない, 1:買い, 2:売り
-        # 状態空間: 価格帯別出来高(3000), 現在値, MACD, シグナル, PER, PBR, 前日終値, 当日始値, ロウソク足(3000*4), 建玉
+        # 状態空間: 価格帯別出来高(3000), 現在値, MACD, シグナル, 前日終値, 当日始値, ロウソク足(3000*4), 建玉, RSI, MA乖離率, 出来高比, ボラティリティ
         n_price_bins = 3000
         n_candle = 3000 * 4
-        obs_dim = n_price_bins + 7 + n_candle + 1
+        obs_dim = n_price_bins + 8 + n_candle + 1  # PER/PBR削除、短期指標4種追加
         self.observation_space = spaces.Box(
             low=-np.inf, high=np.inf, shape=(obs_dim,), dtype=np.float32)
         self.reset()
@@ -38,12 +45,16 @@ class TradingEnv(gym.Env):
         # ロウソク足（Open, High, Low, Close）
         candle = self.df[['始値', '高値', '安値', '終値']
                          ].iloc[self.current_step-3000:self.current_step].values.flatten()
-        # その他指標
+        # 短期トレード向け指標
         now = self.df.iloc[self.current_step]
+        rsi = now.get('RSI', 0.0)
+        ma_kairi = now.get('MA乖離率', 0.0)
+        vol_ratio = now.get('出来高比', 0.0)
+        volatility = now.get('ボラティリティ', 0.0)
         obs = np.concatenate([
             volume_by_price,
             [now['終値'], now['MACD'], now['シグナルライン'],
-                now['PER'], now['PBR'], now['前日終値'], now['始値']],
+                now['前日終値'], now['始値'], rsi, ma_kairi, vol_ratio, volatility],
             candle,
             [self.position]
         ])
@@ -69,7 +80,7 @@ class TradingEnv(gym.Env):
 
 # --- データ準備例（本番では実データを読み込む） ---
 # df = pd.read_csv('your_data.csv')
-# 必要なカラム: ['出来高','終値','MACD','シグナルライン','PER','PBR','前日終値','始値','始値','高値','安値','終値']
+# 必要なカラム: ['出来高','終値','MACD','シグナルライン','前日終値','始値','始値','高値','安値','終値']
 # df['MACD'], df['シグナルライン']は事前に計算しておくこと
 
 # --- 学習例 ---
@@ -84,3 +95,36 @@ class TradingEnv(gym.Env):
 # while not done:
 #     action, _ = model.predict(obs)
 #     obs, reward, done, truncated, info = env.step(action)
+
+
+def main():
+    # データの読み込みと前処理
+    chart_file = os.path.join(S_INPUT_DIR, 'stock_chart_5M_6758.csv')
+    df = pd.read_csv(chart_file)  # 実際のデータファイルを指定
+    df['MACD'] = df['終値'].ewm(span=12, adjust=False).mean() - df['終値'].ewm(span=26, adjust=False).mean()
+    df['シグナルライン'] = df['MACD'].ewm(span=9, adjust=False).mean()
+    df['RSI'] = 100 - (100 / (1 + (df['終値'].diff().clip(lower=0).rolling(window=14).mean() /
+                                    df['終値'].diff().clip(upper=0).abs().rolling(window=14).mean())))
+    df['MA乖離率'] = (df['終値'] - df['終値'].rolling(window=20).mean()) / df['終値'].rolling(window=20).mean()
+    df['出来高比'] = df['出来高'] / df['出来高'].rolling(window=20).mean()
+    df['ボラティリティ'] = df['終値'].rolling(window=20).std()
+
+    # データ表示
+    print("データの先頭5行:")
+    print(df.head())
+
+    # データの保存
+    output_file = os.path.join(S_OUTPUT_DIR, 'processed_stock_data.csv')
+    df.to_csv(output_file, index=False)
+
+    # 環境の初期化
+    env = TradingEnv(df)
+
+    # モデルの学習
+    model = PPO('MlpPolicy', env, verbose=1)
+    model.learn(total_timesteps=100_000)
+    model.save('ppo_trading')
+
+
+if __name__ == "__main__":
+    main()
