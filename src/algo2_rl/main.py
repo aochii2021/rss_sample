@@ -18,43 +18,52 @@ S_INPUT_DIR = os.path.join(S_FILE_DIR, 'input')
 
 
 class TradingEnv(gym.Env):
-    def __init__(self, df: pd.DataFrame, initial_balance=1_000_000):
+    def __init__(self, df: pd.DataFrame, initial_balance=1_000_000, n_history=3000):
         super().__init__()
         self.df = df.reset_index(drop=True)
         self.initial_balance = initial_balance
+        self.n_history = n_history
         self.action_space = spaces.Discrete(3)  # 0:何もしない, 1:買い, 2:売り
-        # 状態空間: 価格帯別出来高(3000), 現在値, MACD, シグナル, 前日終値, 当日始値, ロウソク足(3000*4), 建玉, RSI, MA乖離率, 出来高比, ボラティリティ
-        n_price_bins = 3000
-        n_candle = 3000 * 4
+        n_price_bins = self.n_history
+        n_candle = self.n_history * 4
         obs_dim = n_price_bins + 8 + n_candle + 1  # PER/PBR削除、短期指標4種追加
         self.observation_space = spaces.Box(
             low=-np.inf, high=np.inf, shape=(obs_dim,), dtype=np.float32)
+        # データ数がn_history未満の場合はエラー
+        if len(self.df) <= self.n_history:
+            raise ValueError(f"データ数が{self.n_history}未満です: {len(self.df)} 行")
         self.reset()
 
     def reset(self, seed=None, options=None):
         self.balance = self.initial_balance
         self.position = 0  # 0:ノーポジ, 1:買い, -1:売り
-        self.current_step = 3000  # 3000本目からスタート
+        # データ長に応じてcurrent_stepを調整
+        self.current_step = min(self.n_history, len(self.df) - 1)
         self.done = False
         return self._get_obs(), {}
 
     def _get_obs(self):
-        # 価格帯別出来高
-        volume_by_price = self.df['出来高'].iloc[self.current_step -
-                                              3000:self.current_step].values
-        # ロウソク足（Open, High, Low, Close）
-        candle = self.df[['始値', '高値', '安値', '終値']
-                         ].iloc[self.current_step-3000:self.current_step].values.flatten()
-        # 短期トレード向け指標
-        now = self.df.iloc[self.current_step]
-        rsi = now.get('RSI', 0.0)
-        ma_kairi = now.get('MA乖離率', 0.0)
-        vol_ratio = now.get('出来高比', 0.0)
-        volatility = now.get('ボラティリティ', 0.0)
+        # current_stepが範囲外の場合はゼロ埋め
+        if self.current_step >= len(self.df):
+            volume_by_price = np.zeros(self.n_history)
+            candle = np.zeros(self.n_history * 4)
+            now = {k: 0.0 for k in ['終値','MACD','シグナルライン','前日終値','始値','RSI','MA乖離率','出来高比','ボラティリティ']}
+        else:
+            volume_by_price = self.df['出来高'].iloc[self.current_step - self.n_history:self.current_step].values
+            candle = self.df[['始値', '高値', '安値', '終値']].iloc[self.current_step-self.n_history:self.current_step].values.flatten()
+            now = self.df.iloc[self.current_step]
+        rsi = now.get('RSI', 0.0) if isinstance(now, pd.Series) else 0.0
+        ma_kairi = now.get('MA乖離率', 0.0) if isinstance(now, pd.Series) else 0.0
+        vol_ratio = now.get('出来高比', 0.0) if isinstance(now, pd.Series) else 0.0
+        volatility = now.get('ボラティリティ', 0.0) if isinstance(now, pd.Series) else 0.0
         obs = np.concatenate([
             volume_by_price,
-            [now['終値'], now['MACD'], now['シグナルライン'],
-                now['前日終値'], now['始値'], rsi, ma_kairi, vol_ratio, volatility],
+            [now['終値'] if isinstance(now, pd.Series) else 0.0,
+             now['MACD'] if isinstance(now, pd.Series) else 0.0,
+             now['シグナルライン'] if isinstance(now, pd.Series) else 0.0,
+             now['前日終値'] if isinstance(now, pd.Series) else 0.0,
+             now['始値'] if isinstance(now, pd.Series) else 0.0,
+             rsi, ma_kairi, vol_ratio, volatility],
             candle,
             [self.position]
         ])
@@ -66,8 +75,8 @@ class TradingEnv(gym.Env):
         self.current_step += 1
         if self.current_step >= len(self.df):
             self.done = True
+            self.current_step = len(self.df) - 1  # 範囲外参照防止
         now_price = self.df.iloc[self.current_step]['終値']
-        # シンプルな報酬: ポジション変化時の損益
         if action == 1 and self.position == 0:  # 買い
             self.position = 1
             self.entry_price = now_price
@@ -101,6 +110,15 @@ def main():
     # データの読み込みと前処理
     chart_file = os.path.join(S_INPUT_DIR, 'stock_chart_5M_6758.csv')
     df = pd.read_csv(chart_file)  # 実際のデータファイルを指定
+
+    # 日時カラムの変換
+    df['日時'] = df['日付'] + ' ' + df['時刻'].fillna('00:00')
+    df['日時'] = pd.to_datetime(df['日時'], format='%Y/%m/%d %H:%M')
+
+    # 前日終値の計算
+    df['前日終値'] = df['終値'].shift(1)
+
+    # テクニカル指標の計算
     df['MACD'] = df['終値'].ewm(span=12, adjust=False).mean() - df['終値'].ewm(span=26, adjust=False).mean()
     df['シグナルライン'] = df['MACD'].ewm(span=9, adjust=False).mean()
     df['RSI'] = 100 - (100 / (1 + (df['終値'].diff().clip(lower=0).rolling(window=14).mean() /
@@ -118,7 +136,7 @@ def main():
     df.to_csv(output_file, index=False)
 
     # 環境の初期化
-    env = TradingEnv(df)
+    env = TradingEnv(df, n_history=500)  # 必要に応じてn_historyを変更可能
 
     # モデルの学習
     model = PPO('MlpPolicy', env, verbose=1)
