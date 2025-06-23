@@ -6,3 +6,5 @@ seaborn
 mplfinance
 plotly
 pandas
+stable_baselines3
+gymnasium
