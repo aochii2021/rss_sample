@@ -38,15 +38,26 @@ class TradingEnv(gym.Env):
 
     def reset(self, seed=None, options=None):
         self.balance = self.initial_balance
-        self.position = 0  # 0:ノーポジ, 1:買い, -1:売り
-        # データ長に応じてcurrent_stepを調整
-        self.current_step = min(self.n_history, len(self.df) - 1)
+        self.position = 0  # 0:ノーポジ, 1:買い
+        self.entry_price = None
+        # エピソードごとに1日分のデータ範囲を選択
+        if not hasattr(self, 'unique_dates'):
+            self.unique_dates = self.df['日付'].unique()
+            self.episode_idx = -1
+        self.episode_idx = (self.episode_idx + 1) % len(self.unique_dates)
+        self.episode_date = self.unique_dates[self.episode_idx]
+        # この日のインデックス範囲を特定
+        self.episode_indices = self.df[self.df['日付'] == self.episode_date].index.tolist()
+        self.episode_start = self.episode_indices[0]
+        self.episode_end = self.episode_indices[-1]
+        self.current_step = self.episode_start
         self.done = False
         return self._get_obs(), {}
 
     def _get_obs(self):
         # current_stepが範囲外の場合はゼロ埋め
-        if self.current_step >= len(self.df):
+        if self.current_step < self.n_history:
+            # データが足りない場合はゼロ埋め
             volume_by_price = np.zeros(self.n_history)
             candle = np.zeros(self.n_history * 4)
             now = {k: 0.0 for k in ['終値','MACD','シグナルライン','前日終値','始値','RSI','MA乖離率','出来高比','ボラティリティ']}
@@ -77,16 +88,26 @@ class TradingEnv(gym.Env):
         reward = 0
         prev_price = self.df.iloc[self.current_step]['終値']
         self.current_step += 1
-        if self.current_step >= len(self.df):
+        # 範囲外参照防止
+        if self.current_step > self.episode_end:
             self.done = True
-            self.current_step = len(self.df) - 1  # 範囲外参照防止
+            self.current_step = self.episode_end
         now_price = self.df.iloc[self.current_step]['終値']
-        if action == 1 and self.position == 0:  # 買い
-            self.position = 1
-            self.entry_price = now_price
-        elif action == 2 and self.position == 1:  # 売り
+        # 1日で建玉を清算（エピソード終了時）
+        if self.position == 1 and self.done and self.entry_price is not None:
             reward = now_price - self.entry_price
             self.position = 0
+            self.entry_price = None
+        # 通常の売買ロジック
+        if action == 1 and self.position == 0:
+            self.position = 1
+            self.entry_price = now_price
+        elif action == 2 and self.position == 1 and self.entry_price is not None:
+            reward = now_price - self.entry_price
+            self.position = 0
+            self.entry_price = None
+        elif action == 2 and self.position == 0:
+            reward = 0
         elif action == 0:
             reward = 0
         return self._get_obs(), reward, self.done, False, {}
@@ -122,6 +143,43 @@ def plot_learning_curve(rewards, lengths):
     plt.tight_layout()
     plt.show()
 
+def plot_trade_history(df, trade_history):
+    plt.figure(figsize=(14, 8))
+    ax1 = plt.subplot(2, 1, 1)
+    plt.plot(df['日時'], df['終値'], label='Close Price', color='black')
+    buy_steps = [h['step'] for h in trade_history if h['action'] == 1]
+    sell_steps = [h['step'] for h in trade_history if h['action'] == 2]
+    buy_prices = [h['price'] for h in trade_history if h['action'] == 1]
+    sell_prices = [h['price'] for h in trade_history if h['action'] == 2]
+    plt.scatter(df['日時'].iloc[buy_steps], buy_prices, marker='^', color='green', label='Buy', s=80)
+    plt.scatter(df['日時'].iloc[sell_steps], sell_prices, marker='v', color='red', label='Sell', s=80)
+    plt.xlabel('Datetime')
+    plt.ylabel('Price')
+    plt.title('Trade History on Training Data')
+    plt.legend()
+    plt.grid()
+    
+    # --- 累積利益の計算と表示 ---
+    ax2 = plt.subplot(2, 1, 2, sharex=ax1)
+    cumulative_profit = []
+    profit = 0
+    entry_price = None
+    for h in trade_history:
+        if h['action'] == 1 and entry_price is None:
+            entry_price = h['price']
+        elif h['action'] == 2 and entry_price is not None:
+            profit += h['price'] - entry_price
+            entry_price = None
+        cumulative_profit.append(profit)
+    plt.plot(df['日時'].iloc[[h['step'] for h in trade_history]], cumulative_profit, label='Cumulative Profit', color='blue')
+    plt.xlabel('Datetime')
+    plt.ylabel('Cumulative Profit')
+    plt.title('Cumulative Profit')
+    plt.legend()
+    plt.grid()
+    plt.tight_layout()
+    plt.show()
+
 # --- データ準備例（本番では実データを読み込む） ---
 # df = pd.read_csv('your_data.csv')
 # 必要なカラム: ['出来高','終値','MACD','シグナルライン','前日終値','始値','始値','高値','安値','終値']
@@ -145,6 +203,9 @@ def main():
     # データの読み込みと前処理
     chart_file = os.path.join(S_INPUT_DIR, 'stock_chart_5M_6758.csv')
     df = pd.read_csv(chart_file)  # 実際のデータファイルを指定
+
+    # Null値を除去
+    df = df.dropna().reset_index(drop=True)
 
     # 日時カラムの変換
     df['日時'] = df['日付'] + ' ' + df['時刻'].fillna('00:00')
@@ -185,6 +246,24 @@ def main():
     model.save(os.path.join(model_output_dir, 'ppo_trading'))
     # 学習曲線の可視化
     plot_learning_curve(callback.episode_rewards, callback.episode_lengths)
+
+    # --- 売買履歴の可視化 ---
+    obs, _ = env.reset()
+    done = False
+    trade_history = []
+    step = 0
+    while not done:
+        action, _ = model.predict(obs, deterministic=True)
+        price = env.df.iloc[env.current_step]['終値']
+        trade_history.append({
+            'step': env.current_step,
+            'action': int(action),
+            'price': price,
+            'position': env.position
+        })
+        obs, reward, done, truncated, info = env.step(action)
+        step += 1
+    plot_trade_history(env.df, trade_history)
 
 
 if __name__ == "__main__":
