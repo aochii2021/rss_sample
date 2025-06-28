@@ -26,7 +26,7 @@ class TradingEnv(gym.Env):
         self.action_space = spaces.Discrete(3)  # 0:何もしない, 1:買い, 2:売り
         n_price_bins = self.n_history
         n_candle = self.n_history * 4
-        obs_dim = n_price_bins + 8 + n_candle + 1  # PER/PBR削除、短期指標4種追加
+        obs_dim = n_price_bins + 9 + n_candle + 1  # PER/PBR削除、短期指標4種追加
         self.observation_space = spaces.Box(
             low=-np.inf, high=np.inf, shape=(obs_dim,), dtype=np.float32)
         # データ数がn_history未満の場合はエラー
@@ -67,6 +67,8 @@ class TradingEnv(gym.Env):
             candle,
             [self.position]
         ])
+        # NaNやinfを0に置換
+        obs = np.nan_to_num(obs, nan=0.0, posinf=0.0, neginf=0.0)
         return obs.astype(np.float32)
 
     def step(self, action):
@@ -127,6 +129,9 @@ def main():
     df['出来高比'] = df['出来高'] / df['出来高'].rolling(window=20).mean()
     df['ボラティリティ'] = df['終値'].rolling(window=20).std()
 
+    # NaN, infを0で埋める（全カラム一括）
+    df = df.replace([np.inf, -np.inf], np.nan).fillna(0)
+
     # データ表示
     print("データの先頭5行:")
     print(df.head())
@@ -139,9 +144,11 @@ def main():
     env = TradingEnv(df, n_history=500)  # 必要に応じてn_historyを変更可能
 
     # モデルの学習
+    model_output_dir = os.path.join(S_OUTPUT_DIR, 'model')
+    os.makedirs(model_output_dir, exist_ok=True)
     model = PPO('MlpPolicy', env, verbose=1)
     model.learn(total_timesteps=100_000)
-    model.save('ppo_trading')
+    model.save(os.path.join(model_output_dir, 'ppo_trading'))
 
 
 if __name__ == "__main__":
