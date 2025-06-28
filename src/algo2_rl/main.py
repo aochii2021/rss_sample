@@ -7,6 +7,8 @@ import gymnasium as gym
 from gymnasium import spaces
 from stable_baselines3 import PPO
 # from stable_baselines3 import SAC  # SACを使いたい場合はこちら
+from stable_baselines3.common.callbacks import BaseCallback
+import matplotlib.pyplot as plt
 
 S_FILE_DIR = os.path.dirname(os.path.abspath(__file__))
 # 出力ディレクトリの設定
@@ -89,6 +91,37 @@ class TradingEnv(gym.Env):
             reward = 0
         return self._get_obs(), reward, self.done, False, {}
 
+class RewardLoggerCallback(BaseCallback):
+    def __init__(self, verbose=0):
+        super().__init__(verbose)
+        self.episode_rewards = []
+        self.episode_lengths = []
+        self.current_rewards = 0
+        self.current_length = 0
+
+    def _on_step(self) -> bool:
+        reward = self.locals.get('rewards', [0])[0]
+        done = self.locals.get('dones', [False])[0]
+        self.current_rewards += reward
+        self.current_length += 1
+        if done:
+            self.episode_rewards.append(self.current_rewards)
+            self.episode_lengths.append(self.current_length)
+            self.current_rewards = 0
+            self.current_length = 0
+        return True
+
+def plot_learning_curve(rewards, lengths):
+    plt.figure(figsize=(10, 5))
+    plt.plot(rewards, label='Episode Reward')
+    plt.xlabel('Episode')
+    plt.ylabel('Reward')
+    plt.title('Learning Curve')
+    plt.legend()
+    plt.grid()
+    plt.tight_layout()
+    plt.show()
+
 # --- データ準備例（本番では実データを読み込む） ---
 # df = pd.read_csv('your_data.csv')
 # 必要なカラム: ['出来高','終値','MACD','シグナルライン','前日終値','始値','始値','高値','安値','終値']
@@ -146,9 +179,12 @@ def main():
     # モデルの学習
     model_output_dir = os.path.join(S_OUTPUT_DIR, 'model')
     os.makedirs(model_output_dir, exist_ok=True)
+    callback = RewardLoggerCallback()
     model = PPO('MlpPolicy', env, verbose=1)
-    model.learn(total_timesteps=100_000)
+    model.learn(total_timesteps=100_000, callback=callback)
     model.save(os.path.join(model_output_dir, 'ppo_trading'))
+    # 学習曲線の可視化
+    plot_learning_curve(callback.episode_rewards, callback.episode_lengths)
 
 
 if __name__ == "__main__":
