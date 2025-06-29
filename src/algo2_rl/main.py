@@ -54,6 +54,9 @@ class TradingEnv(gym.Env):
         self.done = False
         return self._get_obs(), {}
 
+    def _normalize(self, x, mean, std, eps=1e-8):
+        return (x - mean) / (std + eps)
+
     def _get_obs(self):
         # current_stepが範囲外の場合はゼロ埋め
         if self.current_step < self.n_history:
@@ -65,18 +68,29 @@ class TradingEnv(gym.Env):
             volume_by_price = self.df['出来高'].iloc[self.current_step - self.n_history:self.current_step].values
             candle = self.df[['始値', '高値', '安値', '終値']].iloc[self.current_step-self.n_history:self.current_step].values.flatten()
             now = self.df.iloc[self.current_step]
-        rsi = now.get('RSI', 0.0) if isinstance(now, pd.Series) else 0.0
-        ma_kairi = now.get('MA乖離率', 0.0) if isinstance(now, pd.Series) else 0.0
-        vol_ratio = now.get('出来高比', 0.0) if isinstance(now, pd.Series) else 0.0
-        volatility = now.get('ボラティリティ', 0.0) if isinstance(now, pd.Series) else 0.0
+        # 特徴量の正規化
+        # 終値・始値・高値・安値・MACD・シグナルライン・前日終値・RSI・MA乖離率・出来高比・ボラティリティ
+        price_cols = ['終値','始値','高値','安値','MACD','シグナルライン','前日終値']
+        price_means = self.df[price_cols].mean()
+        price_stds = self.df[price_cols].std()
+        norm_now = {}
+        for col in price_cols:
+            norm_now[col] = self._normalize(now.get(col, 0.0) if isinstance(now, pd.Series) else 0.0, price_means[col], price_stds[col])
+        # RSI, MA乖離率, 出来高比, ボラティリティ
+        norm_now['RSI'] = self._normalize(now.get('RSI', 0.0) if isinstance(now, pd.Series) else 0.0, 50, 25)
+        norm_now['MA乖離率'] = self._normalize(now.get('MA乖離率', 0.0) if isinstance(now, pd.Series) else 0.0, 0, 0.05)
+        norm_now['出来高比'] = self._normalize(now.get('出来高比', 0.0) if isinstance(now, pd.Series) else 0.0, 1, 0.5)
+        norm_now['ボラティリティ'] = self._normalize(now.get('ボラティリティ', 0.0) if isinstance(now, pd.Series) else 0.0, 0, 50)
+        # volume_by_price, candleも正規化
+        vol_mean = self.df['出来高'].mean()
+        vol_std = self.df['出来高'].std()
+        volume_by_price = self._normalize(volume_by_price, vol_mean, vol_std)
+        candle_mean = self.df[['始値','高値','安値','終値']].values.mean()
+        candle_std = self.df[['始値','高値','安値','終値']].values.std()
+        candle = self._normalize(candle, candle_mean, candle_std)
         obs = np.concatenate([
             volume_by_price,
-            [now['終値'] if isinstance(now, pd.Series) else 0.0,
-             now['MACD'] if isinstance(now, pd.Series) else 0.0,
-             now['シグナルライン'] if isinstance(now, pd.Series) else 0.0,
-             now['前日終値'] if isinstance(now, pd.Series) else 0.0,
-             now['始値'] if isinstance(now, pd.Series) else 0.0,
-             rsi, ma_kairi, vol_ratio, volatility],
+            [norm_now['終値'], norm_now['MACD'], norm_now['シグナルライン'], norm_now['前日終値'], norm_now['始値'], norm_now['RSI'], norm_now['MA乖離率'], norm_now['出来高比'], norm_now['ボラティリティ']],
             candle,
             [self.position]
         ])
@@ -89,27 +103,29 @@ class TradingEnv(gym.Env):
         prev_price = self.df.iloc[self.current_step]['終値']
         self.current_step += 1
         # 範囲外参照防止
-        if self.current_step > self.episode_end:
+        if self.current_step >= len(self.df):
             self.done = True
-            self.current_step = self.episode_end
-        now_price = self.df.iloc[self.current_step]['終値']
-        # 1日で建玉を清算（エピソード終了時）
-        if self.position == 1 and self.done and self.entry_price is not None:
-            reward = now_price - self.entry_price
-            self.position = 0
-            self.entry_price = None
-        # 通常の売買ロジック
-        if action == 1 and self.position == 0:
+            self.current_step = len(self.df) - 1
+        today = self.df.iloc[self.current_step]['日付'] if self.current_step < len(self.df) else None
+        prev_day = self.df.iloc[self.current_step - 1]['日付'] if self.current_step - 1 < len(self.df) else None
+        now_price = self.df.iloc[self.current_step]['終値'] if self.current_step < len(self.df) else prev_price
+        force_sell = False
+        trade_cost = 0.001  # 取引コスト（例: 0.1%）
+        # ポジションがある場合のみ決済（売り or 日付変更 or 終了）
+        if self.position == 1:
+            if action == 2 or today != prev_day or self.done:
+                gross_profit = now_price - self.entry_price
+                cost = (self.entry_price + now_price) * trade_cost
+                reward = gross_profit - cost
+                self.position = 0
+                self.entry_price = None
+                force_sell = True
+        # 買いはノーポジ時のみ
+        if action == 1 and self.position == 0 and not force_sell:
             self.position = 1
             self.entry_price = now_price
-        elif action == 2 and self.position == 1 and self.entry_price is not None:
-            reward = now_price - self.entry_price
-            self.position = 0
-            self.entry_price = None
-        elif action == 2 and self.position == 0:
-            reward = 0
-        elif action == 0:
-            reward = 0
+            # 買い時にもコストを課す
+            reward -= now_price * trade_cost
         return self._get_obs(), reward, self.done, False, {}
 
 class RewardLoggerCallback(BaseCallback):
@@ -242,7 +258,7 @@ def main():
     os.makedirs(model_output_dir, exist_ok=True)
     callback = RewardLoggerCallback()
     model = PPO('MlpPolicy', env, verbose=1)
-    model.learn(total_timesteps=100_000, callback=callback)
+    model.learn(total_timesteps=1_00_000, callback=callback)
     model.save(os.path.join(model_output_dir, 'ppo_trading'))
     # 学習曲線の可視化
     plot_learning_curve(callback.episode_rewards, callback.episode_lengths)
@@ -252,17 +268,76 @@ def main():
     done = False
     trade_history = []
     step = 0
+    last_position = env.position
+    for _ in range(env.episode_start, env.episode_end + 1):
+        action, _ = model.predict(obs, deterministic=True)
+        price = env.df.iloc[env.current_step]['終値']
+        # 実際に売買が成立した場合のみ履歴に記録
+        executed = False
+        if action == 1 and last_position == 0 and env.position == 0:
+            executed = True
+        elif action == 2 and last_position == 1 and env.position == 1:
+            executed = True
+        # ポジション変化時のみ記録
+        if executed:
+            trade_history.append({
+                'step': env.current_step,
+                'action': int(action),
+                'price': price,
+                'position': env.position
+            })
+        obs, reward, done, truncated, info = env.step(action)
+        last_position = env.position
+        if done:
+            break
+    plot_trade_history(env.df, trade_history)
+    # --- 売買履歴の可視化（学習データでの検証） ---
+    obs, _ = env.reset()
+    done = False
+    trade_history = []
+    step = 0
+    last_position = 0
+    last_entry_price = None
+    cumulative_profit = 0
     while not done:
         action, _ = model.predict(obs, deterministic=True)
         price = env.df.iloc[env.current_step]['終値']
-        trade_history.append({
-            'step': env.current_step,
-            'action': int(action),
-            'price': price,
-            'position': env.position
-        })
+        # 実際に売買が成立した場合のみ履歴に記録
+        executed = False
+        executed_action = None
+        executed_price = None
+        if action == 1 and env.position == 0:
+            executed = True
+            executed_action = 1
+            executed_price = price
+            last_position = 1
+            last_entry_price = price
+        elif action == 2 and env.position == 1:
+            executed = True
+            executed_action = 2
+            executed_price = price
+            cumulative_profit += price - last_entry_price if last_entry_price is not None else 0
+            last_position = 0
+            last_entry_price = None
+        # 強制決済（1日終了時）
+        if env.position == 1 and (env.current_step == env.episode_end or done):
+            executed = True
+            executed_action = 2
+            executed_price = price
+            cumulative_profit += price - last_entry_price if last_entry_price is not None else 0
+            last_position = 0
+            last_entry_price = None
+        if executed:
+            trade_history.append({
+                'step': env.current_step,
+                'action': executed_action,
+                'price': executed_price,
+                'position': last_position,
+                'cum_profit': cumulative_profit
+            })
         obs, reward, done, truncated, info = env.step(action)
         step += 1
+    print(f"学習データでの累積利益: {cumulative_profit}")
     plot_trade_history(env.df, trade_history)
 
 
