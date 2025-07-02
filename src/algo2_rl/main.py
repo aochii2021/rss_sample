@@ -32,7 +32,7 @@ class TradingEnv(gym.Env):
         self.observation_space = spaces.Box(
             low=-np.inf, high=np.inf, shape=(obs_dim,), dtype=np.float32)
         # データ数がn_history未満の場合はエラー
-        if len(self.df) <= self.n_history:
+        if len(self.df) < self.n_history:
             raise ValueError(f"データ数が{self.n_history}未満です: {len(self.df)} 行")
         self.reset()
 
@@ -217,7 +217,7 @@ def plot_trade_history(df, trade_history):
 
 def main():
     # データの読み込みと前処理
-    chart_file = os.path.join(S_INPUT_DIR, 'stock_chart_5M_6758.csv')
+    chart_file = os.path.join(S_INPUT_DIR, 'stock_chart_5M_6758_20250423_20250627.csv')
     df = pd.read_csv(chart_file)  # 実際のデータファイルを指定
 
     # Null値を除去
@@ -250,8 +250,17 @@ def main():
     output_file = os.path.join(S_OUTPUT_DIR, 'processed_stock_data.csv')
     df.to_csv(output_file, index=False)
 
+    # --- 学習データと検証データの準備 ---
+    # 例: 学習データの最後20%を検証用に分割
+    split_idx = int(len(df) * 0.8)
+    train_df = df.iloc[:split_idx].reset_index(drop=True)
+    test_df = df.iloc[split_idx:].reset_index(drop=True)
+
+    # n_historyは学習・検証データの最小行数で統一
+    n_history = min(500, len(train_df), len(test_df))
+
     # 環境の初期化
-    env = TradingEnv(df, n_history=500)  # 必要に応じてn_historyを変更可能
+    env = TradingEnv(train_df, n_history=n_history)
 
     # モデルの学習
     model_output_dir = os.path.join(S_OUTPUT_DIR, 'model')
@@ -339,6 +348,57 @@ def main():
         step += 1
     print(f"学習データでの累積利益: {cumulative_profit}")
     plot_trade_history(env.df, trade_history)
+
+    # --- 検証用環境の作成 ---
+    test_env = TradingEnv(test_df, n_history=n_history)
+
+    # --- 検証データでの売買履歴・累積利益の計算 ---
+    obs, _ = test_env.reset()
+    done = False
+    trade_history = []
+    step = 0
+    last_position = 0
+    last_entry_price = None
+    cumulative_profit = 0
+    while not done:
+        action, _ = model.predict(obs, deterministic=True)
+        price = test_env.df.iloc[test_env.current_step]['終値']
+        executed = False
+        executed_action = None
+        executed_price = None
+        if action == 1 and test_env.position == 0:
+            executed = True
+            executed_action = 1
+            executed_price = price
+            last_position = 1
+            last_entry_price = price
+        elif action == 2 and test_env.position == 1:
+            executed = True
+            executed_action = 2
+            executed_price = price
+            cumulative_profit += price - last_entry_price if last_entry_price is not None else 0
+            last_position = 0
+            last_entry_price = None
+        # 強制決済（1日終了時）
+        if test_env.position == 1 and (test_env.current_step == test_env.episode_end or done):
+            executed = True
+            executed_action = 2
+            executed_price = price
+            cumulative_profit += price - last_entry_price if last_entry_price is not None else 0
+            last_position = 0
+            last_entry_price = None
+        if executed:
+            trade_history.append({
+                'step': test_env.current_step,
+                'action': executed_action,
+                'price': executed_price,
+                'position': last_position,
+                'cum_profit': cumulative_profit
+            })
+        obs, reward, done, truncated, info = test_env.step(action)
+        step += 1
+    print(f"検証データでの累積利益: {cumulative_profit}")
+    plot_trade_history(test_env.df, trade_history)
 
 
 if __name__ == "__main__":
