@@ -160,22 +160,42 @@ def plot_learning_curve(rewards, lengths):
     plt.show()
 
 def plot_trade_history(df, trade_history):
+    # 9:00～15:30のデータだけにフィルタ
+    df = df.copy()
+    df['時刻'] = df['日時'].dt.time
+    df_trading = df[(df['時刻'] >= pd.to_datetime('09:00').time()) & (df['時刻'] <= pd.to_datetime('15:30').time())].reset_index()
+    valid_indices = set(df_trading['index'])
+
+    # trade_historyも該当stepのみ
+    trade_history = [h for h in trade_history if h['step'] in valid_indices]
+
+    # インデックスを“取引時刻のみ”の連番に変換
+    idx_map = {orig_idx: new_idx for new_idx, orig_idx in enumerate(df_trading['index'])}
+    for h in trade_history:
+        h['plot_idx'] = idx_map[h['step']]
+
     plt.figure(figsize=(14, 8))
     ax1 = plt.subplot(2, 1, 1)
-    plt.plot(df['日時'], df['終値'], label='Close Price', color='black')
-    buy_steps = [h['step'] for h in trade_history if h['action'] == 1]
-    sell_steps = [h['step'] for h in trade_history if h['action'] == 2]
+    plt.plot(range(len(df_trading)), df_trading['終値'], label='Close Price', color='black')
+    buy_idxs = [h['plot_idx'] for h in trade_history if h['action'] == 1]
+    sell_idxs = [h['plot_idx'] for h in trade_history if h['action'] == 2]
     buy_prices = [h['price'] for h in trade_history if h['action'] == 1]
     sell_prices = [h['price'] for h in trade_history if h['action'] == 2]
-    plt.scatter(df['日時'].iloc[buy_steps], buy_prices, marker='^', color='green', label='Buy', s=80)
-    plt.scatter(df['日時'].iloc[sell_steps], sell_prices, marker='v', color='red', label='Sell', s=80)
-    plt.xlabel('Datetime')
+    plt.scatter(buy_idxs, buy_prices, marker='^', color='green', label='Buy', s=80)
+    plt.scatter(sell_idxs, sell_prices, marker='v', color='red', label='Sell', s=80)
+    # xticksラベルを間引いて表示
+    xtick_pos = range(0, len(df_trading), max(1, len(df_trading)//10))
+    plt.xticks(
+        ticks=xtick_pos,
+        labels=[df_trading['日時'].iloc[i].strftime('%Y-%m-%d %H:%M') for i in xtick_pos]
+    )
+    plt.xlabel('Trading Datetime (non-trading hours skipped)')
     plt.ylabel('Price')
-    plt.title('Trade History on Training Data')
+    plt.title('Trade History (Trading Hours Only)')
     plt.legend()
     plt.grid()
-    
-    # --- 累積利益の計算と表示 ---
+
+    # --- 累積利益 ---
     ax2 = plt.subplot(2, 1, 2, sharex=ax1)
     cumulative_profit = []
     profit = 0
@@ -187,8 +207,9 @@ def plot_trade_history(df, trade_history):
             profit += h['price'] - entry_price
             entry_price = None
         cumulative_profit.append(profit)
-    plt.plot(df['日時'].iloc[[h['step'] for h in trade_history]], cumulative_profit, label='Cumulative Profit', color='blue')
-    plt.xlabel('Datetime')
+    if trade_history:
+        plt.plot([h['plot_idx'] for h in trade_history], cumulative_profit, label='Cumulative Profit', color='blue')
+    plt.xlabel('Trading Datetime (non-trading hours skipped)')
     plt.ylabel('Cumulative Profit')
     plt.title('Cumulative Profit')
     plt.legend()
