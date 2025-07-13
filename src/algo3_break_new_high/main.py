@@ -4,6 +4,7 @@ import pandas as pd
 import datetime
 import glob
 from typing import List, Tuple
+from tqdm import tqdm
 
 # 親ディレクトリのパスを追加
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
@@ -34,9 +35,9 @@ class BreakNewHighAnalyzer:
         all_data = []
         csv_files = glob.glob(os.path.join(folder_path, "*.csv"))
         
-        print(f"読み込み対象ファイル数: {len(csv_files)}")
+        print(f"📊 データ読み込み開始: {len(csv_files)}ファイル")
         
-        for csv_file in csv_files:
+        for csv_file in tqdm(csv_files, desc="📁 CSVファイル読み込み", unit="file"):
             try:
                 df = pd.read_csv(csv_file, encoding='utf-8-sig')
                 if not df.empty:
@@ -50,16 +51,15 @@ class BreakNewHighAnalyzer:
                             df['銘柄コード'] = stock_code
                     
                     all_data.append(df)
-                    print(f"読み込み完了: {filename}, データ数: {len(df)}")
             except Exception as e:
-                print(f"ファイル読み込みエラー: {csv_file}, エラー: {e}")
+                tqdm.write(f"❌ ファイル読み込みエラー: {csv_file}, エラー: {e}")
         
         if all_data:
             combined_df = pd.concat(all_data, ignore_index=True)
-            print(f"統合データ数: {len(combined_df)}")
+            print(f"✅ 統合完了: {len(combined_df)}件のデータ, {combined_df['銘柄コード'].nunique()}銘柄")
             return combined_df
         else:
-            print("読み込めるデータがありませんでした。")
+            print("⚠️ 読み込めるデータがありませんでした。")
             return pd.DataFrame()
     
     def find_new_highs(self, df: pd.DataFrame, period_weeks: int = 52) -> pd.DataFrame:
@@ -74,11 +74,12 @@ class BreakNewHighAnalyzer:
             新高値銘柄のDataFrame
         """
         new_high_stocks = []
+        stock_codes = df['銘柄コード'].unique()
         
-        print(f"分析対象銘柄数: {df['銘柄コード'].nunique()}")
+        print(f"📈 新高値分析開始: {len(stock_codes)}銘柄を分析")
         
         # 銘柄コードごとに分析
-        for stock_code in df['銘柄コード'].unique():
+        for stock_code in tqdm(stock_codes, desc="🔍 新高値銘柄検索", unit="銘柄"):
             stock_df = df[df['銘柄コード'] == stock_code].copy()
             
             if len(stock_df) == 0:
@@ -96,8 +97,6 @@ class BreakNewHighAnalyzer:
             if len(stock_df) > 1:
                 historical_data = stock_df.iloc[:-1]
                 historical_max = historical_data['高値'].max()
-                
-                print(f"銘柄コード: {stock_code}, 最新高値: {latest_high}, 過去最高値: {historical_max}")
                 
                 # 新高値判定
                 if latest_high > historical_max:
@@ -122,9 +121,9 @@ class BreakNewHighAnalyzer:
         if not result_df.empty:
             # 高値更新率でソート（降順）
             result_df = result_df.sort_values('高値更新率', ascending=False).reset_index(drop=True)
-            print(f"新高値銘柄数: {len(result_df)}")
+            print(f"🎉 新高値銘柄数: {len(result_df)}銘柄")
         else:
-            print("新高値を付けた銘柄はありませんでした。")
+            print("📉 新高値を付けた銘柄はありませんでした。")
         
         return result_df
     
@@ -140,11 +139,12 @@ class BreakNewHighAnalyzer:
             新高値更新候補銘柄のDataFrame
         """
         near_high_stocks = []
+        stock_codes = df['銘柄コード'].unique()
         
-        print(f"新高値更新候補の閾値: 過去高値の-{threshold_percent}%以内")
+        print(f"🎯 新高値候補分析開始: 閾値 -{threshold_percent}%以内")
         
         # 銘柄コードごとに分析
-        for stock_code in df['銘柄コード'].unique():
+        for stock_code in tqdm(stock_codes, desc="🔍 候補銘柄検索", unit="銘柄"):
             stock_df = df[df['銘柄コード'] == stock_code].copy()
             
             if len(stock_df) == 0:
@@ -166,8 +166,6 @@ class BreakNewHighAnalyzer:
             
             # 高値までの乖離率を計算
             divergence_rate = ((historical_max - latest_close) / historical_max * 100)
-            
-            print(f"銘柄コード: {stock_code}, 最新終値: {latest_close}, 過去最高値: {historical_max}, 乖離率: {divergence_rate:.2f}%")
             
             # 新高値更新候補判定
             if latest_close >= threshold_price and latest_close < historical_max:
@@ -192,9 +190,9 @@ class BreakNewHighAnalyzer:
         if not result_df.empty:
             # 高値までの乖離率でソート（昇順）
             result_df = result_df.sort_values('高値までの乖離率', ascending=True).reset_index(drop=True)
-            print(f"新高値更新候補銘柄数: {len(result_df)}")
+            print(f"🎯 新高値候補銘柄数: {len(result_df)}銘柄")
         else:
-            print("新高値更新候補銘柄はありませんでした。")
+            print("📉 新高値更新候補銘柄はありませんでした。")
         
         return result_df
     
@@ -217,7 +215,7 @@ class BreakNewHighAnalyzer:
         # CSVファイルを保存
         output_path = os.path.join(output_folder, filename)
         df.to_csv(output_path, index=False, encoding='utf-8-sig')
-        print(f"結果を保存しました: {output_path}")
+        print(f"💾 結果保存: {filename} ({len(df)}件)")
         
         return output_path
 
@@ -234,16 +232,16 @@ def analyze_folder_data(folder_name: str):
     folder_path = os.path.join(S_INPUT_DIR, folder_name)
     
     if not os.path.exists(folder_path):
-        print(f"フォルダが存在しません: {folder_path}")
+        print(f"❌ フォルダが存在しません: {folder_path}")
         return
     
-    print(f"分析開始: {folder_name}")
+    print(f"🚀 分析開始: {folder_name}")
     
     # データを読み込み
     df = analyzer.load_stock_data_from_folder(folder_path)
     
     if df.empty:
-        print("分析対象データがありません。")
+        print("⚠️ 分析対象データがありません。")
         return
     
     # フォルダ名から期間を抽出（例: W_52_20250713 -> 52週）
@@ -266,7 +264,7 @@ def analyze_folder_data(folder_name: str):
             f"new_highs_{period_weeks}week.csv", 
             analysis_type
         )
-        print("\n=== 新高値銘柄トップ10 ===")
+        print("\n=== 🏆 新高値銘柄トップ10 ===")
         print(new_highs_df[['銘柄コード', '銘柄名', '新高値', '高値更新率']].head(10))
     
     # 2. 新高値更新候補銘柄の選出
@@ -277,37 +275,37 @@ def analyze_folder_data(folder_name: str):
             f"near_new_highs_{period_weeks}week.csv", 
             analysis_type
         )
-        print("\n=== 新高値更新候補銘柄トップ10 ===")
+        print("\n=== 🎯 新高値更新候補銘柄トップ10 ===")
         print(near_highs_df[['銘柄コード', '銘柄名', '最新終値', '高値までの乖離率']].head(10))
     
-    print(f"\n分析完了: {folder_name}")
+    print(f"\n✅ 分析完了: {folder_name}")
 
 def main():
     """メイン処理"""
-    print("=== 新高値ブレイク投資法 分析開始 ===")
+    print("=== 📈 新高値ブレイク投資法 分析開始 ===")
     
     # inputフォルダ内の全フォルダを取得
     if not os.path.exists(S_INPUT_DIR):
-        print(f"inputディレクトリが存在しません: {S_INPUT_DIR}")
+        print(f"❌ inputディレクトリが存在しません: {S_INPUT_DIR}")
         return
     
     # inputフォルダ内のサブフォルダを検索
     folders = [f for f in os.listdir(S_INPUT_DIR) if os.path.isdir(os.path.join(S_INPUT_DIR, f))]
     
     if not folders:
-        print("分析対象フォルダがありません。")
+        print("⚠️ 分析対象フォルダがありません。")
         return
     
-    print(f"分析対象フォルダ: {folders}")
+    print(f"📂 分析対象フォルダ: {folders}")
     
     # 各フォルダを分析
     for folder_name in folders:
         try:
             analyze_folder_data(folder_name)
         except Exception as e:
-            print(f"フォルダ {folder_name} の分析でエラーが発生しました: {e}")
+            print(f"❌ フォルダ {folder_name} の分析でエラーが発生しました: {e}")
     
-    print("\n=== 分析終了 ===")
+    print("\n=== 🎉 分析終了 ===")
 
 if __name__ == "__main__":
     main()
