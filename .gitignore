@@ -11,5 +11,7 @@ src/*/output/*.png
 src/*/output/*.json
 src/*/output/*.html
 
+src/*/output/*/*.csv
+
 # Ignore paticular input files
 src/algo3_break_new_high/input/*/*.csv
