@@ -128,21 +128,27 @@ def main():
 
     # RSSチャートデータの取得
     tick_type = TickType.MIN5  # 5分足データを取得
-    number = 1000  # 取得するデータ数
+    number = 3000  # 取得するデータ数
     df_chart = get_stock_charts(ws, tick_type, number, stock_code)
-    output_file = os.path.join(S_OUTPUT_DIR, f'stock_chart_{tick_type.value}_{stock_code}.csv')
+    start_date = df_chart['日付'].dropna().min()  # 最初の日付
+    end_date = df_chart['日付'].dropna().max()  # 最後の日付
+    # スラッシュを削除
+    start_date = start_date.replace("/", "")
+    end_date = end_date.replace("/", "")
+    print(f"取得したデータの期間: {start_date} から {end_date}")
+    output_file = os.path.join(S_OUTPUT_DIR, f'stock_chart_{tick_type.value}_{stock_code}_{start_date}_{end_date}.csv')
     df_chart.to_csv(output_file, index=False)
     print(f"Saved stock chart data: {output_file}")
 
     # 価格帯別出来高の計算
     df_volume_by_price = calculate_volume_by_price(df_chart)
-    output_file = os.path.join(S_OUTPUT_DIR, f'volume_by_price_{stock_code}.csv')
+    output_file = os.path.join(S_OUTPUT_DIR, f'volume_by_price_{stock_code}_{start_date}_{end_date}.csv')
     df_volume_by_price.to_csv(output_file, index=False)
     print(f"Saved volume by price data: {output_file}")
 
     # MACDの計算
     df_macd = calculate_macd(df_chart, group_by_date=True)
-    output_file = os.path.join(S_OUTPUT_DIR, f'macd_{stock_code}.csv')
+    output_file = os.path.join(S_OUTPUT_DIR, f'macd_{stock_code}_{start_date}_{end_date}.csv')
     df_macd.to_csv(output_file, index=False)
 
 
