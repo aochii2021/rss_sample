@@ -35,31 +35,35 @@ class BreakNewHighAnalyzer:
         all_data = []
         csv_files = glob.glob(os.path.join(folder_path, "*.csv"))
         
-        print(f"📊 データ読み込み開始: {len(csv_files)}ファイル")
-        
-        for csv_file in tqdm(csv_files, desc="📁 CSVファイル読み込み", unit="file"):
-            try:
-                df = pd.read_csv(csv_file, encoding='utf-8-sig')
-                if not df.empty:
-                    # ファイル名から銘柄コードを抽出（例: stock_chart_W_130A_20240719_20250711.csv）
-                    filename = os.path.basename(csv_file)
-                    if '銘柄コード' not in df.columns:
-                        # ファイル名から銘柄コードを抽出
-                        parts = filename.split('_')
-                        if len(parts) >= 3:
-                            stock_code = parts[2]
-                            df['銘柄コード'] = stock_code
-                    
-                    all_data.append(df)
-            except Exception as e:
-                tqdm.write(f"❌ ファイル読み込みエラー: {csv_file}, エラー: {e}")
+        # プログレスバーで読み込み進行状況を表示
+        with tqdm(total=len(csv_files), desc="📁 CSVファイル読み込み", unit="file") as pbar:
+            for csv_file in csv_files:
+                try:
+                    df = pd.read_csv(csv_file, encoding='utf-8-sig')
+                    if not df.empty:
+                        # ファイル名から銘柄コードを抽出（例: stock_chart_W_130A_20240719_20250711.csv）
+                        filename = os.path.basename(csv_file)
+                        if '銘柄コード' not in df.columns:
+                            # ファイル名から銘柄コードを抽出
+                            parts = filename.split('_')
+                            if len(parts) >= 3:
+                                stock_code = parts[2]
+                                df['銘柄コード'] = stock_code
+                        
+                        all_data.append(df)
+                    pbar.set_postfix({"ファイル": os.path.basename(csv_file)})
+                except Exception as e:
+                    tqdm.write(f"❌ ファイル読み込みエラー: {csv_file}, エラー: {e}")
+                pbar.update(1)
         
         if all_data:
             combined_df = pd.concat(all_data, ignore_index=True)
-            print(f"✅ 統合完了: {len(combined_df)}件のデータ, {combined_df['銘柄コード'].nunique()}銘柄")
+            # 銘柄コードを文字列型に統一
+            combined_df['銘柄コード'] = combined_df['銘柄コード'].astype(str)
+            tqdm.write(f"✅ 統合完了: {len(combined_df):,}件のデータ, {combined_df['銘柄コード'].nunique()}銘柄")
             return combined_df
         else:
-            print("⚠️ 読み込めるデータがありませんでした。")
+            tqdm.write("⚠️ 読み込めるデータがありませんでした。")
             return pd.DataFrame()
     
     def find_new_highs(self, df: pd.DataFrame, period_weeks: int = 52) -> pd.DataFrame:
@@ -76,54 +80,57 @@ class BreakNewHighAnalyzer:
         new_high_stocks = []
         stock_codes = df['銘柄コード'].unique()
         
-        print(f"📈 新高値分析開始: {len(stock_codes)}銘柄を分析")
-        
         # 銘柄コードごとに分析
-        for stock_code in tqdm(stock_codes, desc="🔍 新高値銘柄検索", unit="銘柄"):
-            stock_df = df[df['銘柄コード'] == stock_code].copy()
-            
-            if len(stock_df) == 0:
-                continue
-            
-            # 日付でソート
-            stock_df['日付'] = pd.to_datetime(stock_df['日付'])
-            stock_df = stock_df.sort_values('日付').reset_index(drop=True)
-            
-            # 最新の高値を取得
-            latest_high = stock_df['高値'].iloc[-1]
-            latest_date = stock_df['日付'].iloc[-1]
-            
-            # 過去の最高値を計算（最新データを除く）
-            if len(stock_df) > 1:
-                historical_data = stock_df.iloc[:-1]
-                historical_max = historical_data['高値'].max()
+        with tqdm(total=len(stock_codes), desc="🔍 新高値銘柄検索", unit="銘柄") as pbar:
+            for stock_code in stock_codes:
+                stock_df = df[df['銘柄コード'] == stock_code].copy()
                 
-                # 新高値判定
-                if latest_high > historical_max:
-                    # 銘柄情報を取得
-                    stock_info = self.stock_code_master.get_by_code(stock_code)
-                    stock_name = stock_info['name'].iloc[0] if not stock_info.empty else "不明"
+                if len(stock_df) == 0:
+                    pbar.update(1)
+                    continue
+                
+                # 日付でソート
+                stock_df['日付'] = pd.to_datetime(stock_df['日付'])
+                stock_df = stock_df.sort_values('日付').reset_index(drop=True)
+                
+                # 最新の高値を取得
+                latest_high = stock_df['高値'].iloc[-1]
+                latest_date = stock_df['日付'].iloc[-1]
+                
+                # 過去の最高値を計算（最新データを除く）
+                if len(stock_df) > 1:
+                    historical_data = stock_df.iloc[:-1]
+                    historical_max = historical_data['高値'].max()
                     
-                    new_high_stocks.append({
-                        '銘柄コード': stock_code,
-                        '銘柄名': stock_name,
-                        '新高値': latest_high,
-                        '新高値日付': latest_date,
-                        '過去最高値': historical_max,
-                        '高値更新率': ((latest_high - historical_max) / historical_max * 100),
-                        '分析期間_週': period_weeks,
-                        '最新終値': stock_df['終値'].iloc[-1],
-                        '最新出来高': stock_df['出来高'].iloc[-1]
-                    })
+                    # 新高値判定
+                    if latest_high > historical_max:
+                        # 銘柄情報を取得 - 銘柄コードの型を確実に文字列にする
+                        stock_code_str = str(stock_code).strip()
+                        stock_info = self.stock_code_master.get_by_code(stock_code_str)
+                        stock_name = stock_info['name'].iloc[0] if not stock_info.empty else "不明"
+                        
+                        new_high_stocks.append({
+                            '銘柄コード': stock_code_str,
+                            '銘柄名': stock_name,
+                            '新高値': latest_high,
+                            '新高値日付': latest_date,
+                            '過去最高値': historical_max,
+                            '高値更新率': ((latest_high - historical_max) / historical_max * 100),
+                            '分析期間_週': period_weeks,
+                            '最新終値': stock_df['終値'].iloc[-1],
+                            '最新出来高': stock_df['出来高'].iloc[-1]
+                        })
+                
+                pbar.update(1)
         
         result_df = pd.DataFrame(new_high_stocks)
         
         if not result_df.empty:
             # 高値更新率でソート（降順）
             result_df = result_df.sort_values('高値更新率', ascending=False).reset_index(drop=True)
-            print(f"🎉 新高値銘柄数: {len(result_df)}銘柄")
+            tqdm.write(f"🎉 新高値銘柄数: {len(result_df)}銘柄")
         else:
-            print("📉 新高値を付けた銘柄はありませんでした。")
+            tqdm.write("📉 新高値を付けた銘柄はありませんでした。")
         
         return result_df
     
@@ -141,58 +148,61 @@ class BreakNewHighAnalyzer:
         near_high_stocks = []
         stock_codes = df['銘柄コード'].unique()
         
-        print(f"🎯 新高値候補分析開始: 閾値 -{threshold_percent}%以内")
-        
         # 銘柄コードごとに分析
-        for stock_code in tqdm(stock_codes, desc="🔍 候補銘柄検索", unit="銘柄"):
-            stock_df = df[df['銘柄コード'] == stock_code].copy()
-            
-            if len(stock_df) == 0:
-                continue
-            
-            # 日付でソート
-            stock_df['日付'] = pd.to_datetime(stock_df['日付'])
-            stock_df = stock_df.sort_values('日付').reset_index(drop=True)
-            
-            # 最新の終値を取得
-            latest_close = stock_df['終値'].iloc[-1]
-            latest_date = stock_df['日付'].iloc[-1]
-            
-            # 過去の最高値を計算
-            historical_max = stock_df['高値'].max()
-            
-            # 新高値更新候補の閾値を計算
-            threshold_price = historical_max * (1 - threshold_percent / 100)
-            
-            # 高値までの乖離率を計算
-            divergence_rate = ((historical_max - latest_close) / historical_max * 100)
-            
-            # 新高値更新候補判定
-            if latest_close >= threshold_price and latest_close < historical_max:
-                # 銘柄情報を取得
-                stock_info = self.stock_code_master.get_by_code(stock_code)
-                stock_name = stock_info['name'].iloc[0] if not stock_info.empty else "不明"
+        with tqdm(total=len(stock_codes), desc="🔍 候補銘柄検索", unit="銘柄") as pbar:
+            for stock_code in stock_codes:
+                stock_df = df[df['銘柄コード'] == stock_code].copy()
                 
-                near_high_stocks.append({
-                    '銘柄コード': stock_code,
-                    '銘柄名': stock_name,
-                    '最新終値': latest_close,
-                    '最新日付': latest_date,
-                    '過去最高値': historical_max,
-                    '高値までの乖離率': divergence_rate,
-                    '閾値価格': threshold_price,
-                    '閾値_パーセント': threshold_percent,
-                    '最新出来高': stock_df['出来高'].iloc[-1]
-                })
+                if len(stock_df) == 0:
+                    pbar.update(1)
+                    continue
+                
+                # 日付でソート
+                stock_df['日付'] = pd.to_datetime(stock_df['日付'])
+                stock_df = stock_df.sort_values('日付').reset_index(drop=True)
+                
+                # 最新の終値を取得
+                latest_close = stock_df['終値'].iloc[-1]
+                latest_date = stock_df['日付'].iloc[-1]
+                
+                # 過去の最高値を計算
+                historical_max = stock_df['高値'].max()
+                
+                # 新高値更新候補の閾値を計算
+                threshold_price = historical_max * (1 - threshold_percent / 100)
+                
+                # 高値までの乖離率を計算
+                divergence_rate = ((historical_max - latest_close) / historical_max * 100)
+                
+                # 新高値更新候補判定
+                if latest_close >= threshold_price and latest_close < historical_max:
+                    # 銘柄情報を取得 - 銘柄コードの型を確実に文字列にする
+                    stock_code_str = str(stock_code).strip()
+                    stock_info = self.stock_code_master.get_by_code(stock_code_str)
+                    stock_name = stock_info['name'].iloc[0] if not stock_info.empty else "不明"
+                    
+                    near_high_stocks.append({
+                        '銘柄コード': stock_code_str,
+                        '銘柄名': stock_name,
+                        '最新終値': latest_close,
+                        '最新日付': latest_date,
+                        '過去最高値': historical_max,
+                        '高値までの乖離率': divergence_rate,
+                        '閾値価格': threshold_price,
+                        '閾値_パーセント': threshold_percent,
+                        '最新出来高': stock_df['出来高'].iloc[-1]
+                    })
+                
+                pbar.update(1)
         
         result_df = pd.DataFrame(near_high_stocks)
         
         if not result_df.empty:
             # 高値までの乖離率でソート（昇順）
             result_df = result_df.sort_values('高値までの乖離率', ascending=True).reset_index(drop=True)
-            print(f"🎯 新高値候補銘柄数: {len(result_df)}銘柄")
+            tqdm.write(f"🎯 新高値候補銘柄数: {len(result_df)}銘柄")
         else:
-            print("📉 新高値更新候補銘柄はありませんでした。")
+            tqdm.write("📉 新高値更新候補銘柄はありませんでした。")
         
         return result_df
     
@@ -215,7 +225,7 @@ class BreakNewHighAnalyzer:
         # CSVファイルを保存
         output_path = os.path.join(output_folder, filename)
         df.to_csv(output_path, index=False, encoding='utf-8-sig')
-        print(f"💾 結果保存: {filename} ({len(df)}件)")
+        tqdm.write(f"💾 結果保存: {filename} ({len(df)}件)")
         
         return output_path
 
@@ -232,16 +242,16 @@ def analyze_folder_data(folder_name: str):
     folder_path = os.path.join(S_INPUT_DIR, folder_name)
     
     if not os.path.exists(folder_path):
-        print(f"❌ フォルダが存在しません: {folder_path}")
+        tqdm.write(f"❌ フォルダが存在しません: {folder_path}")
         return
     
-    print(f"🚀 分析開始: {folder_name}")
+    tqdm.write(f"🚀 分析開始: {folder_name}")
     
     # データを読み込み
     df = analyzer.load_stock_data_from_folder(folder_path)
     
     if df.empty:
-        print("⚠️ 分析対象データがありません。")
+        tqdm.write("⚠️ 分析対象データがありません。")
         return
     
     # フォルダ名から期間を抽出（例: W_52_20250713 -> 52週）
@@ -264,7 +274,7 @@ def analyze_folder_data(folder_name: str):
             f"new_highs_{period_weeks}week.csv", 
             analysis_type
         )
-        print("\n=== 🏆 新高値銘柄トップ10 ===")
+        tqdm.write("\n=== 🏆 新高値銘柄トップ10 ===")
         print(new_highs_df[['銘柄コード', '銘柄名', '新高値', '高値更新率']].head(10))
     
     # 2. 新高値更新候補銘柄の選出
@@ -275,10 +285,10 @@ def analyze_folder_data(folder_name: str):
             f"near_new_highs_{period_weeks}week.csv", 
             analysis_type
         )
-        print("\n=== 🎯 新高値更新候補銘柄トップ10 ===")
+        tqdm.write("\n=== 🎯 新高値更新候補銘柄トップ10 ===")
         print(near_highs_df[['銘柄コード', '銘柄名', '最新終値', '高値までの乖離率']].head(10))
     
-    print(f"\n✅ 分析完了: {folder_name}")
+    tqdm.write(f"\n✅ 分析完了: {folder_name}")
 
 def main():
     """メイン処理"""
