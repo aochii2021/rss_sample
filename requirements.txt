@@ -8,3 +8,4 @@ plotly
 pandas
 stable_baselines3
 gymnasium
+tqdm
