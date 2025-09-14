@@ -2,8 +2,11 @@
 __pycache__/
 .env/
 *.pyc
-
 .env
+*.html
+*.zip
+*.log
+*.xlsx
 
 # Ignore output files
 src/*/output/*.csv
