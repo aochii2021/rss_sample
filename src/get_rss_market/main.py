@@ -70,11 +70,11 @@ def main():
     stock_code_master = StockCodeMaster()
     stock_code_master.load()
     # 銘柄コードの一覧を表示
-    stock_code_list = stock_code_master.get_all_codes()
-    # stock_code_list = [
-    #     "7203",  # トヨタ自動車
-    #     "6758",  # ソニーグループ
-    # ]
+    # stock_code_list = stock_code_master.get_all_codes()
+    stock_code_list = [
+        "7203",  # トヨタ自動車
+        "6758",  # ソニーグループ
+    ]
     print("銘柄コード一覧:")
     for code in stock_code_list:
         print(f" - {code}")

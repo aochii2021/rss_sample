@@ -65,6 +65,7 @@ def main():
 
     # 全銘柄のチャートを取得
     # get_all_stock_charts(ws, TickType.MIN1, 3000, stock_code_master)
+    # get_all_stock_charts(ws, TickType.MIN1, 3000, stock_code_master)
     # get_all_stock_charts(ws, TickType.MIN5 , 3000, stock_code_master)
     # get_all_stock_charts(ws, TickType.DAY, 730, stock_code_master) # 730日(約2年)分のデータを取得
     get_all_stock_charts(ws, TickType.WEEK, 104, stock_code_master) # 104週(約2年)分のデータを取得
