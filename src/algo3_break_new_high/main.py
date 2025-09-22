@@ -480,7 +480,7 @@ def main():
     # 例: W_52_20250713（52週のデータ、2025年7月13日実行）
     tick_type = TickType.WEEK
     number = 104  # 104週のデータ
-    date = "20250902"
+    date = "20250918"
     target_folder_name = f"{tick_type.value}_{number}_{date}"
     tqdm.write(f"🔍 分析対象フォルダ名: {target_folder_name}")
 
