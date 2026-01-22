@@ -5,11 +5,51 @@ MarketSpeed II RSS関数ラッパー
 Excel COM経由でRSS関数を呼び出し
 """
 import logging
-from typing import Optional, Dict, Any, List
+import time
+from functools import wraps
+from typing import Optional, Dict, Any, List, Callable
 import pandas as pd
 from datetime import datetime
 
 logger = logging.getLogger(__name__)
+
+
+def retry_on_error(max_retries: int = 3, delay_seconds: float = 1.0):
+    """
+    エラー時にリトライするデコレータ
+    
+    Args:
+        max_retries: 最大リトライ回数（初回実行 + リトライ回数）
+        delay_seconds: リトライ間隔（秒）
+    
+    Returns:
+        デコレータ関数
+    """
+    def decorator(func: Callable):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            last_exception = None
+            for attempt in range(max_retries):
+                try:
+                    return func(*args, **kwargs)
+                except Exception as e:
+                    last_exception = e
+                    if attempt < max_retries - 1:
+                        logger.warning(
+                            f"{func.__name__} failed (attempt {attempt + 1}/{max_retries}): {e}. "
+                            f"Retrying in {delay_seconds}s..."
+                        )
+                        time.sleep(delay_seconds)
+                    else:
+                        logger.error(
+                            f"{func.__name__} failed after {max_retries} attempts: {e}"
+                        )
+            
+            # 全てのリトライが失敗した場合
+            raise last_exception
+        
+        return wrapper
+    return decorator
 
 
 class RSSFunctions:
@@ -26,6 +66,7 @@ class RSSFunctions:
         
         logger.info("RSSFunctions initialized")
     
+    @retry_on_error(max_retries=3, delay_seconds=1.0)
     def get_market_price(self, symbol: str) -> Optional[float]:
         """
         現在価格を取得（RssMarket）
@@ -50,6 +91,7 @@ class RSSFunctions:
             logger.error(f"Error getting market price for {symbol}: {e}")
             return None
     
+    @retry_on_error(max_retries=3, delay_seconds=1.0)
     def get_order_list(
         self,
         order_status: str = "",  # 空=全て、"0"=受付中、"1"=発注済、"2"=訂正中等
@@ -98,6 +140,7 @@ class RSSFunctions:
             logger.error(f"Error getting order list: {e}")
             return pd.DataFrame()
     
+    @retry_on_error(max_retries=3, delay_seconds=1.0)
     def get_execution_list(
         self,
         order_type: str = "",  # 空=全て、"0"=現物、"1"=信用
@@ -138,6 +181,7 @@ class RSSFunctions:
             logger.error(f"Error getting execution list: {e}")
             return pd.DataFrame()
     
+    @retry_on_error(max_retries=3, delay_seconds=1.0)
     def get_margin_positions(
         self,
         symbol: str = "",        # 空=全銘柄
@@ -180,6 +224,7 @@ class RSSFunctions:
             logger.error(f"Error getting margin positions: {e}")
             return pd.DataFrame()
     
+    @retry_on_error(max_retries=3, delay_seconds=1.0)
     def get_margin_power(self, symbol: str) -> Optional[Dict[str, Any]]:
         """
         信用新規建余力を取得（RssMarginPower）
@@ -213,6 +258,7 @@ class RSSFunctions:
             logger.error(f"Error getting margin power for {symbol}: {e}")
             return None
     
+    @retry_on_error(max_retries=3, delay_seconds=1.0)
     def get_order_status(self, order_id: int) -> Optional[str]:
         """
         発注IDごとの注文状況を取得（RssOrderStatus）

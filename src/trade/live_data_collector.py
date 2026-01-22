@@ -5,6 +5,7 @@
 MarketSpeed II RSSから板情報を取得し、LOB特徴量を計算
 """
 import sys
+import time
 import logging
 from datetime import datetime
 from pathlib import Path
@@ -45,56 +46,72 @@ class LiveDataCollector:
     def fetch_board_data(self) -> pd.DataFrame:
         """
         MarketSpeed II RSSから板情報を取得（bid/ask各5本）
+        リトライ機構付き（最大3回、1秒間隔）
         
         Returns:
             板情報DataFrame（複数銘柄）
         """
-        try:
-            # DRY_RUNモード：ダミーデータを返す
-            if not self.excel_data:
-                logger.debug("DRY_RUN mode: returning dummy data")
-                return pd.DataFrame()
-            
-            # 各銘柄の板情報をRssMarketで取得
-            board_data = []
-            
-            for symbol in self.symbols:
-                row_data = {
-                    "ts": datetime.now(),
-                    "symbol": symbol
-                }
-                
-                # RssMarketで板の気配値を取得（bid/ask各5本）
-                try:
-                    # 買気配（bid）1〜5
-                    for i in range(1, 6):
-                        bid_px = self.excel_data.Run("RssMarket", f"{symbol}.T", f"買気配値段{i}")
-                        bid_qty = self.excel_data.Run("RssMarket", f"{symbol}.T", f"買気配数量{i}")
-                        row_data[f"bid_px_{i}"] = bid_px if bid_px else None
-                        row_data[f"bid_qty_{i}"] = bid_qty if bid_qty else None
-                    
-                    # 売気配（ask）1〜5
-                    for i in range(1, 6):
-                        ask_px = self.excel_data.Run("RssMarket", f"{symbol}.T", f"売気配値段{i}")
-                        ask_qty = self.excel_data.Run("RssMarket", f"{symbol}.T", f"売気配数量{i}")
-                        row_data[f"ask_px_{i}"] = ask_px if ask_px else None
-                        row_data[f"ask_qty_{i}"] = ask_qty if ask_qty else None
-                    
-                    board_data.append(row_data)
-                except Exception as e:
-                    logger.warning(f"Failed to fetch board data for {symbol}: {e}")
-            
-            if board_data:
-                df = pd.DataFrame(board_data)
-                logger.debug(f"Fetched board data for {len(board_data)} symbols")
-                return df
-            else:
-                logger.warning("No board data fetched")
-                return pd.DataFrame()
-            
-        except Exception as e:
-            logger.error(f"Failed to fetch board data: {e}")
+        # DRY_RUNモード：ダミーデータを返す
+        if not self.excel_data:
+            logger.debug("DRY_RUN mode: returning dummy data")
             return pd.DataFrame()
+        
+        max_retries = 3
+        retry_delay = 1.0
+        last_exception = None
+        
+        for attempt in range(max_retries):
+            try:
+                # 各銘柄の板情報をRssMarketで取得
+                board_data = []
+                
+                for symbol in self.symbols:
+                    row_data = {
+                        "ts": datetime.now(),
+                        "symbol": symbol
+                    }
+                    
+                    # RssMarketで板の気配値を取得（bid/ask各5本）
+                    try:
+                        # 買気配（bid）1〜5
+                        for i in range(1, 6):
+                            bid_px = self.excel_data.Run("RssMarket", f"{symbol}.T", f"買気配値段{i}")
+                            bid_qty = self.excel_data.Run("RssMarket", f"{symbol}.T", f"買気配数量{i}")
+                            row_data[f"bid_px_{i}"] = bid_px if bid_px else None
+                            row_data[f"bid_qty_{i}"] = bid_qty if bid_qty else None
+                        
+                        # 売気配（ask）1〜5
+                        for i in range(1, 6):
+                            ask_px = self.excel_data.Run("RssMarket", f"{symbol}.T", f"売気配値段{i}")
+                            ask_qty = self.excel_data.Run("RssMarket", f"{symbol}.T", f"売気配数量{i}")
+                            row_data[f"ask_px_{i}"] = ask_px if ask_px else None
+                            row_data[f"ask_qty_{i}"] = ask_qty if ask_qty else None
+                        
+                        board_data.append(row_data)
+                    except Exception as e:
+                        logger.warning(f"Failed to fetch board data for {symbol}: {e}")
+                
+                if board_data:
+                    df = pd.DataFrame(board_data)
+                    logger.debug(f"Fetched board data for {len(board_data)} symbols")
+                    return df
+                else:
+                    logger.warning("No board data fetched")
+                    return pd.DataFrame()
+                
+            except Exception as e:
+                last_exception = e
+                if attempt < max_retries - 1:
+                    logger.warning(
+                        f"fetch_board_data failed (attempt {attempt + 1}/{max_retries}): {e}. "
+                        f"Retrying in {retry_delay}s..."
+                    )
+                    time.sleep(retry_delay)
+                else:
+                    logger.error(f"fetch_board_data failed after {max_retries} attempts: {e}")
+        
+        # 全てのリトライが失敗した場合、空DataFrameを返す
+        return pd.DataFrame()
     
     def compute_lob_features(self, board_df: pd.DataFrame) -> pd.DataFrame:
         """
