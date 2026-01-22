@@ -7,6 +7,7 @@ import logging
 from datetime import datetime
 from typing import Optional, Dict, Any, List
 import pandas as pd
+import win32com.client
 
 import config
 
@@ -93,6 +94,17 @@ class OrderExecutor:
         self.consecutive_losses = 0
         self.max_drawdown_tick = 0.0
         self.peak_pnl_tick = 0.0
+        
+        # Excel COM接続（DRY_RUN=Falseの場合）
+        self.excel = None
+        if not dry_run:
+            try:
+                self.excel = win32com.client.Dispatch("Excel.Application")
+                self.excel.Visible = True
+                logger.info("Excel COM connection established")
+            except Exception as e:
+                logger.error(f"Failed to connect to Excel: {e}")
+                raise
         
         logger.info(f"OrderExecutor initialized (DRY_RUN={dry_run})")
     
@@ -226,16 +238,128 @@ class OrderExecutor:
         return False
     
     def _execute_order(self, signal: Dict[str, Any]) -> bool:
-        """実際の注文実行（MarketSpeed II）"""
-        # TODO: MarketSpeed II RSSを使った注文実行を実装
-        logger.warning("_execute_order: Not implemented (MarketSpeed II integration required)")
-        return True
+        """
+        信用新規注文実行（MarketSpeed II RSS）
+        
+        Args:
+            signal: エントリーシグナル（symbol, action, price等）
+        
+        Returns:
+            True: 注文成功、False: 注文失敗
+        """
+        if not self.excel:
+            logger.error("Excel not connected")
+            return False
+        
+        try:
+            symbol = signal["symbol"]
+            action = signal["action"]  # "buy" or "sell"
+            price = signal["price"]
+            
+            # 発注IDを生成（タイムスタンプベース）
+            order_id = int(datetime.now().strftime("%Y%m%d%H%M%S"))
+            
+            # 売買区分: 1=売建、3=買建
+            trade_type = "3" if action == "buy" else "1"
+            
+            # 注文パラメータ
+            order_params = [
+                order_id,                                      # 1. 発注ID
+                1,                                             # 2. 発注トリガー（1=発注）
+                f"{symbol}.T",                                # 3. 銘柄コード（東証）
+                trade_type,                                    # 4. 売買区分（1=売建、3=買建）
+                "0",                                          # 5. 注文区分（0=通常注文）
+                "0",                                          # 6. SOR区分（0=通常）
+                config.MARGIN_PARAMS["margin_type"],         # 7. 信用区分
+                config.RISK_PARAMS["position_size"],          # 8. 注文数量
+                "1",                                          # 9. 価格区分（1=指値）
+                price,                                         # 10. 注文価格
+                "1",                                          # 11. 執行条件（1=本日中）
+                "",                                           # 12. 注文期限（本日中なので省略）
+                config.MARGIN_PARAMS["account_type"],        # 13. 口座区分
+            ]
+            
+            # RssMarginOpenOrder関数を呼び出し
+            result = self.excel.Run("RssMarginOpenOrder", *order_params)
+            
+            if result:
+                logger.info(
+                    f"Order executed: {symbol} {action} {config.RISK_PARAMS['position_size']}株 @ {price:.2f} "
+                    f"(OrderID: {order_id})"
+                )
+                return True
+            else:
+                logger.error(f"Order failed: {symbol} {action} @ {price:.2f}")
+                return False
+                
+        except Exception as e:
+            logger.error(f"Order execution error: {e}")
+            return False
     
     def _execute_close_order(self, position: Position, price: float) -> bool:
-        """実際のクローズ注文実行"""
-        # TODO: MarketSpeed II RSSを使った注文実行を実装
-        logger.warning("_execute_close_order: Not implemented (MarketSpeed II integration required)")
-        return True
+        """
+        信用返済注文実行（MarketSpeed II RSS）
+        
+        Args:
+            position: クローズするポジション
+            price: 返済価格
+        
+        Returns:
+            True: 注文成功、False: 注文失敗
+        """
+        if not self.excel:
+            logger.error("Excel not connected")
+            return False
+        
+        try:
+            symbol = position.symbol
+            direction = position.direction
+            
+            # 発注IDを生成
+            order_id = int(datetime.now().strftime("%Y%m%d%H%M%S"))
+            
+            # 売買区分: 1=売埋、3=買埋（新規と逆）
+            trade_type = "1" if direction == "buy" else "3"
+            
+            # 建日（ポジション建てた日）
+            entry_date = position.entry_time.strftime("%Y%m%d")
+            
+            # 注文パラメータ
+            order_params = [
+                order_id,                                      # 1. 発注ID
+                1,                                             # 2. 発注トリガー（1=発注）
+                f"{symbol}.T",                                # 3. 銘柄コード（東証）
+                trade_type,                                    # 4. 売買区分（1=売埋、3=買埋）
+                "0",                                          # 5. 注文区分（0=通常注文）
+                "0",                                          # 6. SOR区分（0=通常）
+                config.MARGIN_PARAMS["margin_type"],         # 7. 信用区分
+                position.size,                                 # 8. 注文数量
+                "1",                                          # 9. 価格区分（1=指値）
+                price,                                         # 10. 注文価格
+                "1",                                          # 11. 執行条件（1=本日中）
+                "",                                           # 12. 注文期限（本日中なので省略）
+                config.MARGIN_PARAMS["account_type"],        # 13. 口座区分
+                entry_date,                                    # 14. 建日
+                position.entry_price,                          # 15. 建単価
+                "1",                                          # 16. 建市場（1=東証）
+            ]
+            
+            # RssMarginCloseOrder関数を呼び出し
+            result = self.excel.Run("RssMarginCloseOrder", *order_params)
+            
+            if result:
+                logger.info(
+                    f"Close order executed: {symbol} {position.size}株 @ {price:.2f} "
+                    f"(OrderID: {order_id}, Entry: {position.entry_price:.2f})"
+                )
+                return True
+            else:
+                logger.error(f"Close order failed: {symbol} @ {price:.2f}")
+                return False
+                
+        except Exception as e:
+            logger.error(f"Close order execution error: {e}")
+            return False
     
     def get_open_positions(self) -> List[Position]:
         """保有中のポジションを取得"""
