@@ -61,6 +61,21 @@ def c(level: int, side: str, kind: str) -> str:
 def compute_features_ms2(df: pd.DataFrame, roll_n: int=20, k_depth: int=5) -> pd.DataFrame:
     df = ensure_ts(df)
 
+    # 板気配値が存在しない行を除外（市場時間外など）
+    ask_px_col = c(1,"ask","px")
+    bid_px_col = c(1,"bid","px")
+    
+    # 空文字とNaNを除外
+    mask = (df[ask_px_col].notna()) & (df[bid_px_col].notna())
+    mask &= (df[ask_px_col] != "") & (df[bid_px_col] != "")
+    df = df[mask].reset_index(drop=True)
+    
+    if len(df) == 0:
+        # 全て除外された場合は空のDataFrameを返す
+        return pd.DataFrame(columns=["ts", "symbol", "spread", "mid", "qi_l1", 
+                                     "microprice", "micro_bias", f"ofi_{roll_n}", 
+                                     f"depth_imb_{k_depth}"])
+
     ask_px  = df[c(1,"ask","px")]
     bid_px  = df[c(1,"bid","px")]
     ask_qty = df[c(1,"ask","qty")]
