@@ -6,6 +6,7 @@ seaborn
 mplfinance
 plotly
 pandas
+scipy
 stable_baselines3
 gymnasium
 tqdm

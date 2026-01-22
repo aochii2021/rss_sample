@@ -47,36 +47,46 @@ def get_all_stock_charts(ws, tick_type: TickType, number: int, stock_code_master
         print(f"Saved: {csv_file}")
 
 def main():
+    # Excelアプリケーションを取得または起動
     try:
-        xl = win32com.client.GetObject(Class="Excel.Application")  # 今、開いている空白のブック
-    except Exception as e:
-        print("エクセルが開いていません。", e)
-        return
-
+        xl = win32com.client.GetObject(Class="Excel.Application")
+    except:
+        xl = win32com.client.Dispatch("Excel.Application")
+    
     xl.Visible = True
-    ws = xl.Worksheets('Sheet1')
+    
+    # 新しいワークブックを追加
+    wb = xl.Workbooks.Add()
+    ws = wb.Worksheets(1)
+    ws.Name = 'RssChart'
 
-    # 銘柄コードマスターの読み込み
-    stock_code_master = StockCodeMaster()
-    stock_code_master.load()
-    # 銘柄コードの一覧を表示
-    print("銘柄コード一覧:")
-    print(stock_code_master.get_all_codes())
+    # 対象銘柄リスト（rss_market_data.csvから）
+    TARGET_SYMBOLS = ['3350', '9501', '9509', '215A', '6315', '6526', '5016']
+    
+    # 一時的な銘柄コードマスター作成
+    class TempStockCodeMaster:
+        def __init__(self, codes):
+            self.codes = codes
+        def get_all_codes(self):
+            return self.codes
+    
+    temp_master = TempStockCodeMaster(TARGET_SYMBOLS)
+    
+    print("対象銘柄コード:")
+    print(temp_master.get_all_codes())
+    print()
 
-    # 全銘柄のチャートを取得
-    # get_all_stock_charts(ws, TickType.MIN1, 3000, stock_code_master)
-    # get_all_stock_charts(ws, TickType.MIN1, 3000, stock_code_master)
-    # get_all_stock_charts(ws, TickType.MIN5 , 3000, stock_code_master)
-    # get_all_stock_charts(ws, TickType.DAY, 730, stock_code_master) # 730日(約2年)分のデータを取得
-    get_all_stock_charts(ws, TickType.WEEK, 104, stock_code_master) # 104週(約2年)分のデータを取得
-    # get_all_stock_charts(ws, TickType.MONTH, 100, stock_code_master)
-
-    # # ティッカーの取得
-    # rss_tick_list_range = DataRange(start_row=3, start_col=1, end_row=number + 2, end_col=3)
-    # rss_tick_list = RssTickList(ws, stock_code, number, rss_tick_list_range, header_row)
-    # tick_df = rss_tick_list.get_dataframe()
-    # # データフレームを表示
-    # print(tick_df)
+    # 日足3000本取得
+    print("【日足 3000本】")
+    get_all_stock_charts(ws, TickType.DAY, 3000, temp_master)
+    print()
+    
+    # 3分足3000本取得
+    print("【3分足 3000本】")
+    get_all_stock_charts(ws, TickType.MIN3, 3000, temp_master)
+    print()
+    
+    print("=== 完了 ===")
 
 
 if __name__ == "__main__":

@@ -83,6 +83,115 @@ def is_session_end_approaching(ts, session: str, minutes_before: int = 5) -> boo
     
     return False
 
+def detect_recent_drop(lob_df: pd.DataFrame, current_idx: int, lookback: int = 10) -> tuple:
+    """
+    直近の急落を検出
+    
+    Returns:
+        (has_drop, high_price, low_price, drop_size)
+    """
+    if current_idx < lookback:
+        return False, 0.0, 0.0, 0.0
+    
+    recent_slice = lob_df.iloc[max(0, current_idx - lookback):current_idx + 1]
+    if len(recent_slice) < 2:
+        return False, 0.0, 0.0, 0.0
+    
+    high_price = recent_slice['mid'].max()
+    low_price = recent_slice['mid'].min()
+    drop_size = high_price - low_price
+    
+    # 直近の最安値が現在から3本以内にある場合は「急落中」とみなす
+    low_idx = recent_slice['mid'].idxmin()
+    bars_since_low = current_idx - low_idx
+    
+    # 急落判定：下落幅が大きく、かつ最安値が最近（厳格化：>7 tick）
+    has_drop = drop_size > 7.0 and bars_since_low <= 3
+    
+    return has_drop, high_price, low_price, drop_size
+
+def find_next_resistance(price: float, direction: str, levels: List[Dict]) -> float:
+    """
+    次のレジスタンスレベルを検索
+    
+    Args:
+        price: 現在価格
+        direction: "buy" or "sell"
+        levels: レベルリスト
+    
+    Returns:
+        次のレジスタンス価格（見つからない場合はNone）
+    """
+    if direction == "buy":
+        # 買いポジション：現在価格より上のレベル
+        upper_levels = [lv['level_now'] for lv in levels if lv['level_now'] > price]
+        if upper_levels:
+            return min(upper_levels)  # 最も近い上のレベル
+    else:
+        # 売りポジション：現在価格より下のレベル
+        lower_levels = [lv['level_now'] for lv in levels if lv['level_now'] < price]
+        if lower_levels:
+            return max(lower_levels)  # 最も近い下のレベル
+    
+    return None
+
+def is_reversal_weakening(row, direction: str, ofi_col: str, depth_col: str) -> bool:
+    """
+    反発が弱まっているか判定
+    
+    Args:
+        row: 現在の行データ
+        direction: "buy" or "sell"
+        ofi_col: OFIカラム名
+        depth_col: depth_imbカラム名
+    
+    Returns:
+        反発が弱まっている場合True
+    """
+    ofi = row.get(ofi_col, 0)
+    depth_imb = row.get(depth_col, 0)
+    
+    if direction == "buy":
+        # 買いポジション：OFIが負（売り圧力）、depth_imbが負（売り板厚い）
+        return ofi < -0.3 and depth_imb < -0.2
+    else:
+        # 売りポジション：OFIが正（買い圧力）、depth_imbが正（買い板厚い）
+        return ofi > 0.3 and depth_imb > 0.2
+
+def is_reversal_failing(row, direction: str, micro_bias_col: str, ofi_col: str, depth_col: str) -> bool:
+    """
+    反転シグナルが消失しているか判定（含み損時の早期損切り用）
+    
+    Args:
+        row: 現在の行データ
+        direction: "buy" or "sell"
+        micro_bias_col: micro_biasカラム名
+        ofi_col: OFIカラム名
+        depth_col: depth_imbカラム名
+    
+    Returns:
+        反転が失敗している（逆方向の圧力が強い）場合True
+    """
+    micro_bias = row.get(micro_bias_col, 0)
+    ofi = row.get(ofi_col, 0)
+    depth_imb = row.get(depth_col, 0)
+    
+    if direction == "buy":
+        # 買いポジションで含み損：下落圧力が強い = 反転失敗
+        # OFIとdepth_imbのどちらかが逆方向に強く振れている場合
+        has_sell_pressure = ofi < -0.2 or depth_imb < -0.15
+        # micro_biasも負なら確実に反転失敗
+        if micro_bias < -0.2 and has_sell_pressure:
+            return True
+        # OFIとdepth_imbが両方とも逆方向の場合
+        return ofi < -0.15 and depth_imb < -0.15
+    else:
+        # 売りポジションで含み損：上昇圧力が強い = 反転失敗
+        has_buy_pressure = ofi > 0.2 or depth_imb > 0.15
+        if micro_bias > 0.2 and has_buy_pressure:
+            return True
+        return ofi > 0.15 and depth_imb > 0.15
+
 def merge_nearby_levels(levels: List[Dict], tolerance: float = 0.005) -> List[Dict]:
     """
     近い価格帯のレベルを統合し、strengthを加算
@@ -277,23 +386,52 @@ def run_backtest_single_symbol(lob_df: pd.DataFrame, levels: List[Dict],
             pnl_tick = 0.0
             exit_reason = ""
             
+            # 現在の損益を計算
+            if position["direction"] == "buy":
+                pnl_tick = price - position["entry_price"]
+            else:
+                pnl_tick = position["entry_price"] - price
+            
             # セッションが変わったら強制決済
             if session_changed or session == 'closed':
-                if position["direction"] == "buy":
-                    pnl_tick = price - position["entry_price"]
-                else:
-                    pnl_tick = position["entry_price"] - price
                 exit_reason = "SESSION_END"
-            elif position["direction"] == "buy":
-                pnl_tick = price - position["entry_price"]
-                if pnl_tick >= x_tick:
-                    exit_reason = "TP"
-                elif pnl_tick <= -y_tick:
-                    exit_reason = "SL"
-                elif hold_bars >= max_hold_bars:
-                    exit_reason = "TO"
-            else:  # sell
-                pnl_tick = position["entry_price"] - price
+            
+            # 動的利確ロジック
+            elif pnl_tick > 0:  # 含み益がある場合のみ
+                # 1. 半値戻しでの利確チェック
+                has_drop, high_price, low_price, drop_size = detect_recent_drop(lob_df, i, lookback=10)
+                if has_drop and position["direction"] == "buy":
+                    # 急落からの反発：半値戻し（50%）到達で利確（引き上げ：5 tick）
+                    half_retracement = low_price + (drop_size * 0.5)
+                    if price >= half_retracement and pnl_tick >= 5.0:  # 最低5tick以上の利益
+                        exit_reason = "HALF_RETRACE"
+                
+                # 2. 次のレジスタンスレベル接近での利確
+                if not exit_reason:
+                    next_resistance = find_next_resistance(price, position["direction"], merged_levels)
+                    if next_resistance is not None:
+                        distance_to_resistance = abs(price - next_resistance)
+                        # レジスタンスまで1.5tick以内で、かつ十分な利益がある場合（引き上げ：8 tick）
+                        if distance_to_resistance <= 1.5 and pnl_tick >= 8.0:
+                            exit_reason = "NEAR_RESISTANCE"
+                
+                # 3. 反発が弱まっている場合の早期利確
+                if not exit_reason and hold_bars >= 5:
+                    if is_reversal_weakening(row, position["direction"], ofi_col, depth_col):
+                        # 反発が弱まっており、かつ十分な利益がある場合（引き上げ：5 tick）
+                        if pnl_tick >= 5.0:
+                            exit_reason = "WEAK_REVERSAL"
+            
+            # 早期損切りロジック（含み損時）
+            elif pnl_tick < 0 and hold_bars >= 2:  # 2本以上保有で含み損
+                # 反転シグナルが消失し、逆方向の圧力が強い場合は早期損切り
+                if is_reversal_failing(row, position["direction"], micro_bias_col, ofi_col, depth_col):
+                    # 含み損が-1.5 tick以上で、かつy_tick到達前なら早期損切り
+                    if pnl_tick >= -y_tick and pnl_tick <= -1.5:
+                        exit_reason = "EARLY_SL"
+            
+            # 通常の利確・損切ロジック
+            if not exit_reason:
                 if pnl_tick >= x_tick:
                     exit_reason = "TP"
                 elif pnl_tick <= -y_tick:

@@ -404,11 +404,18 @@ def main():
         ])
         
         # トレード結果を集約
-        if os.path.exists(trades_path):
-            df_trades = pd.read_csv(trades_path)
-            if not df_trades.empty:
-                all_trades.append(df_trades)
-                print(f"  トレード数: {len(df_trades)}件")
+        if os.path.exists(trades_path) and os.path.getsize(trades_path) > 0:
+            try:
+                df_trades = pd.read_csv(trades_path)
+                if not df_trades.empty:
+                    all_trades.append(df_trades)
+                    print(f"  トレード数: {len(df_trades)}件")
+                else:
+                    print(f"  トレード数: 0件")
+            except pd.errors.EmptyDataError:
+                print(f"  トレード数: 0件")
+        else:
+            print(f"  トレード数: 0件")
     
     # 全日のトレードを結合
     if all_trades:

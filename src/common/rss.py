@@ -519,15 +519,26 @@ class RssMarket(RssBase):
             return False
 
     def get_dataframe(self) -> pd.DataFrame:
-        # シート全体をクリア
-        self.ws.Cells.ClearContents()
+        # 使用範囲のみクリア（全体をクリアするとエラーになる場合がある）
+        try:
+            used_range = self.ws.UsedRange
+            if used_range is not None:
+                used_range.ClearContents()
+        except:
+            # UsedRangeが取得できない場合は、特定の範囲をクリア
+            try:
+                self.ws.Range("A1:ZZ1000").ClearContents()
+            except:
+                pass  # クリアに失敗しても続行
         # ヘッダーを取得
         headers = [item.value for item in self.item_list]
         l_df = []
+        print(f"処理対象の銘柄コードリスト: {self.stock_code_list}")  # デバッグログ追加
         for batch_start in range(0, len(self.stock_code_list), self.batch_row_size):
             # バッチごとに銘柄コードを取得
             batch_end = min(batch_start + self.batch_row_size, len(self.stock_code_list))
             batch_stock_codes = self.stock_code_list[batch_start:batch_end]
+            print(f"現在のバッチ: {batch_stock_codes}")  # デバッグログ追加
             for i, item in enumerate(self.item_list):
                 for j, stock_code in enumerate(batch_stock_codes):
                     # RSS関数を設定
