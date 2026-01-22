@@ -1,8 +1,8 @@
-{"kind": "recent_high", "symbol": "215A", "anchors": [["2026-01-19T17:21:00", 1431.0]], "slope": 0.0, "level_now": 1431.0, "strength": 1.0, "meta": {"lookback_bars": 180}}
-{"kind": "recent_low", "symbol": "215A", "anchors": [["2026-01-19T17:21:00", 1431.0]], "slope": 0.0, "level_now": 1431.0, "strength": 1.0, "meta": {"lookback_bars": 180}}
-{"kind": "vpoc", "symbol": "215A", "anchors": [["", 1431.0]], "slope": 0.0, "level_now": 1431.0, "strength": 1.0, "meta": {"bin_size": 1.0, "volume": 450149700.0, "rank": 0}}
-{"kind": "hvn", "symbol": "215A", "anchors": [["", 1432.0]], "slope": 0.0, "level_now": 1432.0, "strength": 0.11264563766231545, "meta": {"bin_size": 1.0, "volume": 50707400.0, "rank": 1}}
-{"kind": "hvn", "symbol": "215A", "anchors": [["", 1448.0]], "slope": 0.0, "level_now": 1448.0, "strength": 0.07211045569951507, "meta": {"bin_size": 1.0, "volume": 32460500.0, "rank": 2}}
+{"kind": "recent_high", "symbol": "215A", "anchors": [["2026-01-22T02:34:00", 1357.0]], "slope": 0.0, "level_now": 1357.0, "strength": 1.0, "meta": {"lookback_bars": 180}}
+{"kind": "recent_low", "symbol": "215A", "anchors": [["2026-01-22T02:34:00", 1357.0]], "slope": 0.0, "level_now": 1357.0, "strength": 1.0, "meta": {"lookback_bars": 180}}
+{"kind": "vpoc", "symbol": "215A", "anchors": [["", 1357.0]], "slope": 0.0, "level_now": 1357.0, "strength": 1.0, "meta": {"bin_size": 1.0, "volume": 2513244000.0, "rank": 0}}
+{"kind": "hvn", "symbol": "215A", "anchors": [["", 1408.0]], "slope": 0.0, "level_now": 1408.0, "strength": 0.21418736103617475, "meta": {"bin_size": 1.0, "volume": 538305100.0, "rank": 1}}
+{"kind": "hvn", "symbol": "215A", "anchors": [["", 1431.0]], "slope": 0.0, "level_now": 1431.0, "strength": 0.1791110214527519, "meta": {"bin_size": 1.0, "volume": 450149700.0, "rank": 2}}
 {"kind": "swing_resistance", "symbol": "215A", "anchors": [["2026-01-19T09:01:00", 1450.5]], "slope": 0.0, "level_now": 1450.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_resistance", "symbol": "215A", "anchors": [["2026-01-19T09:11:00", 1454.5]], "slope": 0.0, "level_now": 1454.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_resistance", "symbol": "215A", "anchors": [["2026-01-19T09:25:00", 1448.0]], "slope": 0.0, "level_now": 1448.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
@@ -15,6 +15,34 @@
 {"kind": "swing_resistance", "symbol": "215A", "anchors": [["2026-01-19T14:25:00", 1433.5]], "slope": 0.0, "level_now": 1433.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_resistance", "symbol": "215A", "anchors": [["2026-01-19T14:30:00", 1433.5]], "slope": 0.0, "level_now": 1433.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_resistance", "symbol": "215A", "anchors": [["2026-01-19T15:24:00", 1431.0]], "slope": 0.0, "level_now": 1431.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "215A", "anchors": [["2026-01-20T09:00:00", 1432.0]], "slope": 0.0, "level_now": 1432.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "215A", "anchors": [["2026-01-20T09:39:00", 1426.0]], "slope": 0.0, "level_now": 1426.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "215A", "anchors": [["2026-01-20T09:49:00", 1422.5]], "slope": 0.0, "level_now": 1422.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "215A", "anchors": [["2026-01-20T10:28:00", 1420.5]], "slope": 0.0, "level_now": 1420.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "215A", "anchors": [["2026-01-20T10:50:00", 1409.5]], "slope": 0.0, "level_now": 1409.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "215A", "anchors": [["2026-01-20T11:02:00", 1404.5]], "slope": 0.0, "level_now": 1404.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "215A", "anchors": [["2026-01-20T13:04:00", 1402.0]], "slope": 0.0, "level_now": 1402.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "215A", "anchors": [["2026-01-20T13:21:00", 1399.5]], "slope": 0.0, "level_now": 1399.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "215A", "anchors": [["2026-01-20T13:51:00", 1401.0]], "slope": 0.0, "level_now": 1401.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "215A", "anchors": [["2026-01-20T14:46:00", 1402.5]], "slope": 0.0, "level_now": 1402.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "215A", "anchors": [["2026-01-20T14:53:00", 1404.5]], "slope": 0.0, "level_now": 1404.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "215A", "anchors": [["2026-01-20T15:29:00", 1408.5]], "slope": 0.0, "level_now": 1408.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "215A", "anchors": [["2026-01-21T08:55:00", 1381.5]], "slope": 0.0, "level_now": 1381.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "215A", "anchors": [["2026-01-21T09:02:00", 1390.5]], "slope": 0.0, "level_now": 1390.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "215A", "anchors": [["2026-01-21T09:10:00", 1373.0]], "slope": 0.0, "level_now": 1373.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "215A", "anchors": [["2026-01-21T09:23:00", 1356.5]], "slope": 0.0, "level_now": 1356.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "215A", "anchors": [["2026-01-21T09:42:00", 1368.0]], "slope": 0.0, "level_now": 1368.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "215A", "anchors": [["2026-01-21T09:47:00", 1369.0]], "slope": 0.0, "level_now": 1369.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "215A", "anchors": [["2026-01-21T10:04:00", 1365.0]], "slope": 0.0, "level_now": 1365.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "215A", "anchors": [["2026-01-21T10:10:00", 1365.0]], "slope": 0.0, "level_now": 1365.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "215A", "anchors": [["2026-01-21T10:37:00", 1355.5]], "slope": 0.0, "level_now": 1355.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "215A", "anchors": [["2026-01-21T10:51:00", 1346.5]], "slope": 0.0, "level_now": 1346.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "215A", "anchors": [["2026-01-21T11:14:00", 1354.0]], "slope": 0.0, "level_now": 1354.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "215A", "anchors": [["2026-01-21T12:32:00", 1357.5]], "slope": 0.0, "level_now": 1357.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "215A", "anchors": [["2026-01-21T12:48:00", 1348.5]], "slope": 0.0, "level_now": 1348.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "215A", "anchors": [["2026-01-21T14:24:00", 1350.5]], "slope": 0.0, "level_now": 1350.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "215A", "anchors": [["2026-01-21T14:47:00", 1358.5]], "slope": 0.0, "level_now": 1358.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "215A", "anchors": [["2026-01-21T15:25:00", 1363.5]], "slope": 0.0, "level_now": 1363.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "215A", "anchors": [["2026-01-19T09:08:00", 1434.5]], "slope": 0.0, "level_now": 1434.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "215A", "anchors": [["2026-01-19T09:28:00", 1440.5]], "slope": 0.0, "level_now": 1440.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "215A", "anchors": [["2026-01-19T09:43:00", 1444.5]], "slope": 0.0, "level_now": 1444.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
@@ -30,17 +58,48 @@
 {"kind": "swing_support", "symbol": "215A", "anchors": [["2026-01-19T13:35:00", 1446.5]], "slope": 0.0, "level_now": 1446.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "215A", "anchors": [["2026-01-19T14:06:00", 1425.5]], "slope": 0.0, "level_now": 1425.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "215A", "anchors": [["2026-01-19T14:17:00", 1430.5]], "slope": 0.0, "level_now": 1430.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
-{"kind": "consolidation", "symbol": "215A", "anchors": [["", 1431.0]], "slope": 0.0, "level_now": 1431.0, "strength": 0.6, "meta": {"high": 1431.0, "low": 1431.0, "range_pct": 0.0, "duration_bars": 60}}
-{"kind": "consolidation", "symbol": "215A", "anchors": [["", 1464.0]], "slope": 0.0, "level_now": 1464.0, "strength": 0.6, "meta": {"high": 1469.5, "low": 1458.5, "range_pct": 0.7513661202185792, "duration_bars": 60}}
+{"kind": "swing_support", "symbol": "215A", "anchors": [["2026-01-20T09:07:00", 1410.5]], "slope": 0.0, "level_now": 1410.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "215A", "anchors": [["2026-01-20T09:48:00", 1420.5]], "slope": 0.0, "level_now": 1420.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "215A", "anchors": [["2026-01-20T10:23:00", 1417.0]], "slope": 0.0, "level_now": 1417.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "215A", "anchors": [["2026-01-20T11:08:00", 1402.5]], "slope": 0.0, "level_now": 1402.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "215A", "anchors": [["2026-01-20T12:46:00", 1393.5]], "slope": 0.0, "level_now": 1393.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "215A", "anchors": [["2026-01-20T13:14:00", 1396.0]], "slope": 0.0, "level_now": 1396.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "215A", "anchors": [["2026-01-20T13:20:00", 1398.0]], "slope": 0.0, "level_now": 1398.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "215A", "anchors": [["2026-01-20T15:28:00", 1400.5]], "slope": 0.0, "level_now": 1400.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "215A", "anchors": [["2026-01-21T08:58:00", 1361.5]], "slope": 0.0, "level_now": 1361.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "215A", "anchors": [["2026-01-21T09:26:00", 1346.5]], "slope": 0.0, "level_now": 1346.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "215A", "anchors": [["2026-01-21T09:45:00", 1365.5]], "slope": 0.0, "level_now": 1365.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "215A", "anchors": [["2026-01-21T09:55:00", 1362.5]], "slope": 0.0, "level_now": 1362.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "215A", "anchors": [["2026-01-21T10:21:00", 1357.5]], "slope": 0.0, "level_now": 1357.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "215A", "anchors": [["2026-01-21T10:38:00", 1353.5]], "slope": 0.0, "level_now": 1353.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "215A", "anchors": [["2026-01-21T10:45:00", 1343.0]], "slope": 0.0, "level_now": 1343.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "215A", "anchors": [["2026-01-21T10:56:00", 1344.5]], "slope": 0.0, "level_now": 1344.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "215A", "anchors": [["2026-01-21T11:19:00", 1349.5]], "slope": 0.0, "level_now": 1349.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "215A", "anchors": [["2026-01-21T12:17:00", 1347.5]], "slope": 0.0, "level_now": 1347.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "215A", "anchors": [["2026-01-21T12:30:00", 1350.5]], "slope": 0.0, "level_now": 1350.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "215A", "anchors": [["2026-01-21T12:34:00", 1350.5]], "slope": 0.0, "level_now": 1350.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "215A", "anchors": [["2026-01-21T12:45:00", 1346.5]], "slope": 0.0, "level_now": 1346.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "215A", "anchors": [["2026-01-21T13:16:00", 1341.5]], "slope": 0.0, "level_now": 1341.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "215A", "anchors": [["2026-01-21T14:02:00", 1345.0]], "slope": 0.0, "level_now": 1345.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "215A", "anchors": [["2026-01-21T14:21:00", 1348.5]], "slope": 0.0, "level_now": 1348.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "215A", "anchors": [["2026-01-21T14:27:00", 1347.5]], "slope": 0.0, "level_now": 1347.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "215A", "anchors": [["2026-01-21T15:10:00", 1358.5]], "slope": 0.0, "level_now": 1358.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "prev_high", "symbol": "215A", "anchors": [["", 1390.5]], "slope": 0.0, "level_now": 1390.5, "strength": 0.8, "meta": {"day": "2026-01-21"}}
+{"kind": "prev_low", "symbol": "215A", "anchors": [["", 1341.5]], "slope": 0.0, "level_now": 1341.5, "strength": 0.8, "meta": {"day": "2026-01-21"}}
+{"kind": "prev_close", "symbol": "215A", "anchors": [["", 1357.0]], "slope": 0.0, "level_now": 1357.0, "strength": 0.6, "meta": {"day": "2026-01-21"}}
+{"kind": "consolidation", "symbol": "215A", "anchors": [["", 1357.0]], "slope": 0.0, "level_now": 1357.0, "strength": 0.6, "meta": {"high": 1357.0, "low": 1357.0, "range_pct": 0.0, "duration_bars": 60}}
+{"kind": "consolidation", "symbol": "215A", "anchors": [["", 1465.75]], "slope": 0.0, "level_now": 1465.75, "strength": 0.6, "meta": {"high": 1468.5, "low": 1463.0, "range_pct": 0.37523452157598497, "duration_bars": 60}}
 {"kind": "consolidation", "symbol": "215A", "anchors": [["", 1454.0]], "slope": 0.0, "level_now": 1454.0, "strength": 0.6, "meta": {"high": 1460.5, "low": 1447.5, "range_pct": 0.8940852819807428, "duration_bars": 60}}
-{"kind": "multi_day_vpoc", "symbol": "215A", "anchors": [["", 1431.0]], "slope": 0.0, "level_now": 1431.0, "strength": 1.0, "meta": {"bin_size": 1.0, "volume": 450149700.0, "rank": 0, "lookback_days": 1}}
-{"kind": "multi_day_hvn", "symbol": "215A", "anchors": [["", 1432.0]], "slope": 0.0, "level_now": 1432.0, "strength": 0.11264563766231545, "meta": {"bin_size": 1.0, "volume": 50707400.0, "rank": 1, "lookback_days": 1}}
-{"kind": "multi_day_hvn", "symbol": "215A", "anchors": [["", 1448.0]], "slope": 0.0, "level_now": 1448.0, "strength": 0.07211045569951507, "meta": {"bin_size": 1.0, "volume": 32460500.0, "rank": 2, "lookback_days": 1}}
-{"kind": "recent_high", "symbol": "3350.0", "anchors": [["2026-01-19T17:21:00", 541.5]], "slope": 0.0, "level_now": 541.5, "strength": 1.0, "meta": {"lookback_bars": 180}}
-{"kind": "recent_low", "symbol": "3350.0", "anchors": [["2026-01-19T17:21:00", 541.5]], "slope": 0.0, "level_now": 541.5, "strength": 1.0, "meta": {"lookback_bars": 180}}
-{"kind": "vpoc", "symbol": "3350.0", "anchors": [["", 542.0]], "slope": 0.0, "level_now": 542.0, "strength": 1.0, "meta": {"bin_size": 1.0, "volume": 9607594900.0, "rank": 0}}
-{"kind": "hvn", "symbol": "3350.0", "anchors": [["", 546.0]], "slope": 0.0, "level_now": 546.0, "strength": 0.1551775668643148, "meta": {"bin_size": 1.0, "volume": 1490883200.0, "rank": 1}}
-{"kind": "hvn", "symbol": "3350.0", "anchors": [["", 548.0]], "slope": 0.0, "level_now": 548.0, "strength": 0.13211299115036584, "meta": {"bin_size": 1.0, "volume": 1269288100.0, "rank": 2}}
+{"kind": "consolidation", "symbol": "215A", "anchors": [["", 1430.5]], "slope": 0.0, "level_now": 1430.5, "strength": 0.6, "meta": {"high": 1435.5, "low": 1425.5, "range_pct": 0.6990562740300594, "duration_bars": 60}}
+{"kind": "consolidation", "symbol": "215A", "anchors": [["", 1403.0]], "slope": 0.0, "level_now": 1403.0, "strength": 0.6, "meta": {"high": 1409.5, "low": 1396.5, "range_pct": 0.9265858873841768, "duration_bars": 60}}
+{"kind": "multi_day_vpoc", "symbol": "215A", "anchors": [["", 1357.0]], "slope": 0.0, "level_now": 1357.0, "strength": 1.0, "meta": {"bin_size": 1.0, "volume": 2513244000.0, "rank": 0, "lookback_days": 4}}
+{"kind": "multi_day_hvn", "symbol": "215A", "anchors": [["", 1408.0]], "slope": 0.0, "level_now": 1408.0, "strength": 0.21418736103617475, "meta": {"bin_size": 1.0, "volume": 538305100.0, "rank": 1, "lookback_days": 4}}
+{"kind": "multi_day_hvn", "symbol": "215A", "anchors": [["", 1431.0]], "slope": 0.0, "level_now": 1431.0, "strength": 0.1791110214527519, "meta": {"bin_size": 1.0, "volume": 450149700.0, "rank": 2, "lookback_days": 4}}
+{"kind": "recent_high", "symbol": "3350.0", "anchors": [["2026-01-22T02:34:00", 515.5]], "slope": 0.0, "level_now": 515.5, "strength": 1.0, "meta": {"lookback_bars": 180}}
+{"kind": "recent_low", "symbol": "3350.0", "anchors": [["2026-01-22T02:34:00", 515.5]], "slope": 0.0, "level_now": 515.5, "strength": 1.0, "meta": {"lookback_bars": 180}}
+{"kind": "vpoc", "symbol": "3350.0", "anchors": [["", 516.0]], "slope": 0.0, "level_now": 516.0, "strength": 1.0, "meta": {"bin_size": 1.0, "volume": 21912244800.0, "rank": 0}}
+{"kind": "hvn", "symbol": "3350.0", "anchors": [["", 542.0]], "slope": 0.0, "level_now": 542.0, "strength": 0.44281531119075485, "meta": {"bin_size": 1.0, "volume": 9703077500.0, "rank": 1}}
+{"kind": "hvn", "symbol": "3350.0", "anchors": [["", 521.0]], "slope": 0.0, "level_now": 521.0, "strength": 0.40579001289726374, "meta": {"bin_size": 1.0, "volume": 8891770100.0, "rank": 2}}
 {"kind": "swing_resistance", "symbol": "3350.0", "anchors": [["2026-01-19T09:44:00", 551.5]], "slope": 0.0, "level_now": 551.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_resistance", "symbol": "3350.0", "anchors": [["2026-01-19T10:36:00", 542.5]], "slope": 0.0, "level_now": 542.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_resistance", "symbol": "3350.0", "anchors": [["2026-01-19T11:14:00", 542.5]], "slope": 0.0, "level_now": 542.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
@@ -50,6 +109,27 @@
 {"kind": "swing_resistance", "symbol": "3350.0", "anchors": [["2026-01-19T13:30:00", 548.5]], "slope": 0.0, "level_now": 548.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_resistance", "symbol": "3350.0", "anchors": [["2026-01-19T14:37:00", 554.5]], "slope": 0.0, "level_now": 554.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_resistance", "symbol": "3350.0", "anchors": [["2026-01-19T14:54:00", 549.5]], "slope": 0.0, "level_now": 549.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "3350.0", "anchors": [["2026-01-20T09:08:00", 551.5]], "slope": 0.0, "level_now": 551.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "3350.0", "anchors": [["2026-01-20T10:00:00", 541.5]], "slope": 0.0, "level_now": 541.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "3350.0", "anchors": [["2026-01-20T10:31:00", 540.5]], "slope": 0.0, "level_now": 540.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "3350.0", "anchors": [["2026-01-20T10:52:00", 538.5]], "slope": 0.0, "level_now": 538.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "3350.0", "anchors": [["2026-01-20T12:44:00", 533.5]], "slope": 0.0, "level_now": 533.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "3350.0", "anchors": [["2026-01-20T13:30:00", 531.5]], "slope": 0.0, "level_now": 531.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "3350.0", "anchors": [["2026-01-20T14:07:00", 526.5]], "slope": 0.0, "level_now": 526.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "3350.0", "anchors": [["2026-01-20T14:38:00", 526.5]], "slope": 0.0, "level_now": 526.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "3350.0", "anchors": [["2026-01-20T15:29:00", 521.5]], "slope": 0.0, "level_now": 521.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "3350.0", "anchors": [["2026-01-21T09:19:00", 501.5]], "slope": 0.0, "level_now": 501.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "3350.0", "anchors": [["2026-01-21T09:52:00", 516.5]], "slope": 0.0, "level_now": 516.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "3350.0", "anchors": [["2026-01-21T10:29:00", 509.5]], "slope": 0.0, "level_now": 509.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "3350.0", "anchors": [["2026-01-21T10:35:00", 510.5]], "slope": 0.0, "level_now": 510.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "3350.0", "anchors": [["2026-01-21T10:42:00", 513.5]], "slope": 0.0, "level_now": 513.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "3350.0", "anchors": [["2026-01-21T10:54:00", 511.5]], "slope": 0.0, "level_now": 511.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "3350.0", "anchors": [["2026-01-21T12:32:00", 513.5]], "slope": 0.0, "level_now": 513.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "3350.0", "anchors": [["2026-01-21T12:49:00", 512.5]], "slope": 0.0, "level_now": 512.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "3350.0", "anchors": [["2026-01-21T13:55:00", 511.5]], "slope": 0.0, "level_now": 511.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "3350.0", "anchors": [["2026-01-21T14:42:00", 519.5]], "slope": 0.0, "level_now": 519.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "3350.0", "anchors": [["2026-01-21T15:12:00", 520.5]], "slope": 0.0, "level_now": 520.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "3350.0", "anchors": [["2026-01-21T15:26:00", 519.5]], "slope": 0.0, "level_now": 519.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "3350.0", "anchors": [["2026-01-19T08:59:00", 558.5]], "slope": 0.0, "level_now": 558.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "3350.0", "anchors": [["2026-01-19T09:18:00", 538.5]], "slope": 0.0, "level_now": 538.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "3350.0", "anchors": [["2026-01-19T09:45:00", 548.5]], "slope": 0.0, "level_now": 548.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
@@ -64,16 +144,35 @@
 {"kind": "swing_support", "symbol": "3350.0", "anchors": [["2026-01-19T13:10:00", 546.5]], "slope": 0.0, "level_now": 546.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "3350.0", "anchors": [["2026-01-19T14:01:00", 545.5]], "slope": 0.0, "level_now": 545.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "3350.0", "anchors": [["2026-01-19T15:00:00", 544.5]], "slope": 0.0, "level_now": 544.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
-{"kind": "consolidation", "symbol": "3350.0", "anchors": [["", 541.5]], "slope": 0.0, "level_now": 541.5, "strength": 0.6, "meta": {"high": 541.5, "low": 541.5, "range_pct": 0.0, "duration_bars": 60}}
-{"kind": "consolidation", "symbol": "3350.0", "anchors": [["", 547.5]], "slope": 0.0, "level_now": 547.5, "strength": 0.6, "meta": {"high": 549.5, "low": 545.5, "range_pct": 0.730593607305936, "duration_bars": 60}}
-{"kind": "multi_day_vpoc", "symbol": "3350.0", "anchors": [["", 542.0]], "slope": 0.0, "level_now": 542.0, "strength": 1.0, "meta": {"bin_size": 1.0, "volume": 9607594900.0, "rank": 0, "lookback_days": 1}}
-{"kind": "multi_day_hvn", "symbol": "3350.0", "anchors": [["", 546.0]], "slope": 0.0, "level_now": 546.0, "strength": 0.1551775668643148, "meta": {"bin_size": 1.0, "volume": 1490883200.0, "rank": 1, "lookback_days": 1}}
-{"kind": "multi_day_hvn", "symbol": "3350.0", "anchors": [["", 548.0]], "slope": 0.0, "level_now": 548.0, "strength": 0.13211299115036584, "meta": {"bin_size": 1.0, "volume": 1269288100.0, "rank": 2, "lookback_days": 1}}
-{"kind": "recent_high", "symbol": "5016.0", "anchors": [["2026-01-19T17:21:00", 2708.75]], "slope": 0.0, "level_now": 2708.75, "strength": 1.0, "meta": {"lookback_bars": 180}}
-{"kind": "recent_low", "symbol": "5016.0", "anchors": [["2026-01-19T17:21:00", 2708.75]], "slope": 0.0, "level_now": 2708.75, "strength": 1.0, "meta": {"lookback_bars": 180}}
-{"kind": "vpoc", "symbol": "5016.0", "anchors": [["", 2709.0]], "slope": 0.0, "level_now": 2709.0, "strength": 1.0, "meta": {"bin_size": 1.0, "volume": 11174532000.0, "rank": 0}}
-{"kind": "hvn", "symbol": "5016.0", "anchors": [["", 2654.0]], "slope": 0.0, "level_now": 2654.0, "strength": 0.07566560281898159, "meta": {"bin_size": 1.0, "volume": 845527700.0, "rank": 1}}
-{"kind": "hvn", "symbol": "5016.0", "anchors": [["", 2652.0]], "slope": 0.0, "level_now": 2652.0, "strength": 0.03733786793039744, "meta": {"bin_size": 1.0, "volume": 417233200.0, "rank": 2}}
+{"kind": "swing_support", "symbol": "3350.0", "anchors": [["2026-01-20T08:38:00", 536.5]], "slope": 0.0, "level_now": 536.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "3350.0", "anchors": [["2026-01-20T08:58:00", 535.5]], "slope": 0.0, "level_now": 535.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "3350.0", "anchors": [["2026-01-20T09:51:00", 540.5]], "slope": 0.0, "level_now": 540.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "3350.0", "anchors": [["2026-01-20T10:18:00", 539.5]], "slope": 0.0, "level_now": 539.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "3350.0", "anchors": [["2026-01-20T10:24:00", 538.5]], "slope": 0.0, "level_now": 538.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "3350.0", "anchors": [["2026-01-20T10:48:00", 535.5]], "slope": 0.0, "level_now": 535.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "3350.0", "anchors": [["2026-01-20T13:14:00", 527.5]], "slope": 0.0, "level_now": 527.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "3350.0", "anchors": [["2026-01-20T14:47:00", 523.5]], "slope": 0.0, "level_now": 523.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "3350.0", "anchors": [["2026-01-21T08:51:00", 452.5]], "slope": 0.0, "level_now": 452.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "3350.0", "anchors": [["2026-01-21T11:02:00", 507.5]], "slope": 0.0, "level_now": 507.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "3350.0", "anchors": [["2026-01-21T11:15:00", 508.5]], "slope": 0.0, "level_now": 508.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "3350.0", "anchors": [["2026-01-21T14:05:00", 508.5]], "slope": 0.0, "level_now": 508.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "3350.0", "anchors": [["2026-01-21T15:22:00", 515.5]], "slope": 0.0, "level_now": 515.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "prev_high", "symbol": "3350.0", "anchors": [["", 520.5]], "slope": 0.0, "level_now": 520.5, "strength": 0.8, "meta": {"day": "2026-01-21"}}
+{"kind": "prev_low", "symbol": "3350.0", "anchors": [["", 452.5]], "slope": 0.0, "level_now": 452.5, "strength": 0.8, "meta": {"day": "2026-01-21"}}
+{"kind": "prev_close", "symbol": "3350.0", "anchors": [["", 515.5]], "slope": 0.0, "level_now": 515.5, "strength": 0.6, "meta": {"day": "2026-01-21"}}
+{"kind": "consolidation", "symbol": "3350.0", "anchors": [["", 515.5]], "slope": 0.0, "level_now": 515.5, "strength": 0.6, "meta": {"high": 515.5, "low": 515.5, "range_pct": 0.0, "duration_bars": 60}}
+{"kind": "consolidation", "symbol": "3350.0", "anchors": [["", 540.0]], "slope": 0.0, "level_now": 540.0, "strength": 0.6, "meta": {"high": 542.5, "low": 537.5, "range_pct": 0.9259259259259258, "duration_bars": 60}}
+{"kind": "consolidation", "symbol": "3350.0", "anchors": [["", 543.25]], "slope": 0.0, "level_now": 543.25, "strength": 0.6, "meta": {"high": 545.5, "low": 541.0, "range_pct": 0.8283479061205707, "duration_bars": 60}}
+{"kind": "consolidation", "symbol": "3350.0", "anchors": [["", 547.0]], "slope": 0.0, "level_now": 547.0, "strength": 0.6, "meta": {"high": 548.5, "low": 545.5, "range_pct": 0.5484460694698354, "duration_bars": 60}}
+{"kind": "consolidation", "symbol": "3350.0", "anchors": [["", 534.0]], "slope": 0.0, "level_now": 534.0, "strength": 0.6, "meta": {"high": 536.5, "low": 531.5, "range_pct": 0.9363295880149813, "duration_bars": 60}}
+{"kind": "multi_day_vpoc", "symbol": "3350.0", "anchors": [["", 516.0]], "slope": 0.0, "level_now": 516.0, "strength": 1.0, "meta": {"bin_size": 1.0, "volume": 21912244800.0, "rank": 0, "lookback_days": 4}}
+{"kind": "multi_day_hvn", "symbol": "3350.0", "anchors": [["", 542.0]], "slope": 0.0, "level_now": 542.0, "strength": 0.44281531119075485, "meta": {"bin_size": 1.0, "volume": 9703077500.0, "rank": 1, "lookback_days": 4}}
+{"kind": "multi_day_hvn", "symbol": "3350.0", "anchors": [["", 521.0]], "slope": 0.0, "level_now": 521.0, "strength": 0.40579001289726374, "meta": {"bin_size": 1.0, "volume": 8891770100.0, "rank": 2, "lookback_days": 4}}
+{"kind": "recent_high", "symbol": "5016.0", "anchors": [["2026-01-22T02:34:00", 2654.25]], "slope": 0.0, "level_now": 2654.25, "strength": 1.0, "meta": {"lookback_bars": 180}}
+{"kind": "recent_low", "symbol": "5016.0", "anchors": [["2026-01-22T02:34:00", 2654.25]], "slope": 0.0, "level_now": 2654.25, "strength": 1.0, "meta": {"lookback_bars": 180}}
+{"kind": "vpoc", "symbol": "5016.0", "anchors": [["", 2654.0]], "slope": 0.0, "level_now": 2654.0, "strength": 1.0, "meta": {"bin_size": 1.0, "volume": 37382599600.0, "rank": 0}}
+{"kind": "hvn", "symbol": "5016.0", "anchors": [["", 2675.0]], "slope": 0.0, "level_now": 2675.0, "strength": 0.5454229913962431, "meta": {"bin_size": 1.0, "volume": 20389329300.0, "rank": 1}}
+{"kind": "hvn", "symbol": "5016.0", "anchors": [["", 2709.0]], "slope": 0.0, "level_now": 2709.0, "strength": 0.3007131130602271, "meta": {"bin_size": 1.0, "volume": 11241437900.0, "rank": 2}}
 {"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-19T09:09:00", 2673.0]], "slope": 0.0, "level_now": 2673.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-19T09:17:00", 2656.0]], "slope": 0.0, "level_now": 2656.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-19T09:26:00", 2666.5]], "slope": 0.0, "level_now": 2666.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
@@ -105,6 +204,67 @@
 {"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-19T15:14:00", 2709.0]], "slope": 0.0, "level_now": 2709.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-19T15:22:00", 2716.0]], "slope": 0.0, "level_now": 2716.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-19T15:26:00", 2713.25]], "slope": 0.0, "level_now": 2713.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-20T09:09:00", 2780.25]], "slope": 0.0, "level_now": 2780.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-20T09:20:00", 2747.75]], "slope": 0.0, "level_now": 2747.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-20T09:27:00", 2731.75]], "slope": 0.0, "level_now": 2731.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-20T09:36:00", 2734.25]], "slope": 0.0, "level_now": 2734.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-20T09:43:00", 2740.25]], "slope": 0.0, "level_now": 2740.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-20T09:48:00", 2744.75]], "slope": 0.0, "level_now": 2744.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-20T10:01:00", 2717.25]], "slope": 0.0, "level_now": 2717.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-20T10:08:00", 2713.0]], "slope": 0.0, "level_now": 2713.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-20T10:17:00", 2722.5]], "slope": 0.0, "level_now": 2722.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-20T10:27:00", 2733.75]], "slope": 0.0, "level_now": 2733.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-20T10:51:00", 2702.75]], "slope": 0.0, "level_now": 2702.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-20T11:00:00", 2706.25]], "slope": 0.0, "level_now": 2706.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-20T11:11:00", 2689.0]], "slope": 0.0, "level_now": 2689.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-20T11:15:00", 2688.75]], "slope": 0.0, "level_now": 2688.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-20T11:28:00", 2657.5]], "slope": 0.0, "level_now": 2657.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-20T12:24:00", 2646.75]], "slope": 0.0, "level_now": 2646.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-20T12:36:00", 2657.5]], "slope": 0.0, "level_now": 2657.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-20T12:57:00", 2662.5]], "slope": 0.0, "level_now": 2662.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-20T13:02:00", 2663.75]], "slope": 0.0, "level_now": 2663.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-20T13:11:00", 2650.25]], "slope": 0.0, "level_now": 2650.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-20T13:21:00", 2650.25]], "slope": 0.0, "level_now": 2650.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-20T13:31:00", 2664.5]], "slope": 0.0, "level_now": 2664.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-20T13:42:00", 2677.75]], "slope": 0.0, "level_now": 2677.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-20T13:53:00", 2681.5]], "slope": 0.0, "level_now": 2681.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-20T14:00:00", 2677.25]], "slope": 0.0, "level_now": 2677.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-20T14:06:00", 2685.75]], "slope": 0.0, "level_now": 2685.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-20T14:34:00", 2696.75]], "slope": 0.0, "level_now": 2696.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-20T14:42:00", 2700.25]], "slope": 0.0, "level_now": 2700.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-20T14:52:00", 2697.75]], "slope": 0.0, "level_now": 2697.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-20T14:58:00", 2696.75]], "slope": 0.0, "level_now": 2696.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-20T15:05:00", 2692.25]], "slope": 0.0, "level_now": 2692.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-20T15:14:00", 2689.0]], "slope": 0.0, "level_now": 2689.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-21T09:04:00", 2666.0]], "slope": 0.0, "level_now": 2666.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-21T09:13:00", 2678.25]], "slope": 0.0, "level_now": 2678.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-21T09:19:00", 2684.75]], "slope": 0.0, "level_now": 2684.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-21T09:28:00", 2695.5]], "slope": 0.0, "level_now": 2695.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-21T09:53:00", 2741.25]], "slope": 0.0, "level_now": 2741.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-21T10:15:00", 2735.5]], "slope": 0.0, "level_now": 2735.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-21T10:19:00", 2733.75]], "slope": 0.0, "level_now": 2733.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-21T10:25:00", 2731.25]], "slope": 0.0, "level_now": 2731.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-21T10:35:00", 2724.75]], "slope": 0.0, "level_now": 2724.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-21T11:01:00", 2731.75]], "slope": 0.0, "level_now": 2731.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-21T11:11:00", 2730.75]], "slope": 0.0, "level_now": 2730.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-21T11:21:00", 2729.75]], "slope": 0.0, "level_now": 2729.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-21T11:28:00", 2724.75]], "slope": 0.0, "level_now": 2724.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-21T12:26:00", 2729.75]], "slope": 0.0, "level_now": 2729.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-21T12:36:00", 2718.25]], "slope": 0.0, "level_now": 2718.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-21T12:48:00", 2694.75]], "slope": 0.0, "level_now": 2694.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-21T12:56:00", 2683.25]], "slope": 0.0, "level_now": 2683.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-21T13:05:00", 2669.75]], "slope": 0.0, "level_now": 2669.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-21T13:10:00", 2667.25]], "slope": 0.0, "level_now": 2667.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-21T13:16:00", 2661.5]], "slope": 0.0, "level_now": 2661.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-21T13:37:00", 2649.25]], "slope": 0.0, "level_now": 2649.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-21T13:47:00", 2662.75]], "slope": 0.0, "level_now": 2662.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-21T13:52:00", 2666.25]], "slope": 0.0, "level_now": 2666.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-21T14:02:00", 2668.25]], "slope": 0.0, "level_now": 2668.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-21T14:11:00", 2677.75]], "slope": 0.0, "level_now": 2677.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-21T14:44:00", 2677.75]], "slope": 0.0, "level_now": 2677.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-21T14:50:00", 2675.75]], "slope": 0.0, "level_now": 2675.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-21T15:16:00", 2661.0]], "slope": 0.0, "level_now": 2661.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "5016.0", "anchors": [["2026-01-21T15:24:00", 2664.25]], "slope": 0.0, "level_now": 2664.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-19T09:00:00", 2588.5]], "slope": 0.0, "level_now": 2588.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-19T09:06:00", 2647.25]], "slope": 0.0, "level_now": 2647.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-19T09:21:00", 2643.0]], "slope": 0.0, "level_now": 2643.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
@@ -134,17 +294,80 @@
 {"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-19T15:07:00", 2696.75]], "slope": 0.0, "level_now": 2696.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-19T15:17:00", 2703.0]], "slope": 0.0, "level_now": 2703.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-19T15:24:00", 2708.75]], "slope": 0.0, "level_now": 2708.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
-{"kind": "consolidation", "symbol": "5016.0", "anchors": [["", 2708.75]], "slope": 0.0, "level_now": 2708.75, "strength": 0.6, "meta": {"high": 2708.75, "low": 2708.75, "range_pct": 0.0, "duration_bars": 60}}
-{"kind": "consolidation", "symbol": "5016.0", "anchors": [["", 2652.125]], "slope": 0.0, "level_now": 2652.125, "strength": 0.6, "meta": {"high": 2663.0, "low": 2641.25, "range_pct": 0.8200970919545648, "duration_bars": 60}}
-{"kind": "consolidation", "symbol": "5016.0", "anchors": [["", 2667.375]], "slope": 0.0, "level_now": 2667.375, "strength": 0.6, "meta": {"high": 2679.75, "low": 2655.0, "range_pct": 0.9278785322648672, "duration_bars": 60}}
-{"kind": "multi_day_vpoc", "symbol": "5016.0", "anchors": [["", 2709.0]], "slope": 0.0, "level_now": 2709.0, "strength": 1.0, "meta": {"bin_size": 1.0, "volume": 11174532000.0, "rank": 0, "lookback_days": 1}}
-{"kind": "multi_day_hvn", "symbol": "5016.0", "anchors": [["", 2654.0]], "slope": 0.0, "level_now": 2654.0, "strength": 0.07566560281898159, "meta": {"bin_size": 1.0, "volume": 845527700.0, "rank": 1, "lookback_days": 1}}
-{"kind": "multi_day_hvn", "symbol": "5016.0", "anchors": [["", 2652.0]], "slope": 0.0, "level_now": 2652.0, "strength": 0.03733786793039744, "meta": {"bin_size": 1.0, "volume": 417233200.0, "rank": 2, "lookback_days": 1}}
-{"kind": "recent_high", "symbol": "6315.0", "anchors": [["2026-01-19T17:21:00", 3120.0]], "slope": 0.0, "level_now": 3120.0, "strength": 1.0, "meta": {"lookback_bars": 180}}
-{"kind": "recent_low", "symbol": "6315.0", "anchors": [["2026-01-19T17:21:00", 3120.0]], "slope": 0.0, "level_now": 3120.0, "strength": 1.0, "meta": {"lookback_bars": 180}}
-{"kind": "vpoc", "symbol": "6315.0", "anchors": [["", 3120.0]], "slope": 0.0, "level_now": 3120.0, "strength": 1.0, "meta": {"bin_size": 1.0, "volume": 1438607500.0, "rank": 0}}
-{"kind": "hvn", "symbol": "6315.0", "anchors": [["", 3112.0]], "slope": 0.0, "level_now": 3112.0, "strength": 0.07739101874555777, "meta": {"bin_size": 1.0, "volume": 111335300.0, "rank": 1}}
-{"kind": "hvn", "symbol": "6315.0", "anchors": [["", 3118.0]], "slope": 0.0, "level_now": 3118.0, "strength": 0.061374766918704374, "meta": {"bin_size": 1.0, "volume": 88294200.0, "rank": 2}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-20T08:45:00", 2749.75]], "slope": 0.0, "level_now": 2749.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-20T09:00:00", 2731.75]], "slope": 0.0, "level_now": 2731.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-20T09:07:00", 2749.0]], "slope": 0.0, "level_now": 2749.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-20T09:28:00", 2714.25]], "slope": 0.0, "level_now": 2714.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-20T09:34:00", 2718.75]], "slope": 0.0, "level_now": 2718.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-20T09:44:00", 2736.25]], "slope": 0.0, "level_now": 2736.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-20T09:58:00", 2701.0]], "slope": 0.0, "level_now": 2701.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-20T10:05:00", 2707.5]], "slope": 0.0, "level_now": 2707.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-20T10:11:00", 2704.0]], "slope": 0.0, "level_now": 2704.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-20T10:20:00", 2717.25]], "slope": 0.0, "level_now": 2717.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-20T10:43:00", 2697.5]], "slope": 0.0, "level_now": 2697.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-20T10:48:00", 2695.75]], "slope": 0.0, "level_now": 2695.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-20T10:53:00", 2697.25]], "slope": 0.0, "level_now": 2697.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-20T10:57:00", 2698.75]], "slope": 0.0, "level_now": 2698.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-20T11:08:00", 2677.25]], "slope": 0.0, "level_now": 2677.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-20T12:06:00", 2638.25]], "slope": 0.0, "level_now": 2638.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-20T12:41:00", 2640.25]], "slope": 0.0, "level_now": 2640.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-20T12:49:00", 2635.25]], "slope": 0.0, "level_now": 2635.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-20T13:00:00", 2655.0]], "slope": 0.0, "level_now": 2655.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-20T13:16:00", 2637.75]], "slope": 0.0, "level_now": 2637.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-20T13:24:00", 2645.5]], "slope": 0.0, "level_now": 2645.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-20T13:41:00", 2670.75]], "slope": 0.0, "level_now": 2670.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-20T13:58:00", 2670.75]], "slope": 0.0, "level_now": 2670.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-20T14:08:00", 2678.75]], "slope": 0.0, "level_now": 2678.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-20T14:24:00", 2690.25]], "slope": 0.0, "level_now": 2690.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-20T14:29:00", 2689.25]], "slope": 0.0, "level_now": 2689.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-20T14:40:00", 2693.75]], "slope": 0.0, "level_now": 2693.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-20T14:49:00", 2693.0]], "slope": 0.0, "level_now": 2693.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-20T15:02:00", 2684.75]], "slope": 0.0, "level_now": 2684.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-20T15:10:00", 2683.25]], "slope": 0.0, "level_now": 2683.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-20T15:18:00", 2681.25]], "slope": 0.0, "level_now": 2681.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-20T15:25:00", 2676.75]], "slope": 0.0, "level_now": 2676.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-21T09:06:00", 2637.5]], "slope": 0.0, "level_now": 2637.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-21T09:15:00", 2658.25]], "slope": 0.0, "level_now": 2658.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-21T09:43:00", 2708.75]], "slope": 0.0, "level_now": 2708.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-21T10:04:00", 2715.0]], "slope": 0.0, "level_now": 2715.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-21T10:32:00", 2715.25]], "slope": 0.0, "level_now": 2715.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-21T10:39:00", 2710.75]], "slope": 0.0, "level_now": 2710.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-21T10:47:00", 2705.75]], "slope": 0.0, "level_now": 2705.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-21T10:57:00", 2716.75]], "slope": 0.0, "level_now": 2716.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-21T11:04:00", 2712.75]], "slope": 0.0, "level_now": 2712.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-21T11:14:00", 2726.75]], "slope": 0.0, "level_now": 2726.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-21T12:23:00", 2715.25]], "slope": 0.0, "level_now": 2715.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-21T12:33:00", 2713.25]], "slope": 0.0, "level_now": 2713.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-21T12:45:00", 2691.0]], "slope": 0.0, "level_now": 2691.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-21T12:54:00", 2673.25]], "slope": 0.0, "level_now": 2673.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-21T13:00:00", 2666.25]], "slope": 0.0, "level_now": 2666.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-21T13:08:00", 2662.25]], "slope": 0.0, "level_now": 2662.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-21T13:15:00", 2647.5]], "slope": 0.0, "level_now": 2647.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-21T13:20:00", 2655.0]], "slope": 0.0, "level_now": 2655.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-21T13:41:00", 2641.0]], "slope": 0.0, "level_now": 2641.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-21T13:59:00", 2655.25]], "slope": 0.0, "level_now": 2655.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-21T14:24:00", 2664.75]], "slope": 0.0, "level_now": 2664.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-21T14:30:00", 2661.75]], "slope": 0.0, "level_now": 2661.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-21T14:46:00", 2674.5]], "slope": 0.0, "level_now": 2674.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-21T14:54:00", 2667.25]], "slope": 0.0, "level_now": 2667.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-21T15:09:00", 2646.25]], "slope": 0.0, "level_now": 2646.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "5016.0", "anchors": [["2026-01-21T15:20:00", 2657.25]], "slope": 0.0, "level_now": 2657.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "prev_high", "symbol": "5016.0", "anchors": [["", 2741.25]], "slope": 0.0, "level_now": 2741.25, "strength": 0.8, "meta": {"day": "2026-01-21"}}
+{"kind": "prev_low", "symbol": "5016.0", "anchors": [["", 2500.25]], "slope": 0.0, "level_now": 2500.25, "strength": 0.8, "meta": {"day": "2026-01-21"}}
+{"kind": "prev_close", "symbol": "5016.0", "anchors": [["", 2654.25]], "slope": 0.0, "level_now": 2654.25, "strength": 0.6, "meta": {"day": "2026-01-21"}}
+{"kind": "consolidation", "symbol": "5016.0", "anchors": [["", 2654.25]], "slope": 0.0, "level_now": 2654.25, "strength": 0.6, "meta": {"high": 2654.25, "low": 2654.25, "range_pct": 0.0, "duration_bars": 60}}
+{"kind": "consolidation", "symbol": "5016.0", "anchors": [["", 2669.75]], "slope": 0.0, "level_now": 2669.75, "strength": 0.6, "meta": {"high": 2679.75, "low": 2659.75, "range_pct": 0.7491338140275307, "duration_bars": 60}}
+{"kind": "consolidation", "symbol": "5016.0", "anchors": [["", 2706.375]], "slope": 0.0, "level_now": 2706.375, "strength": 0.6, "meta": {"high": 2716.0, "low": 2696.75, "range_pct": 0.7112835434852893, "duration_bars": 60}}
+{"kind": "consolidation", "symbol": "5016.0", "anchors": [["", 2687.5]], "slope": 0.0, "level_now": 2687.5, "strength": 0.6, "meta": {"high": 2700.25, "low": 2674.75, "range_pct": 0.9488372093023256, "duration_bars": 60}}
+{"kind": "consolidation", "symbol": "5016.0", "anchors": [["", 2721.75]], "slope": 0.0, "level_now": 2721.75, "strength": 0.6, "meta": {"high": 2730.75, "low": 2712.75, "range_pct": 0.6613392119041058, "duration_bars": 60}}
+{"kind": "multi_day_vpoc", "symbol": "5016.0", "anchors": [["", 2654.0]], "slope": 0.0, "level_now": 2654.0, "strength": 1.0, "meta": {"bin_size": 1.0, "volume": 37382599600.0, "rank": 0, "lookback_days": 4}}
+{"kind": "multi_day_hvn", "symbol": "5016.0", "anchors": [["", 2675.0]], "slope": 0.0, "level_now": 2675.0, "strength": 0.5454229913962431, "meta": {"bin_size": 1.0, "volume": 20389329300.0, "rank": 1, "lookback_days": 4}}
+{"kind": "multi_day_hvn", "symbol": "5016.0", "anchors": [["", 2709.0]], "slope": 0.0, "level_now": 2709.0, "strength": 0.3007131130602271, "meta": {"bin_size": 1.0, "volume": 11241437900.0, "rank": 2, "lookback_days": 4}}
+{"kind": "recent_high", "symbol": "6315.0", "anchors": [["2026-01-22T02:34:00", 3007.5]], "slope": 0.0, "level_now": 3007.5, "strength": 1.0, "meta": {"lookback_bars": 180}}
+{"kind": "recent_low", "symbol": "6315.0", "anchors": [["2026-01-22T02:34:00", 3007.5]], "slope": 0.0, "level_now": 3007.5, "strength": 1.0, "meta": {"lookback_bars": 180}}
+{"kind": "vpoc", "symbol": "6315.0", "anchors": [["", 3008.0]], "slope": 0.0, "level_now": 3008.0, "strength": 1.0, "meta": {"bin_size": 1.0, "volume": 4498302900.0, "rank": 0}}
+{"kind": "hvn", "symbol": "6315.0", "anchors": [["", 2970.0]], "slope": 0.0, "level_now": 2970.0, "strength": 0.41862114265359945, "meta": {"bin_size": 1.0, "volume": 1883084700.0, "rank": 1}}
+{"kind": "hvn", "symbol": "6315.0", "anchors": [["", 3120.0]], "slope": 0.0, "level_now": 3120.0, "strength": 0.3198111670070061, "meta": {"bin_size": 1.0, "volume": 1438607500.0, "rank": 2}}
 {"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-19T09:08:00", 3057.5]], "slope": 0.0, "level_now": 3057.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-19T09:31:00", 3032.5]], "slope": 0.0, "level_now": 3032.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-19T09:42:00", 3045.0]], "slope": 0.0, "level_now": 3045.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
@@ -162,6 +385,36 @@
 {"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-19T14:48:00", 3097.5]], "slope": 0.0, "level_now": 3097.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-19T15:04:00", 3112.5]], "slope": 0.0, "level_now": 3112.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-19T15:09:00", 3117.5]], "slope": 0.0, "level_now": 3117.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-20T08:58:00", 3152.5]], "slope": 0.0, "level_now": 3152.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-20T09:31:00", 3042.5]], "slope": 0.0, "level_now": 3042.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-20T09:44:00", 3062.5]], "slope": 0.0, "level_now": 3062.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-20T09:50:00", 3052.5]], "slope": 0.0, "level_now": 3052.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-20T10:00:00", 3022.5]], "slope": 0.0, "level_now": 3022.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-20T12:36:00", 2982.0]], "slope": 0.0, "level_now": 2982.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-20T12:42:00", 2993.0]], "slope": 0.0, "level_now": 2993.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-20T13:05:00", 2998.5]], "slope": 0.0, "level_now": 2998.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-20T13:09:00", 2994.5]], "slope": 0.0, "level_now": 2994.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-20T13:19:00", 2992.5]], "slope": 0.0, "level_now": 2992.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-20T13:55:00", 2983.5]], "slope": 0.0, "level_now": 2983.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-20T14:08:00", 2997.5]], "slope": 0.0, "level_now": 2997.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-20T14:17:00", 2988.5]], "slope": 0.0, "level_now": 2988.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-20T14:33:00", 2993.5]], "slope": 0.0, "level_now": 2993.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-21T09:04:00", 2935.0]], "slope": 0.0, "level_now": 2935.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-21T09:10:00", 2952.0]], "slope": 0.0, "level_now": 2952.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-21T09:26:00", 2993.0]], "slope": 0.0, "level_now": 2993.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-21T09:32:00", 2993.0]], "slope": 0.0, "level_now": 2993.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-21T09:48:00", 3027.5]], "slope": 0.0, "level_now": 3027.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-21T10:10:00", 3062.5]], "slope": 0.0, "level_now": 3062.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-21T10:19:00", 3067.5]], "slope": 0.0, "level_now": 3067.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-21T10:54:00", 3057.5]], "slope": 0.0, "level_now": 3057.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-21T11:12:00", 3027.5]], "slope": 0.0, "level_now": 3027.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-21T11:27:00", 3017.5]], "slope": 0.0, "level_now": 3017.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-21T12:30:00", 3040.0]], "slope": 0.0, "level_now": 3040.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-21T12:38:00", 3017.5]], "slope": 0.0, "level_now": 3017.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-21T12:55:00", 3007.5]], "slope": 0.0, "level_now": 3007.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-21T14:14:00", 3017.5]], "slope": 0.0, "level_now": 3017.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-21T14:59:00", 3017.5]], "slope": 0.0, "level_now": 3017.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6315.0", "anchors": [["2026-01-21T15:22:00", 3010.0]], "slope": 0.0, "level_now": 3010.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-19T09:01:00", 2994.0]], "slope": 0.0, "level_now": 2994.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-19T09:28:00", 3017.5]], "slope": 0.0, "level_now": 3017.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-19T09:33:00", 3017.5]], "slope": 0.0, "level_now": 3017.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
@@ -178,16 +431,56 @@
 {"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-19T14:07:00", 3092.5]], "slope": 0.0, "level_now": 3092.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-19T14:31:00", 3085.0]], "slope": 0.0, "level_now": 3085.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-19T15:17:00", 3102.5]], "slope": 0.0, "level_now": 3102.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-20T09:07:00", 3047.5]], "slope": 0.0, "level_now": 3047.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-20T09:34:00", 3027.5]], "slope": 0.0, "level_now": 3027.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-20T10:43:00", 2984.0]], "slope": 0.0, "level_now": 2984.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-20T12:06:00", 2945.5]], "slope": 0.0, "level_now": 2945.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-20T12:13:00", 2945.5]], "slope": 0.0, "level_now": 2945.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-20T12:27:00", 2936.5]], "slope": 0.0, "level_now": 2936.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-20T12:32:00", 2938.0]], "slope": 0.0, "level_now": 2938.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-20T12:48:00", 2974.5]], "slope": 0.0, "level_now": 2974.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-20T13:03:00", 2987.5]], "slope": 0.0, "level_now": 2987.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-20T13:16:00", 2977.0]], "slope": 0.0, "level_now": 2977.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-20T13:35:00", 2995.0]], "slope": 0.0, "level_now": 2995.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-20T13:59:00", 2972.0]], "slope": 0.0, "level_now": 2972.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-20T14:16:00", 2983.5]], "slope": 0.0, "level_now": 2983.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-20T14:34:00", 2989.5]], "slope": 0.0, "level_now": 2989.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-20T14:52:00", 3002.5]], "slope": 0.0, "level_now": 3002.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-20T15:08:00", 2975.5]], "slope": 0.0, "level_now": 2975.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-20T15:12:00", 2974.0]], "slope": 0.0, "level_now": 2974.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-20T15:28:00", 2955.5]], "slope": 0.0, "level_now": 2955.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-21T08:51:00", 2670.5]], "slope": 0.0, "level_now": 2670.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-21T09:06:00", 2885.5]], "slope": 0.0, "level_now": 2885.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-21T09:13:00", 2936.5]], "slope": 0.0, "level_now": 2936.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-21T09:30:00", 2972.5]], "slope": 0.0, "level_now": 2972.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-21T09:36:00", 2985.5]], "slope": 0.0, "level_now": 2985.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-21T09:55:00", 3010.0]], "slope": 0.0, "level_now": 3010.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-21T10:00:00", 3007.5]], "slope": 0.0, "level_now": 3007.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-21T10:32:00", 3042.5]], "slope": 0.0, "level_now": 3042.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-21T10:39:00", 3042.5]], "slope": 0.0, "level_now": 3042.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-21T11:07:00", 3020.0]], "slope": 0.0, "level_now": 3020.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-21T11:25:00", 3007.5]], "slope": 0.0, "level_now": 3007.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-21T11:29:00", 3010.0]], "slope": 0.0, "level_now": 3010.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-21T12:09:00", 3017.5]], "slope": 0.0, "level_now": 3017.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-21T12:53:00", 2992.5]], "slope": 0.0, "level_now": 2992.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-21T13:00:00", 2985.5]], "slope": 0.0, "level_now": 2985.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6315.0", "anchors": [["2026-01-21T14:27:00", 3002.5]], "slope": 0.0, "level_now": 3002.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "prev_high", "symbol": "6315.0", "anchors": [["", 3067.5]], "slope": 0.0, "level_now": 3067.5, "strength": 0.8, "meta": {"day": "2026-01-21"}}
+{"kind": "prev_low", "symbol": "6315.0", "anchors": [["", 2670.5]], "slope": 0.0, "level_now": 2670.5, "strength": 0.8, "meta": {"day": "2026-01-21"}}
+{"kind": "prev_close", "symbol": "6315.0", "anchors": [["", 3007.5]], "slope": 0.0, "level_now": 3007.5, "strength": 0.6, "meta": {"day": "2026-01-21"}}
+{"kind": "consolidation", "symbol": "6315.0", "anchors": [["", 3007.5]], "slope": 0.0, "level_now": 3007.5, "strength": 0.6, "meta": {"high": 3007.5, "low": 3007.5, "range_pct": 0.0, "duration_bars": 60}}
+{"kind": "consolidation", "symbol": "6315.0", "anchors": [["", 3120.0]], "slope": 0.0, "level_now": 3120.0, "strength": 0.6, "meta": {"high": 3120.0, "low": 3120.0, "range_pct": 0.0, "duration_bars": 60}}
+{"kind": "consolidation", "symbol": "6315.0", "anchors": [["", 2950.75]], "slope": 0.0, "level_now": 2950.75, "strength": 0.6, "meta": {"high": 2965.0, "low": 2936.5, "range_pct": 0.9658561382699314, "duration_bars": 60}}
+{"kind": "consolidation", "symbol": "6315.0", "anchors": [["", 2970.5]], "slope": 0.0, "level_now": 2970.5, "strength": 0.6, "meta": {"high": 2970.5, "low": 2970.5, "range_pct": 0.0, "duration_bars": 60}}
 {"kind": "consolidation", "symbol": "6315.0", "anchors": [["", 3077.5]], "slope": 0.0, "level_now": 3077.5, "strength": 0.6, "meta": {"high": 3092.5, "low": 3062.5, "range_pct": 0.974817221770918, "duration_bars": 60}}
-{"kind": "consolidation", "symbol": "6315.0", "anchors": [["", 3122.5]], "slope": 0.0, "level_now": 3122.5, "strength": 0.6, "meta": {"high": 3137.5, "low": 3107.5, "range_pct": 0.9607686148919135, "duration_bars": 60}}
-{"kind": "multi_day_vpoc", "symbol": "6315.0", "anchors": [["", 3120.0]], "slope": 0.0, "level_now": 3120.0, "strength": 1.0, "meta": {"bin_size": 1.0, "volume": 1438607500.0, "rank": 0, "lookback_days": 1}}
-{"kind": "multi_day_hvn", "symbol": "6315.0", "anchors": [["", 3112.0]], "slope": 0.0, "level_now": 3112.0, "strength": 0.07739101874555777, "meta": {"bin_size": 1.0, "volume": 111335300.0, "rank": 1, "lookback_days": 1}}
-{"kind": "multi_day_hvn", "symbol": "6315.0", "anchors": [["", 3118.0]], "slope": 0.0, "level_now": 3118.0, "strength": 0.061374766918704374, "meta": {"bin_size": 1.0, "volume": 88294200.0, "rank": 2, "lookback_days": 1}}
-{"kind": "recent_high", "symbol": "6526.0", "anchors": [["2026-01-19T17:21:00", 2313.0]], "slope": 0.0, "level_now": 2313.0, "strength": 1.0, "meta": {"lookback_bars": 180}}
-{"kind": "recent_low", "symbol": "6526.0", "anchors": [["2026-01-19T17:21:00", 2313.0]], "slope": 0.0, "level_now": 2313.0, "strength": 1.0, "meta": {"lookback_bars": 180}}
-{"kind": "vpoc", "symbol": "6526.0", "anchors": [["", 2313.0]], "slope": 0.0, "level_now": 2313.0, "strength": 1.0, "meta": {"bin_size": 1.0, "volume": 1098928600.0, "rank": 0}}
-{"kind": "hvn", "symbol": "6526.0", "anchors": [["", 2292.0]], "slope": 0.0, "level_now": 2292.0, "strength": 0.07696651083609982, "meta": {"bin_size": 1.0, "volume": 84580700.0, "rank": 1}}
-{"kind": "hvn", "symbol": "6526.0", "anchors": [["", 2302.0]], "slope": 0.0, "level_now": 2302.0, "strength": 0.034916645176037826, "meta": {"bin_size": 1.0, "volume": 38370900.0, "rank": 2}}
+{"kind": "multi_day_vpoc", "symbol": "6315.0", "anchors": [["", 3008.0]], "slope": 0.0, "level_now": 3008.0, "strength": 1.0, "meta": {"bin_size": 1.0, "volume": 4498302900.0, "rank": 0, "lookback_days": 4}}
+{"kind": "multi_day_hvn", "symbol": "6315.0", "anchors": [["", 2970.0]], "slope": 0.0, "level_now": 2970.0, "strength": 0.41862114265359945, "meta": {"bin_size": 1.0, "volume": 1883084700.0, "rank": 1, "lookback_days": 4}}
+{"kind": "multi_day_hvn", "symbol": "6315.0", "anchors": [["", 3120.0]], "slope": 0.0, "level_now": 3120.0, "strength": 0.3198111670070061, "meta": {"bin_size": 1.0, "volume": 1438607500.0, "rank": 2, "lookback_days": 4}}
+{"kind": "recent_high", "symbol": "6526.0", "anchors": [["2026-01-22T02:34:00", 2295.25]], "slope": 0.0, "level_now": 2295.25, "strength": 1.0, "meta": {"lookback_bars": 180}}
+{"kind": "recent_low", "symbol": "6526.0", "anchors": [["2026-01-22T02:34:00", 2295.25]], "slope": 0.0, "level_now": 2295.25, "strength": 1.0, "meta": {"lookback_bars": 180}}
+{"kind": "vpoc", "symbol": "6526.0", "anchors": [["", 2295.0]], "slope": 0.0, "level_now": 2295.0, "strength": 1.0, "meta": {"bin_size": 1.0, "volume": 2259517800.0, "rank": 0}}
+{"kind": "hvn", "symbol": "6526.0", "anchors": [["", 2293.0]], "slope": 0.0, "level_now": 2293.0, "strength": 0.5147817379442641, "meta": {"bin_size": 1.0, "volume": 1163158500.0, "rank": 1}}
+{"kind": "hvn", "symbol": "6526.0", "anchors": [["", 2313.0]], "slope": 0.0, "level_now": 2313.0, "strength": 0.48900278634671523, "meta": {"bin_size": 1.0, "volume": 1104910500.0, "rank": 2}}
 {"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-19T09:24:00", 2253.75]], "slope": 0.0, "level_now": 2253.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-19T09:39:00", 2253.5]], "slope": 0.0, "level_now": 2253.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-19T09:49:00", 2267.25]], "slope": 0.0, "level_now": 2267.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
@@ -205,6 +498,59 @@
 {"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-19T13:29:00", 2303.75]], "slope": 0.0, "level_now": 2303.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-19T14:40:00", 2325.75]], "slope": 0.0, "level_now": 2325.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-19T14:59:00", 2316.75]], "slope": 0.0, "level_now": 2316.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-20T09:00:00", 2316.0]], "slope": 0.0, "level_now": 2316.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-20T09:44:00", 2303.5]], "slope": 0.0, "level_now": 2303.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-20T09:49:00", 2305.5]], "slope": 0.0, "level_now": 2305.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-20T10:06:00", 2310.0]], "slope": 0.0, "level_now": 2310.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-20T10:16:00", 2313.5]], "slope": 0.0, "level_now": 2313.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-20T10:31:00", 2319.0]], "slope": 0.0, "level_now": 2319.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-20T10:37:00", 2318.5]], "slope": 0.0, "level_now": 2318.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-20T10:42:00", 2319.75]], "slope": 0.0, "level_now": 2319.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-20T10:51:00", 2319.0]], "slope": 0.0, "level_now": 2319.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-20T11:03:00", 2317.75]], "slope": 0.0, "level_now": 2317.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-20T11:19:00", 2306.25]], "slope": 0.0, "level_now": 2306.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-20T12:05:00", 2295.25]], "slope": 0.0, "level_now": 2295.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-20T12:36:00", 2308.0]], "slope": 0.0, "level_now": 2308.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-20T12:42:00", 2320.25]], "slope": 0.0, "level_now": 2320.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-20T12:51:00", 2324.25]], "slope": 0.0, "level_now": 2324.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-20T13:05:00", 2308.0]], "slope": 0.0, "level_now": 2308.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-20T13:30:00", 2298.25]], "slope": 0.0, "level_now": 2298.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-20T13:49:00", 2303.25]], "slope": 0.0, "level_now": 2303.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-20T14:13:00", 2304.75]], "slope": 0.0, "level_now": 2304.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-20T14:28:00", 2303.0]], "slope": 0.0, "level_now": 2303.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-20T14:38:00", 2299.25]], "slope": 0.0, "level_now": 2299.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-20T14:48:00", 2302.25]], "slope": 0.0, "level_now": 2302.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-21T08:59:00", 2248.25]], "slope": 0.0, "level_now": 2248.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-21T09:04:00", 2255.5]], "slope": 0.0, "level_now": 2255.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-21T09:10:00", 2253.25]], "slope": 0.0, "level_now": 2253.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-21T09:29:00", 2259.75]], "slope": 0.0, "level_now": 2259.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-21T09:34:00", 2259.5]], "slope": 0.0, "level_now": 2259.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-21T09:54:00", 2275.25]], "slope": 0.0, "level_now": 2275.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-21T10:02:00", 2290.75]], "slope": 0.0, "level_now": 2290.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-21T10:27:00", 2289.5]], "slope": 0.0, "level_now": 2289.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-21T10:35:00", 2287.5]], "slope": 0.0, "level_now": 2287.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-21T10:45:00", 2296.25]], "slope": 0.0, "level_now": 2296.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-21T10:53:00", 2294.25]], "slope": 0.0, "level_now": 2294.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-21T10:58:00", 2292.75]], "slope": 0.0, "level_now": 2292.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-21T11:21:00", 2293.5]], "slope": 0.0, "level_now": 2293.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-21T11:27:00", 2291.75]], "slope": 0.0, "level_now": 2291.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-21T12:05:00", 2290.75]], "slope": 0.0, "level_now": 2290.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-21T12:21:00", 2294.75]], "slope": 0.0, "level_now": 2294.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-21T12:30:00", 2296.0]], "slope": 0.0, "level_now": 2296.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-21T12:39:00", 2295.5]], "slope": 0.0, "level_now": 2295.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-21T13:05:00", 2289.75]], "slope": 0.0, "level_now": 2289.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-21T13:10:00", 2289.75]], "slope": 0.0, "level_now": 2289.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-21T13:21:00", 2286.75]], "slope": 0.0, "level_now": 2286.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-21T13:39:00", 2290.75]], "slope": 0.0, "level_now": 2290.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-21T13:44:00", 2292.0]], "slope": 0.0, "level_now": 2292.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-21T13:54:00", 2291.75]], "slope": 0.0, "level_now": 2291.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-21T14:12:00", 2294.25]], "slope": 0.0, "level_now": 2294.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-21T14:30:00", 2292.25]], "slope": 0.0, "level_now": 2292.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-21T14:53:00", 2300.25]], "slope": 0.0, "level_now": 2300.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-21T14:59:00", 2301.75]], "slope": 0.0, "level_now": 2301.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-21T15:08:00", 2301.75]], "slope": 0.0, "level_now": 2301.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-21T15:13:00", 2298.5]], "slope": 0.0, "level_now": 2298.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "6526.0", "anchors": [["2026-01-21T15:17:00", 2301.0]], "slope": 0.0, "level_now": 2301.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-19T09:01:00", 2282.5]], "slope": 0.0, "level_now": 2282.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-19T09:10:00", 2272.5]], "slope": 0.0, "level_now": 2272.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-19T09:21:00", 2248.5]], "slope": 0.0, "level_now": 2248.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
@@ -228,18 +574,75 @@
 {"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-19T15:00:00", 2313.25]], "slope": 0.0, "level_now": 2313.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-19T15:15:00", 2308.75]], "slope": 0.0, "level_now": 2308.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-19T15:25:00", 2303.75]], "slope": 0.0, "level_now": 2303.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
-{"kind": "consolidation", "symbol": "6526.0", "anchors": [["", 2313.0]], "slope": 0.0, "level_now": 2313.0, "strength": 0.6, "meta": {"high": 2313.0, "low": 2313.0, "range_pct": 0.0, "duration_bars": 60}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-20T08:52:00", 2302.75]], "slope": 0.0, "level_now": 2302.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-20T09:03:00", 2308.0]], "slope": 0.0, "level_now": 2308.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-20T09:19:00", 2288.75]], "slope": 0.0, "level_now": 2288.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-20T09:28:00", 2273.25]], "slope": 0.0, "level_now": 2273.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-20T09:34:00", 2284.5]], "slope": 0.0, "level_now": 2284.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-20T09:58:00", 2297.25]], "slope": 0.0, "level_now": 2297.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-20T10:11:00", 2301.75]], "slope": 0.0, "level_now": 2301.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-20T10:23:00", 2310.25]], "slope": 0.0, "level_now": 2310.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-20T10:32:00", 2315.75]], "slope": 0.0, "level_now": 2315.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-20T10:44:00", 2314.75]], "slope": 0.0, "level_now": 2314.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-20T11:26:00", 2294.5]], "slope": 0.0, "level_now": 2294.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-20T12:22:00", 2291.25]], "slope": 0.0, "level_now": 2291.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-20T12:39:00", 2304.75]], "slope": 0.0, "level_now": 2304.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-20T12:44:00", 2316.5]], "slope": 0.0, "level_now": 2316.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-20T13:26:00", 2296.25]], "slope": 0.0, "level_now": 2296.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-20T13:35:00", 2293.25]], "slope": 0.0, "level_now": 2293.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-20T13:58:00", 2290.75]], "slope": 0.0, "level_now": 2290.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-20T14:17:00", 2298.0]], "slope": 0.0, "level_now": 2298.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-20T14:26:00", 2301.25]], "slope": 0.0, "level_now": 2301.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-20T14:34:00", 2297.25]], "slope": 0.0, "level_now": 2297.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-20T14:40:00", 2296.25]], "slope": 0.0, "level_now": 2296.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-20T15:23:00", 2286.75]], "slope": 0.0, "level_now": 2286.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-21T08:57:00", 2240.25]], "slope": 0.0, "level_now": 2240.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-21T09:06:00", 2240.5]], "slope": 0.0, "level_now": 2240.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-21T09:13:00", 2242.0]], "slope": 0.0, "level_now": 2242.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-21T09:21:00", 2245.25]], "slope": 0.0, "level_now": 2245.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-21T09:30:00", 2245.25]], "slope": 0.0, "level_now": 2245.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-21T09:36:00", 2252.5]], "slope": 0.0, "level_now": 2252.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-21T09:44:00", 2262.75]], "slope": 0.0, "level_now": 2262.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-21T10:00:00", 2263.5]], "slope": 0.0, "level_now": 2263.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-21T10:07:00", 2284.0]], "slope": 0.0, "level_now": 2284.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-21T10:12:00", 2281.0]], "slope": 0.0, "level_now": 2281.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-21T10:25:00", 2283.5]], "slope": 0.0, "level_now": 2283.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-21T10:32:00", 2280.25]], "slope": 0.0, "level_now": 2280.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-21T10:39:00", 2282.75]], "slope": 0.0, "level_now": 2282.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-21T10:47:00", 2291.5]], "slope": 0.0, "level_now": 2291.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-21T11:02:00", 2287.25]], "slope": 0.0, "level_now": 2287.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-21T11:07:00", 2289.0]], "slope": 0.0, "level_now": 2289.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-21T11:17:00", 2288.75]], "slope": 0.0, "level_now": 2288.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-21T11:25:00", 2288.75]], "slope": 0.0, "level_now": 2288.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-21T12:13:00", 2290.0]], "slope": 0.0, "level_now": 2290.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-21T12:25:00", 2292.25]], "slope": 0.0, "level_now": 2292.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-21T12:36:00", 2286.75]], "slope": 0.0, "level_now": 2286.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-21T12:54:00", 2284.25]], "slope": 0.0, "level_now": 2284.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-21T13:18:00", 2281.25]], "slope": 0.0, "level_now": 2281.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-21T13:24:00", 2284.75]], "slope": 0.0, "level_now": 2284.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-21T13:42:00", 2289.25]], "slope": 0.0, "level_now": 2289.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-21T13:51:00", 2288.75]], "slope": 0.0, "level_now": 2288.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-21T13:57:00", 2288.25]], "slope": 0.0, "level_now": 2288.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-21T14:05:00", 2289.0]], "slope": 0.0, "level_now": 2289.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-21T14:18:00", 2291.25]], "slope": 0.0, "level_now": 2291.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-21T15:01:00", 2298.25]], "slope": 0.0, "level_now": 2298.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-21T15:09:00", 2296.75]], "slope": 0.0, "level_now": 2296.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "6526.0", "anchors": [["2026-01-21T15:25:00", 2282.25]], "slope": 0.0, "level_now": 2282.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "prev_high", "symbol": "6526.0", "anchors": [["", 2301.75]], "slope": 0.0, "level_now": 2301.75, "strength": 0.8, "meta": {"day": "2026-01-21"}}
+{"kind": "prev_low", "symbol": "6526.0", "anchors": [["", 2240.25]], "slope": 0.0, "level_now": 2240.25, "strength": 0.8, "meta": {"day": "2026-01-21"}}
+{"kind": "prev_close", "symbol": "6526.0", "anchors": [["", 2295.25]], "slope": 0.0, "level_now": 2295.25, "strength": 0.6, "meta": {"day": "2026-01-21"}}
+{"kind": "consolidation", "symbol": "6526.0", "anchors": [["", 2295.25]], "slope": 0.0, "level_now": 2295.25, "strength": 0.6, "meta": {"high": 2295.25, "low": 2295.25, "range_pct": 0.0, "duration_bars": 60}}
 {"kind": "consolidation", "symbol": "6526.0", "anchors": [["", 2267.5]], "slope": 0.0, "level_now": 2267.5, "strength": 0.6, "meta": {"high": 2277.75, "low": 2257.25, "range_pct": 0.9040793825799339, "duration_bars": 60}}
-{"kind": "consolidation", "symbol": "6526.0", "anchors": [["", 2282.5]], "slope": 0.0, "level_now": 2282.5, "strength": 0.6, "meta": {"high": 2293.75, "low": 2271.25, "range_pct": 0.9857612267250823, "duration_bars": 60}}
-{"kind": "consolidation", "symbol": "6526.0", "anchors": [["", 2299.875]], "slope": 0.0, "level_now": 2299.875, "strength": 0.6, "meta": {"high": 2309.0, "low": 2290.75, "range_pct": 0.7935213870319039, "duration_bars": 60}}
-{"kind": "multi_day_vpoc", "symbol": "6526.0", "anchors": [["", 2313.0]], "slope": 0.0, "level_now": 2313.0, "strength": 1.0, "meta": {"bin_size": 1.0, "volume": 1098928600.0, "rank": 0, "lookback_days": 1}}
-{"kind": "multi_day_hvn", "symbol": "6526.0", "anchors": [["", 2292.0]], "slope": 0.0, "level_now": 2292.0, "strength": 0.07696651083609982, "meta": {"bin_size": 1.0, "volume": 84580700.0, "rank": 1, "lookback_days": 1}}
-{"kind": "multi_day_hvn", "symbol": "6526.0", "anchors": [["", 2302.0]], "slope": 0.0, "level_now": 2302.0, "strength": 0.034916645176037826, "meta": {"bin_size": 1.0, "volume": 38370900.0, "rank": 2, "lookback_days": 1}}
-{"kind": "recent_high", "symbol": "9501.0", "anchors": [["2026-01-19T17:21:00", 694.05]], "slope": 0.0, "level_now": 694.05, "strength": 1.0, "meta": {"lookback_bars": 180}}
-{"kind": "recent_low", "symbol": "9501.0", "anchors": [["2026-01-19T17:21:00", 694.05]], "slope": 0.0, "level_now": 694.05, "strength": 1.0, "meta": {"lookback_bars": 180}}
-{"kind": "vpoc", "symbol": "9501.0", "anchors": [["", 694.0]], "slope": 0.0, "level_now": 694.0, "strength": 1.0, "meta": {"bin_size": 1.0, "volume": 21144301800.0, "rank": 0}}
-{"kind": "hvn", "symbol": "9501.0", "anchors": [["", 696.0]], "slope": 0.0, "level_now": 696.0, "strength": 0.13217985282446168, "meta": {"bin_size": 1.0, "volume": 2794850700.0, "rank": 1}}
-{"kind": "hvn", "symbol": "9501.0", "anchors": [["", 700.0]], "slope": 0.0, "level_now": 700.0, "strength": 0.11678005371641073, "meta": {"bin_size": 1.0, "volume": 2469232700.0, "rank": 2}}
+{"kind": "consolidation", "symbol": "6526.0", "anchors": [["", 2308.75]], "slope": 0.0, "level_now": 2308.75, "strength": 0.6, "meta": {"high": 2316.25, "low": 2301.25, "range_pct": 0.6497022198159177, "duration_bars": 60}}
+{"kind": "consolidation", "symbol": "6526.0", "anchors": [["", 2283.75]], "slope": 0.0, "level_now": 2283.75, "strength": 0.6, "meta": {"high": 2293.75, "low": 2273.75, "range_pct": 0.875752599890531, "duration_bars": 60}}
+{"kind": "multi_day_vpoc", "symbol": "6526.0", "anchors": [["", 2295.0]], "slope": 0.0, "level_now": 2295.0, "strength": 1.0, "meta": {"bin_size": 1.0, "volume": 2259517800.0, "rank": 0, "lookback_days": 4}}
+{"kind": "multi_day_hvn", "symbol": "6526.0", "anchors": [["", 2293.0]], "slope": 0.0, "level_now": 2293.0, "strength": 0.5147817379442641, "meta": {"bin_size": 1.0, "volume": 1163158500.0, "rank": 1, "lookback_days": 4}}
+{"kind": "multi_day_hvn", "symbol": "6526.0", "anchors": [["", 2313.0]], "slope": 0.0, "level_now": 2313.0, "strength": 0.48900278634671523, "meta": {"bin_size": 1.0, "volume": 1104910500.0, "rank": 2, "lookback_days": 4}}
+{"kind": "recent_high", "symbol": "9501.0", "anchors": [["2026-01-22T02:34:00", 720.35]], "slope": 0.0, "level_now": 720.35, "strength": 1.0, "meta": {"lookback_bars": 180}}
+{"kind": "recent_low", "symbol": "9501.0", "anchors": [["2026-01-22T02:34:00", 720.35]], "slope": 0.0, "level_now": 720.35, "strength": 1.0, "meta": {"lookback_bars": 180}}
+{"kind": "vpoc", "symbol": "9501.0", "anchors": [["", 720.0]], "slope": 0.0, "level_now": 720.0, "strength": 1.0, "meta": {"bin_size": 1.0, "volume": 69629374700.0, "rank": 0}}
+{"kind": "hvn", "symbol": "9501.0", "anchors": [["", 694.0]], "slope": 0.0, "level_now": 694.0, "strength": 0.328199570920461, "meta": {"bin_size": 1.0, "volume": 22852330900.0, "rank": 1}}
+{"kind": "hvn", "symbol": "9501.0", "anchors": [["", 686.0]], "slope": 0.0, "level_now": 686.0, "strength": 0.3054476862909412, "meta": {"bin_size": 1.0, "volume": 21268131400.0, "rank": 2}}
 {"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-19T09:13:00", 692.75]], "slope": 0.0, "level_now": 692.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-19T09:24:00", 696.7]], "slope": 0.0, "level_now": 696.7, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-19T09:36:00", 691.45]], "slope": 0.0, "level_now": 691.45, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
@@ -269,6 +672,64 @@
 {"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-19T14:41:00", 696.1500000000001]], "slope": 0.0, "level_now": 696.1500000000001, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-19T15:00:00", 695.6500000000001]], "slope": 0.0, "level_now": 695.6500000000001, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-19T15:09:00", 694.55]], "slope": 0.0, "level_now": 694.55, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-20T08:47:00", 693.8499999999999]], "slope": 0.0, "level_now": 693.8499999999999, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-20T08:56:00", 692.95]], "slope": 0.0, "level_now": 692.95, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-20T09:06:00", 685.75]], "slope": 0.0, "level_now": 685.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-20T09:32:00", 676.05]], "slope": 0.0, "level_now": 676.05, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-20T09:58:00", 678.5]], "slope": 0.0, "level_now": 678.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-20T10:05:00", 677.35]], "slope": 0.0, "level_now": 677.35, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-20T10:15:00", 675.2]], "slope": 0.0, "level_now": 675.2, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-20T10:21:00", 677.7]], "slope": 0.0, "level_now": 677.7, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-20T10:38:00", 682.3499999999999]], "slope": 0.0, "level_now": 682.3499999999999, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-20T10:42:00", 682.8499999999999]], "slope": 0.0, "level_now": 682.8499999999999, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-20T10:51:00", 682.75]], "slope": 0.0, "level_now": 682.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-20T10:57:00", 680.45]], "slope": 0.0, "level_now": 680.45, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-20T11:14:00", 678.25]], "slope": 0.0, "level_now": 678.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-20T11:20:00", 677.05]], "slope": 0.0, "level_now": 677.05, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-20T12:05:00", 675.8499999999999]], "slope": 0.0, "level_now": 675.8499999999999, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-20T12:13:00", 675.95]], "slope": 0.0, "level_now": 675.95, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-20T12:54:00", 686.3]], "slope": 0.0, "level_now": 686.3, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-20T13:02:00", 685.8499999999999]], "slope": 0.0, "level_now": 685.8499999999999, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-20T13:08:00", 685.05]], "slope": 0.0, "level_now": 685.05, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-20T13:19:00", 685.3]], "slope": 0.0, "level_now": 685.3, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-20T13:29:00", 684.25]], "slope": 0.0, "level_now": 684.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-20T13:35:00", 684.55]], "slope": 0.0, "level_now": 684.55, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-20T13:44:00", 683.8]], "slope": 0.0, "level_now": 683.8, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-20T13:49:00", 683.95]], "slope": 0.0, "level_now": 683.95, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-20T14:11:00", 686.45]], "slope": 0.0, "level_now": 686.45, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-20T14:19:00", 687.9]], "slope": 0.0, "level_now": 687.9, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-20T14:30:00", 689.8]], "slope": 0.0, "level_now": 689.8, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-20T14:37:00", 689.1500000000001]], "slope": 0.0, "level_now": 689.1500000000001, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-20T15:15:00", 683.6500000000001]], "slope": 0.0, "level_now": 683.6500000000001, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-20T15:26:00", 688.1500000000001]], "slope": 0.0, "level_now": 688.1500000000001, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-21T08:56:00", 679.95]], "slope": 0.0, "level_now": 679.95, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-21T09:02:00", 694.3]], "slope": 0.0, "level_now": 694.3, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-21T09:11:00", 690.4]], "slope": 0.0, "level_now": 690.4, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-21T09:27:00", 683.4]], "slope": 0.0, "level_now": 683.4, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-21T09:46:00", 696.7]], "slope": 0.0, "level_now": 696.7, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-21T09:52:00", 694.2]], "slope": 0.0, "level_now": 694.2, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-21T10:16:00", 697.2]], "slope": 0.0, "level_now": 697.2, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-21T10:30:00", 695.95]], "slope": 0.0, "level_now": 695.95, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-21T10:45:00", 696.4]], "slope": 0.0, "level_now": 696.4, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-21T10:49:00", 696.25]], "slope": 0.0, "level_now": 696.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-21T11:10:00", 696.2]], "slope": 0.0, "level_now": 696.2, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-21T12:36:00", 708.55]], "slope": 0.0, "level_now": 708.55, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-21T12:48:00", 710.6]], "slope": 0.0, "level_now": 710.6, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-21T12:55:00", 707.3499999999999]], "slope": 0.0, "level_now": 707.3499999999999, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-21T13:10:00", 711.2]], "slope": 0.0, "level_now": 711.2, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-21T13:20:00", 709.6]], "slope": 0.0, "level_now": 709.6, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-21T13:29:00", 708.95]], "slope": 0.0, "level_now": 708.95, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-21T13:44:00", 709.3]], "slope": 0.0, "level_now": 709.3, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-21T13:56:00", 708.8499999999999]], "slope": 0.0, "level_now": 708.8499999999999, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-21T14:06:00", 712.6]], "slope": 0.0, "level_now": 712.6, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-21T14:16:00", 717.1500000000001]], "slope": 0.0, "level_now": 717.1500000000001, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-21T14:23:00", 718.8499999999999]], "slope": 0.0, "level_now": 718.8499999999999, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-21T14:37:00", 728.1500000000001]], "slope": 0.0, "level_now": 728.1500000000001, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-21T14:43:00", 727.9]], "slope": 0.0, "level_now": 727.9, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-21T14:52:00", 725.05]], "slope": 0.0, "level_now": 725.05, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-21T15:01:00", 724.75]], "slope": 0.0, "level_now": 724.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-21T15:12:00", 724.7]], "slope": 0.0, "level_now": 724.7, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9501.0", "anchors": [["2026-01-21T15:29:00", 724.95]], "slope": 0.0, "level_now": 724.95, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-19T09:18:00", 688.25]], "slope": 0.0, "level_now": 688.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-19T09:32:00", 688.1500000000001]], "slope": 0.0, "level_now": 688.1500000000001, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-19T10:00:00", 695.3499999999999]], "slope": 0.0, "level_now": 695.3499999999999, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
@@ -298,16 +759,76 @@
 {"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-19T15:03:00", 693.3499999999999]], "slope": 0.0, "level_now": 693.3499999999999, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-19T15:19:00", 693.1500000000001]], "slope": 0.0, "level_now": 693.1500000000001, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-19T15:24:00", 693.6]], "slope": 0.0, "level_now": 693.6, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
-{"kind": "consolidation", "symbol": "9501.0", "anchors": [["", 694.05]], "slope": 0.0, "level_now": 694.05, "strength": 0.6, "meta": {"high": 694.05, "low": 694.05, "range_pct": 0.0, "duration_bars": 60}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-20T08:43:00", 692.6]], "slope": 0.0, "level_now": 692.6, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-20T08:54:00", 691.1500000000001]], "slope": 0.0, "level_now": 691.1500000000001, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-20T09:03:00", 683.75]], "slope": 0.0, "level_now": 683.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-20T09:14:00", 677.0]], "slope": 0.0, "level_now": 677.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-20T09:28:00", 671.3499999999999]], "slope": 0.0, "level_now": 671.3499999999999, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-20T09:38:00", 673.2]], "slope": 0.0, "level_now": 673.2, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-20T09:46:00", 675.3]], "slope": 0.0, "level_now": 675.3, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-20T09:51:00", 675.4]], "slope": 0.0, "level_now": 675.4, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-20T09:55:00", 676.1]], "slope": 0.0, "level_now": 676.1, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-20T10:11:00", 674.1500000000001]], "slope": 0.0, "level_now": 674.1500000000001, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-20T10:17:00", 674.6]], "slope": 0.0, "level_now": 674.6, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-20T10:25:00", 676.9]], "slope": 0.0, "level_now": 676.9, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-20T10:48:00", 681.5]], "slope": 0.0, "level_now": 681.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-20T11:08:00", 677.3499999999999]], "slope": 0.0, "level_now": 677.3499999999999, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-20T11:16:00", 676.45]], "slope": 0.0, "level_now": 676.45, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-20T12:27:00", 675.05]], "slope": 0.0, "level_now": 675.05, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-20T12:59:00", 684.25]], "slope": 0.0, "level_now": 684.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-20T13:14:00", 682.3]], "slope": 0.0, "level_now": 682.3, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-20T13:26:00", 683.3499999999999]], "slope": 0.0, "level_now": 683.3499999999999, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-20T13:37:00", 681.45]], "slope": 0.0, "level_now": 681.45, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-20T13:47:00", 682.55]], "slope": 0.0, "level_now": 682.55, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-20T13:58:00", 681.05]], "slope": 0.0, "level_now": 681.05, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-20T14:15:00", 685.3499999999999]], "slope": 0.0, "level_now": 685.3499999999999, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-20T14:38:00", 687.7]], "slope": 0.0, "level_now": 687.7, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-20T15:11:00", 682.0]], "slope": 0.0, "level_now": 682.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-20T15:18:00", 682.45]], "slope": 0.0, "level_now": 682.45, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-20T15:29:00", 685.45]], "slope": 0.0, "level_now": 685.45, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-21T09:07:00", 687.6500000000001]], "slope": 0.0, "level_now": 687.6500000000001, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-21T09:16:00", 684.6]], "slope": 0.0, "level_now": 684.6, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-21T09:24:00", 680.7]], "slope": 0.0, "level_now": 680.7, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-21T09:32:00", 682.2]], "slope": 0.0, "level_now": 682.2, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-21T09:44:00", 691.65]], "slope": 0.0, "level_now": 691.65, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-21T09:55:00", 692.3499999999999]], "slope": 0.0, "level_now": 692.3499999999999, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-21T10:11:00", 694.0]], "slope": 0.0, "level_now": 694.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-21T10:26:00", 694.3499999999999]], "slope": 0.0, "level_now": 694.3499999999999, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-21T10:39:00", 694.1500000000001]], "slope": 0.0, "level_now": 694.1500000000001, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-21T10:54:00", 694.9]], "slope": 0.0, "level_now": 694.9, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-21T11:01:00", 693.2]], "slope": 0.0, "level_now": 693.2, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-21T11:17:00", 692.25]], "slope": 0.0, "level_now": 692.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-21T12:39:00", 703.75]], "slope": 0.0, "level_now": 703.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-21T12:52:00", 705.7]], "slope": 0.0, "level_now": 705.7, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-21T13:00:00", 703.4]], "slope": 0.0, "level_now": 703.4, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-21T13:24:00", 707.6]], "slope": 0.0, "level_now": 707.6, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-21T13:33:00", 705.9]], "slope": 0.0, "level_now": 705.9, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-21T13:42:00", 707.6500000000001]], "slope": 0.0, "level_now": 707.6500000000001, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-21T13:51:00", 707.55]], "slope": 0.0, "level_now": 707.55, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-21T13:58:00", 707.55]], "slope": 0.0, "level_now": 707.55, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-21T14:12:00", 710.5]], "slope": 0.0, "level_now": 710.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-21T14:27:00", 716.6]], "slope": 0.0, "level_now": 716.6, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-21T14:39:00", 724.55]], "slope": 0.0, "level_now": 724.55, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-21T14:50:00", 723.5]], "slope": 0.0, "level_now": 723.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-21T14:57:00", 720.8499999999999]], "slope": 0.0, "level_now": 720.8499999999999, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-21T15:06:00", 721.45]], "slope": 0.0, "level_now": 721.45, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9501.0", "anchors": [["2026-01-21T15:22:00", 717.6500000000001]], "slope": 0.0, "level_now": 717.6500000000001, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "prev_high", "symbol": "9501.0", "anchors": [["", 728.1500000000001]], "slope": 0.0, "level_now": 728.1500000000001, "strength": 0.8, "meta": {"day": "2026-01-21"}}
+{"kind": "prev_low", "symbol": "9501.0", "anchors": [["", 675.05]], "slope": 0.0, "level_now": 675.05, "strength": 0.8, "meta": {"day": "2026-01-21"}}
+{"kind": "prev_close", "symbol": "9501.0", "anchors": [["", 720.35]], "slope": 0.0, "level_now": 720.35, "strength": 0.6, "meta": {"day": "2026-01-21"}}
+{"kind": "consolidation", "symbol": "9501.0", "anchors": [["", 720.35]], "slope": 0.0, "level_now": 720.35, "strength": 0.6, "meta": {"high": 720.35, "low": 720.35, "range_pct": 0.0, "duration_bars": 60}}
 {"kind": "consolidation", "symbol": "9501.0", "anchors": [["", 700.1]], "slope": 0.0, "level_now": 700.1, "strength": 0.6, "meta": {"high": 703.55, "low": 696.6500000000001, "range_pct": 0.9855734895014803, "duration_bars": 60}}
-{"kind": "multi_day_vpoc", "symbol": "9501.0", "anchors": [["", 694.0]], "slope": 0.0, "level_now": 694.0, "strength": 1.0, "meta": {"bin_size": 1.0, "volume": 21144301800.0, "rank": 0, "lookback_days": 1}}
-{"kind": "multi_day_hvn", "symbol": "9501.0", "anchors": [["", 696.0]], "slope": 0.0, "level_now": 696.0, "strength": 0.13217985282446168, "meta": {"bin_size": 1.0, "volume": 2794850700.0, "rank": 1, "lookback_days": 1}}
-{"kind": "multi_day_hvn", "symbol": "9501.0", "anchors": [["", 700.0]], "slope": 0.0, "level_now": 700.0, "strength": 0.11678005371641073, "meta": {"bin_size": 1.0, "volume": 2469232700.0, "rank": 2, "lookback_days": 1}}
-{"kind": "recent_high", "symbol": "9509.0", "anchors": [["2026-01-19T17:21:00", 1177.75]], "slope": 0.0, "level_now": 1177.75, "strength": 1.0, "meta": {"lookback_bars": 180}}
-{"kind": "recent_low", "symbol": "9509.0", "anchors": [["2026-01-19T17:21:00", 1177.75]], "slope": 0.0, "level_now": 1177.75, "strength": 1.0, "meta": {"lookback_bars": 180}}
-{"kind": "vpoc", "symbol": "9509.0", "anchors": [["", 1178.0]], "slope": 0.0, "level_now": 1178.0, "strength": 1.0, "meta": {"bin_size": 1.0, "volume": 700424700.0, "rank": 0}}
-{"kind": "hvn", "symbol": "9509.0", "anchors": [["", 1182.0]], "slope": 0.0, "level_now": 1182.0, "strength": 0.20707036744992002, "meta": {"bin_size": 1.0, "volume": 145037200.0, "rank": 1}}
-{"kind": "hvn", "symbol": "9509.0", "anchors": [["", 1181.0]], "slope": 0.0, "level_now": 1181.0, "strength": 0.13259783671249742, "meta": {"bin_size": 1.0, "volume": 92874800.0, "rank": 2}}
+{"kind": "consolidation", "symbol": "9501.0", "anchors": [["", 694.475]], "slope": 0.0, "level_now": 694.475, "strength": 0.6, "meta": {"high": 696.95, "low": 692.0, "range_pct": 0.7127686381799266, "duration_bars": 60}}
+{"kind": "consolidation", "symbol": "9501.0", "anchors": [["", 677.9000000000001]], "slope": 0.0, "level_now": 677.9000000000001, "strength": 0.6, "meta": {"high": 681.1500000000001, "low": 674.65, "range_pct": 0.9588434872400224, "duration_bars": 60}}
+{"kind": "consolidation", "symbol": "9501.0", "anchors": [["", 683.875]], "slope": 0.0, "level_now": 683.875, "strength": 0.6, "meta": {"high": 686.3, "low": 681.45, "range_pct": 0.7091939316395407, "duration_bars": 60}}
+{"kind": "multi_day_vpoc", "symbol": "9501.0", "anchors": [["", 720.0]], "slope": 0.0, "level_now": 720.0, "strength": 1.0, "meta": {"bin_size": 1.0, "volume": 69629374700.0, "rank": 0, "lookback_days": 4}}
+{"kind": "multi_day_hvn", "symbol": "9501.0", "anchors": [["", 694.0]], "slope": 0.0, "level_now": 694.0, "strength": 0.328199570920461, "meta": {"bin_size": 1.0, "volume": 22852330900.0, "rank": 1, "lookback_days": 4}}
+{"kind": "multi_day_hvn", "symbol": "9501.0", "anchors": [["", 686.0]], "slope": 0.0, "level_now": 686.0, "strength": 0.3054476862909412, "meta": {"bin_size": 1.0, "volume": 21268131400.0, "rank": 2, "lookback_days": 4}}
+{"kind": "recent_high", "symbol": "9509.0", "anchors": [["2026-01-22T02:34:00", 1154.25]], "slope": 0.0, "level_now": 1154.25, "strength": 1.0, "meta": {"lookback_bars": 180}}
+{"kind": "recent_low", "symbol": "9509.0", "anchors": [["2026-01-22T02:34:00", 1154.25]], "slope": 0.0, "level_now": 1154.25, "strength": 1.0, "meta": {"lookback_bars": 180}}
+{"kind": "vpoc", "symbol": "9509.0", "anchors": [["", 1154.0]], "slope": 0.0, "level_now": 1154.0, "strength": 1.0, "meta": {"bin_size": 1.0, "volume": 2136852600.0, "rank": 0}}
+{"kind": "hvn", "symbol": "9509.0", "anchors": [["", 1149.0]], "slope": 0.0, "level_now": 1149.0, "strength": 0.5422249059200434, "meta": {"bin_size": 1.0, "volume": 1158654700.0, "rank": 1}}
+{"kind": "hvn", "symbol": "9509.0", "anchors": [["", 1178.0]], "slope": 0.0, "level_now": 1178.0, "strength": 0.3277833482758708, "meta": {"bin_size": 1.0, "volume": 700424700.0, "rank": 2}}
 {"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-19T09:29:00", 1185.75]], "slope": 0.0, "level_now": 1185.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-19T09:35:00", 1181.25]], "slope": 0.0, "level_now": 1181.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-19T09:50:00", 1181.25]], "slope": 0.0, "level_now": 1181.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
@@ -322,6 +843,50 @@
 {"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-19T13:16:00", 1181.75]], "slope": 0.0, "level_now": 1181.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-19T14:04:00", 1181.75]], "slope": 0.0, "level_now": 1181.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-19T14:58:00", 1183.75]], "slope": 0.0, "level_now": 1183.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-20T09:06:00", 1165.75]], "slope": 0.0, "level_now": 1165.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-20T09:32:00", 1149.25]], "slope": 0.0, "level_now": 1149.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-20T09:43:00", 1149.75]], "slope": 0.0, "level_now": 1149.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-20T09:52:00", 1148.0]], "slope": 0.0, "level_now": 1148.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-20T09:57:00", 1148.0]], "slope": 0.0, "level_now": 1148.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-20T10:05:00", 1149.5]], "slope": 0.0, "level_now": 1149.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-20T10:15:00", 1147.0]], "slope": 0.0, "level_now": 1147.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-20T10:21:00", 1148.5]], "slope": 0.0, "level_now": 1148.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-20T10:26:00", 1148.25]], "slope": 0.0, "level_now": 1148.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-20T10:38:00", 1152.75]], "slope": 0.0, "level_now": 1152.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-20T10:51:00", 1148.0]], "slope": 0.0, "level_now": 1148.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-20T11:18:00", 1141.5]], "slope": 0.0, "level_now": 1141.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-20T12:28:00", 1137.25]], "slope": 0.0, "level_now": 1137.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-20T12:54:00", 1144.75]], "slope": 0.0, "level_now": 1144.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-20T13:19:00", 1138.75]], "slope": 0.0, "level_now": 1138.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-20T13:31:00", 1138.75]], "slope": 0.0, "level_now": 1138.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-20T13:49:00", 1139.75]], "slope": 0.0, "level_now": 1139.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-20T14:11:00", 1143.25]], "slope": 0.0, "level_now": 1143.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-20T15:02:00", 1143.75]], "slope": 0.0, "level_now": 1143.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-20T15:26:00", 1150.75]], "slope": 0.0, "level_now": 1150.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-21T09:02:00", 1139.0]], "slope": 0.0, "level_now": 1139.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-21T09:31:00", 1133.25]], "slope": 0.0, "level_now": 1133.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-21T09:40:00", 1138.75]], "slope": 0.0, "level_now": 1138.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-21T09:46:00", 1140.75]], "slope": 0.0, "level_now": 1140.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-21T09:59:00", 1148.75]], "slope": 0.0, "level_now": 1148.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-21T10:06:00", 1148.25]], "slope": 0.0, "level_now": 1148.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-21T10:32:00", 1144.25]], "slope": 0.0, "level_now": 1144.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-21T10:49:00", 1144.25]], "slope": 0.0, "level_now": 1144.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-21T11:21:00", 1145.25]], "slope": 0.0, "level_now": 1145.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-21T12:05:00", 1144.75]], "slope": 0.0, "level_now": 1144.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-21T12:48:00", 1149.75]], "slope": 0.0, "level_now": 1149.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-21T13:10:00", 1151.25]], "slope": 0.0, "level_now": 1151.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-21T13:31:00", 1149.25]], "slope": 0.0, "level_now": 1149.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-21T13:40:00", 1148.25]], "slope": 0.0, "level_now": 1148.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-21T14:02:00", 1147.25]], "slope": 0.0, "level_now": 1147.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-21T14:08:00", 1148.25]], "slope": 0.0, "level_now": 1148.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-21T14:15:00", 1149.75]], "slope": 0.0, "level_now": 1149.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-21T14:24:00", 1149.75]], "slope": 0.0, "level_now": 1149.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-21T14:38:00", 1153.75]], "slope": 0.0, "level_now": 1153.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-21T14:51:00", 1153.75]], "slope": 0.0, "level_now": 1153.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-21T15:01:00", 1152.25]], "slope": 0.0, "level_now": 1152.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-21T15:14:00", 1152.75]], "slope": 0.0, "level_now": 1152.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-21T15:20:00", 1152.75]], "slope": 0.0, "level_now": 1152.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_resistance", "symbol": "9509.0", "anchors": [["2026-01-21T15:25:00", 1154.75]], "slope": 0.0, "level_now": 1154.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-19T09:18:00", 1176.75]], "slope": 0.0, "level_now": 1176.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-19T09:32:00", 1178.75]], "slope": 0.0, "level_now": 1178.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-19T09:37:00", 1179.0]], "slope": 0.0, "level_now": 1179.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
@@ -339,7 +904,50 @@
 {"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-19T12:54:00", 1182.75]], "slope": 0.0, "level_now": 1182.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-19T13:51:00", 1178.75]], "slope": 0.0, "level_now": 1178.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
 {"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-19T15:03:00", 1178.75]], "slope": 0.0, "level_now": 1178.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
-{"kind": "consolidation", "symbol": "9509.0", "anchors": [["", 1177.75]], "slope": 0.0, "level_now": 1177.75, "strength": 0.6, "meta": {"high": 1177.75, "low": 1177.75, "range_pct": 0.0, "duration_bars": 60}}
-{"kind": "multi_day_vpoc", "symbol": "9509.0", "anchors": [["", 1178.0]], "slope": 0.0, "level_now": 1178.0, "strength": 1.0, "meta": {"bin_size": 1.0, "volume": 700424700.0, "rank": 0, "lookback_days": 1}}
-{"kind": "multi_day_hvn", "symbol": "9509.0", "anchors": [["", 1182.0]], "slope": 0.0, "level_now": 1182.0, "strength": 0.20707036744992002, "meta": {"bin_size": 1.0, "volume": 145037200.0, "rank": 1, "lookback_days": 1}}
-{"kind": "multi_day_hvn", "symbol": "9509.0", "anchors": [["", 1181.0]], "slope": 0.0, "level_now": 1181.0, "strength": 0.13259783671249742, "meta": {"bin_size": 1.0, "volume": 92874800.0, "rank": 2, "lookback_days": 1}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-20T08:51:00", 1182.75]], "slope": 0.0, "level_now": 1182.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-20T09:03:00", 1162.75]], "slope": 0.0, "level_now": 1162.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-20T09:29:00", 1143.25]], "slope": 0.0, "level_now": 1143.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-20T09:55:00", 1145.5]], "slope": 0.0, "level_now": 1145.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-20T10:02:00", 1146.25]], "slope": 0.0, "level_now": 1146.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-20T10:11:00", 1145.75]], "slope": 0.0, "level_now": 1145.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-20T10:29:00", 1147.25]], "slope": 0.0, "level_now": 1147.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-20T10:55:00", 1145.75]], "slope": 0.0, "level_now": 1145.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-20T11:16:00", 1140.5]], "slope": 0.0, "level_now": 1140.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-20T11:28:00", 1137.75]], "slope": 0.0, "level_now": 1137.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-20T12:30:00", 1133.5]], "slope": 0.0, "level_now": 1133.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-20T12:49:00", 1141.25]], "slope": 0.0, "level_now": 1141.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-20T13:14:00", 1136.25]], "slope": 0.0, "level_now": 1136.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-20T13:25:00", 1137.25]], "slope": 0.0, "level_now": 1137.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-20T14:35:00", 1143.75]], "slope": 0.0, "level_now": 1143.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-20T14:43:00", 1145.75]], "slope": 0.0, "level_now": 1145.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-20T15:01:00", 1141.75]], "slope": 0.0, "level_now": 1141.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-20T15:12:00", 1141.5]], "slope": 0.0, "level_now": 1141.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-20T15:29:00", 1147.75]], "slope": 0.0, "level_now": 1147.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-21T09:06:00", 1130.75]], "slope": 0.0, "level_now": 1130.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-21T09:16:00", 1127.5]], "slope": 0.0, "level_now": 1127.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-21T09:22:00", 1127.25]], "slope": 0.0, "level_now": 1127.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-21T09:43:00", 1136.75]], "slope": 0.0, "level_now": 1136.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-21T09:53:00", 1138.25]], "slope": 0.0, "level_now": 1138.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-21T10:14:00", 1142.25]], "slope": 0.0, "level_now": 1142.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-21T10:27:00", 1142.75]], "slope": 0.0, "level_now": 1142.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-21T11:17:00", 1142.75]], "slope": 0.0, "level_now": 1142.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-21T12:44:00", 1148.5]], "slope": 0.0, "level_now": 1148.5, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-21T12:52:00", 1146.25]], "slope": 0.0, "level_now": 1146.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-21T13:00:00", 1145.75]], "slope": 0.0, "level_now": 1145.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-21T13:17:00", 1144.25]], "slope": 0.0, "level_now": 1144.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-21T13:42:00", 1146.75]], "slope": 0.0, "level_now": 1146.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-21T13:52:00", 1146.25]], "slope": 0.0, "level_now": 1146.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-21T14:21:00", 1148.0]], "slope": 0.0, "level_now": 1148.0, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-21T14:27:00", 1147.75]], "slope": 0.0, "level_now": 1147.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-21T14:39:00", 1152.25]], "slope": 0.0, "level_now": 1152.25, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "swing_support", "symbol": "9509.0", "anchors": [["2026-01-21T15:06:00", 1149.75]], "slope": 0.0, "level_now": 1149.75, "strength": 0.7, "meta": {"pivot_left": 3, "pivot_right": 3}}
+{"kind": "prev_high", "symbol": "9509.0", "anchors": [["", 1154.75]], "slope": 0.0, "level_now": 1154.75, "strength": 0.8, "meta": {"day": "2026-01-21"}}
+{"kind": "prev_low", "symbol": "9509.0", "anchors": [["", 1120.25]], "slope": 0.0, "level_now": 1120.25, "strength": 0.8, "meta": {"day": "2026-01-21"}}
+{"kind": "prev_close", "symbol": "9509.0", "anchors": [["", 1154.25]], "slope": 0.0, "level_now": 1154.25, "strength": 0.6, "meta": {"day": "2026-01-21"}}
+{"kind": "consolidation", "symbol": "9509.0", "anchors": [["", 1154.25]], "slope": 0.0, "level_now": 1154.25, "strength": 0.6, "meta": {"high": 1154.25, "low": 1154.25, "range_pct": 0.0, "duration_bars": 60}}
+{"kind": "consolidation", "symbol": "9509.0", "anchors": [["", 1180.0]], "slope": 0.0, "level_now": 1180.0, "strength": 0.6, "meta": {"high": 1185.75, "low": 1174.25, "range_pct": 0.9745762711864407, "duration_bars": 60}}
+{"kind": "consolidation", "symbol": "9509.0", "anchors": [["", 1146.5]], "slope": 0.0, "level_now": 1146.5, "strength": 0.6, "meta": {"high": 1149.75, "low": 1143.25, "range_pct": 0.56694286960314, "duration_bars": 60}}
+{"kind": "consolidation", "symbol": "9509.0", "anchors": [["", 1138.875]], "slope": 0.0, "level_now": 1138.875, "strength": 0.6, "meta": {"high": 1141.5, "low": 1136.25, "range_pct": 0.4609812314784327, "duration_bars": 60}}
+{"kind": "multi_day_vpoc", "symbol": "9509.0", "anchors": [["", 1154.0]], "slope": 0.0, "level_now": 1154.0, "strength": 1.0, "meta": {"bin_size": 1.0, "volume": 2136852600.0, "rank": 0, "lookback_days": 4}}
+{"kind": "multi_day_hvn", "symbol": "9509.0", "anchors": [["", 1149.0]], "slope": 0.0, "level_now": 1149.0, "strength": 0.5422249059200434, "meta": {"bin_size": 1.0, "volume": 1158654700.0, "rank": 1, "lookback_days": 4}}
+{"kind": "multi_day_hvn", "symbol": "9509.0", "anchors": [["", 1178.0]], "slope": 0.0, "level_now": 1178.0, "strength": 0.3277833482758708, "meta": {"bin_size": 1.0, "volume": 700424700.0, "rank": 2, "lookback_days": 4}}

@@ -73,7 +73,7 @@ RSS_PARAMS = {
     "update_interval_sec": 1.0,  # 板情報更新間隔（秒）
     
     # データパス
-    "watchlist_path": PROJECT_ROOT / "watchlist.csv",
+    "watchlist_path": PROJECT_ROOT / "src/get_rss_market_order_book/input/watchlist.csv",
     
     # RSS接続タイムアウト
     "connection_timeout_sec": 30,

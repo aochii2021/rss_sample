@@ -13,7 +13,7 @@ import numpy as np
 
 # algo4_counter_tradeのモジュールをインポート
 sys.path.insert(0, str(Path(__file__).parent.parent / "algo4_counter_trade"))
-from sr_levels import extract_levels
+from sr_levels import find_support_resistance_lines
 
 import config
 
@@ -46,7 +46,7 @@ class SignalGenerator:
                 return
             
             # algo4_counter_tradeのレベル抽出を使用
-            levels = extract_levels(
+            levels = find_support_resistance_lines(
                 ohlc_df,
                 symbol=symbol,
                 lookback_bars=config.STRATEGY_PARAMS["lookback_bars"],

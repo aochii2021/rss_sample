@@ -60,7 +60,7 @@ class TradingSystem:
         # watchlistから読み込み
         try:
             watchlist_df = pd.read_csv(config.RSS_PARAMS["watchlist_path"])
-            symbols = watchlist_df["code"].astype(str).tolist()
+            symbols = watchlist_df["コード"].astype(str).tolist()
             return symbols
         except Exception as e:
             logger.error(f"Failed to load watchlist: {e}")
