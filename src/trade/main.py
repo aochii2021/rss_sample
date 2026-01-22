@@ -42,9 +42,9 @@ class TradingSystem:
         logger.info(f"Target symbols: {len(self.symbols)}")
         
         # コンポーネント初期化
-        self.data_collector = LiveDataCollector(self.symbols)
-        self.signal_generator = SignalGenerator()
         self.order_executor = OrderExecutor(dry_run=config.DRY_RUN)
+        self.data_collector = LiveDataCollector(self.symbols, rss=self.order_executor.rss)
+        self.signal_generator = SignalGenerator()
         
         # 状態管理
         self.is_running = False

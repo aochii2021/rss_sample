@@ -10,6 +10,7 @@ import pandas as pd
 import win32com.client
 
 import config
+from rss_functions import RSSFunctions
 
 logger = logging.getLogger(__name__)
 
@@ -97,10 +98,12 @@ class OrderExecutor:
         
         # Excel COM接続（DRY_RUN=Falseの場合）
         self.excel = None
+        self.rss = None
         if not dry_run:
             try:
                 self.excel = win32com.client.Dispatch("Excel.Application")
                 self.excel.Visible = True
+                self.rss = RSSFunctions(self.excel)
                 logger.info("Excel COM connection established")
             except Exception as e:
                 logger.error(f"Failed to connect to Excel: {e}")
@@ -284,10 +287,18 @@ class OrderExecutor:
             
             if result:
                 logger.info(
-                    f"Order executed: {symbol} {action} {config.RISK_PARAMS['position_size']}株 @ {price:.2f} "
+                    f"Order sent: {symbol} {action} {config.RISK_PARAMS['position_size']}株 @ {price:.2f} "
                     f"(OrderID: {order_id})"
                 )
-                return True
+                
+                # 約定確認（最大5秒待機）
+                if self.rss and self.rss.check_order_filled(order_id, timeout_sec=5):
+                    logger.info(f"Order {order_id} filled successfully")
+                    return True
+                else:
+                    logger.warning(f"Order {order_id} not filled within timeout")
+                    # 約定未確認でも一旦Trueを返す（注文一覧で後から確認可能）
+                    return True
             else:
                 logger.error(f"Order failed: {symbol} {action} @ {price:.2f}")
                 return False
@@ -349,10 +360,17 @@ class OrderExecutor:
             
             if result:
                 logger.info(
-                    f"Close order executed: {symbol} {position.size}株 @ {price:.2f} "
+                    f"Close order sent: {symbol} {position.size}株 @ {price:.2f} "
                     f"(OrderID: {order_id}, Entry: {position.entry_price:.2f})"
                 )
-                return True
+                
+                # 約定確認（最大5秒待機）
+                if self.rss and self.rss.check_order_filled(order_id, timeout_sec=5):
+                    logger.info(f"Close order {order_id} filled successfully")
+                    return True
+                else:
+                    logger.warning(f"Close order {order_id} not filled within timeout")
+                    return True
             else:
                 logger.error(f"Close order failed: {symbol} @ {price:.2f}")
                 return False
@@ -364,6 +382,60 @@ class OrderExecutor:
     def get_open_positions(self) -> List[Position]:
         """保有中のポジションを取得"""
         return self.positions.copy()
+    
+    def sync_positions_with_rss(self) -> Dict[str, Any]:
+        """
+        RSS建玉一覧とローカルポジションを照合
+        
+        Returns:
+            照合結果Dict（rss_count, local_count, matched, missing_in_local, missing_in_rss）
+        """
+        if not self.rss:
+            return {"error": "RSS not available in DRY_RUN mode"}
+        
+        try:
+            # RSS建玉一覧を取得
+            rss_positions = self.rss.get_margin_positions(
+                account_type=config.MARGIN_PARAMS["account_type"],
+                margin_type=config.MARGIN_PARAMS["margin_type"]
+            )
+            
+            result = {
+                "rss_count": len(rss_positions),
+                "local_count": len(self.positions),
+                "matched": 0,
+                "missing_in_local": [],
+                "missing_in_rss": []
+            }
+            
+            # ローカルポジションの銘柄リスト
+            local_symbols = {p.symbol for p in self.positions}
+            
+            # RSS建玉の銘柄リスト
+            if not rss_positions.empty and "銘柄コード" in rss_positions.columns:
+                rss_symbols = set(rss_positions["銘柄コード"].astype(str))
+                
+                # 一致数
+                result["matched"] = len(local_symbols & rss_symbols)
+                
+                # ローカルにないがRSSにある
+                result["missing_in_local"] = list(rss_symbols - local_symbols)
+                
+                # RSSにないがローカルにある
+                result["missing_in_rss"] = list(local_symbols - rss_symbols)
+            else:
+                result["missing_in_rss"] = list(local_symbols)
+            
+            if result["missing_in_local"] or result["missing_in_rss"]:
+                logger.warning(f"Position mismatch: {result}")
+            else:
+                logger.info(f"Positions synced: {result['matched']} matched")
+            
+            return result
+            
+        except Exception as e:
+            logger.error(f"Error syncing positions: {e}")
+            return {"error": str(e)}
     
     def get_daily_stats(self) -> Dict[str, Any]:
         """本日の統計を取得"""

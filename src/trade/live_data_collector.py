@@ -16,6 +16,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "algo4_counter_trade"))
 from lob_features import compute_features_ms2
 
 import config
+from rss_functions import RSSFunctions
 
 logger = logging.getLogger(__name__)
 
@@ -23,12 +24,14 @@ logger = logging.getLogger(__name__)
 class LiveDataCollector:
     """リアルタイムデータ収集クラス"""
     
-    def __init__(self, symbols: list):
+    def __init__(self, symbols: list, rss: RSSFunctions = None):
         """
         Args:
             symbols: 監視対象銘柄コードのリスト
+            rss: RSSFunctionsインスタンス（DRY_RUN=False時）
         """
         self.symbols = symbols
+        self.rss = rss
         self.roll_n = config.STRATEGY_PARAMS["roll_n"]
         self.k_depth = config.STRATEGY_PARAMS["k_depth"]
         
@@ -46,8 +49,29 @@ class LiveDataCollector:
             板情報DataFrame（複数銘柄）
         """
         try:
-            # TODO: 実際のRSS取得処理を実装
-            # 現在はダミーデータを返す
+            # DRY_RUNモード：ダミーデータを返す
+            if not self.rss:
+                logger.debug("DRY_RUN mode: returning dummy data")
+                return pd.DataFrame()
+            
+            # 各銘柄の現在価格をRssMarketで取得
+            board_data = []
+            for symbol in self.symbols:
+                price = self.rss.get_market_price(symbol)
+                if price:
+                    board_data.append({
+                        "ts": datetime.now(),
+                        "symbol": symbol,
+                        "price": price,
+                        # TODO: 板情報（気配値）を取得
+                        # 現在はRssMarketで現在値のみ取得
+                    })
+            
+            if board_data:
+                return pd.DataFrame(board_data)
+            else:
+                logger.warning("No board data fetched")
+                return pd.DataFrame()
             logger.warning("fetch_board_data: Using dummy data (RSS not implemented)")
             
             # ダミーデータ（実装例）
