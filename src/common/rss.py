@@ -6,6 +6,12 @@ from enum import Enum, auto  # 列挙型用
 # 抽象クラス
 from abc import ABC, abstractmethod
 
+# 定数定義
+FORMULA_CHECK_SAMPLE_SIZE = 3  # 数式チェック時のサンプルサイズ
+RSS_VALIDITY_CHECK_MAX_RETRIES = 100  # RSS関数有効性チェックの最大リトライ回数
+RSS_DATA_FETCH_MAX_RETRIES = 3  # データ取得の最大リトライ回数
+FORMULA_SET_MAX_RETRIES = 3  # 数式設定の最大リトライ回数
+
 
 # データ範囲用のデータクラス
 from dataclasses import dataclass
@@ -497,20 +503,81 @@ class RssMarket(RssBase):
         self.ws = ws
         self.stock_code_list = stock_code_list
         self.item_list = item_list
-        self.batch_row_size = min(2000 // len(item_list), len(stock_code_list)) # 1回のRSS関数で取得するデータ量を調整
+        # 全銘柄×全項目の範囲を一度に処理
         self.range = ws.Range(
             ws.Cells(1, 1),
-            ws.Cells(self.batch_row_size, len(item_list))
+            ws.Cells(len(stock_code_list), len(item_list))
         )
+        self.formulas_already_set = False  # 数式設定済みフラグ
 
     def create_formula(self, stock_code: str, item: MarketStatusItem) -> str:
         return f'=RssMarket("{stock_code}", "{item.value}")'
 
+    def _needs_formula_refresh(self, row: int, col: int) -> bool:
+        """
+        指定セルに数式の再設定が必要かを判定
+        :param row: 行番号（1始まり）
+        :param col: 列番号（1始まり）
+        :return: True if refresh needed, False otherwise
+        """
+        try:
+            cell = self.ws.Cells(row, col)
+            has_formula = cell.HasFormula
+            
+            # 数式がある場合はOK（値が空でもRSS関数が更新中の可能性があるため）
+            if has_formula:
+                # エラー値の場合のみ再設定
+                try:
+                    cell_text = str(cell.Text)
+                    if cell_text.startswith('#'):
+                        return True
+                except:
+                    pass
+                return False
+            
+            # 数式がない場合は再設定が必要
+            return True
+        except Exception as e:
+            return True  # エラー時は安全のため再設定
+
+    def _ensure_formulas_set(self) -> None:
+        """
+        数式を設定する（初回のみ実行）
+        """
+        # 既に設定済みの場合はスキップ
+        if self.formulas_already_set:
+            return
+        
+        # 空リストチェック
+        if not self.stock_code_list or not self.item_list:
+            print("警告: 銘柄コードまたはアイテムリストが空です")
+            return
+        
+        print(f"数式を設定中... (銘柄数: {len(self.stock_code_list)}, 項目数: {len(self.item_list)})")
+        # 全銘柄×全項目の数式を一度に設定
+        for i, item in enumerate(self.item_list):
+            for j, stock_code in enumerate(self.stock_code_list):
+                formula = self.create_formula(stock_code, item)
+                retry_count = 0
+                while retry_count < FORMULA_SET_MAX_RETRIES:
+                    try:
+                        self.ws.Cells(1 + j, 1 + i).Formula = formula
+                        break
+                    except Exception as e:
+                        print(f"Error setting formula: {e}, 再試行中...")
+                        time.sleep(1)
+                        retry_count += 1
+                if retry_count >= FORMULA_SET_MAX_RETRIES:
+                    print(f"警告: 数式設定失敗 (row={1+j}, col={1+i})")
+        print("数式設定完了")
+        self.formulas_already_set = True  # 設定完了フラグを立てる
+
     def is_valid(self) -> bool:
         try:
             # 最後の行のステータスをチェック
-            print(f"batch_row_size: {self.batch_row_size}")
-            status_str = self.ws.Cells(self.batch_row_size, 1).Value
+            last_row = len(self.stock_code_list)
+            print(f"銘柄数: {last_row}")
+            status_str = self.ws.Cells(last_row, 1).Value
             if status_str == "":
                 return False
             return True
@@ -519,64 +586,47 @@ class RssMarket(RssBase):
             return False
 
     def get_dataframe(self) -> pd.DataFrame:
-        # 使用範囲のみクリア（全体をクリアするとエラーになる場合がある）
-        try:
-            used_range = self.ws.UsedRange
-            if used_range is not None:
-                used_range.ClearContents()
-        except:
-            # UsedRangeが取得できない場合は、特定の範囲をクリア
-            try:
-                self.ws.Range("A1:ZZ1000").ClearContents()
-            except:
-                pass  # クリアに失敗しても続行
         # ヘッダーを取得
         headers = [item.value for item in self.item_list]
-        l_df = []
-        print(f"処理対象の銘柄コードリスト: {self.stock_code_list}")  # デバッグログ追加
-        for batch_start in range(0, len(self.stock_code_list), self.batch_row_size):
-            # バッチごとに銘柄コードを取得
-            batch_end = min(batch_start + self.batch_row_size, len(self.stock_code_list))
-            batch_stock_codes = self.stock_code_list[batch_start:batch_end]
-            print(f"現在のバッチ: {batch_stock_codes}")  # デバッグログ追加
-            for i, item in enumerate(self.item_list):
-                for j, stock_code in enumerate(batch_stock_codes):
-                    # RSS関数を設定
-                    formula = self.create_formula(stock_code, item)
-                    print(f"RSS関数: {formula}")
-                    while True:
-                        try:
-                            # セルにRSS関数を設定
-                            self.ws.Cells(1 + j, 1 + i).Formula = formula
-                            break  # 成功したらループを抜ける
-                        except Exception as e:
-                            print(f"Error setting formula: {e}, 再試行中...")
-                            time.sleep(1)
+        print(f"処理対象の銘柄コードリスト: {self.stock_code_list}")
+        
+        # 数式が未設定の場合のみ設定（初回のみ実行される）
+        self._ensure_formulas_set()
 
-            # 取得結果が有効になるまで待機
-            max_retries = 100
-            retries = 0
-            while not self.is_valid() and retries < max_retries:
-                print("RSS関数のステータスが有効になるまで待機中...")
+        # 取得結果が有効になるまで待機（初回のみ時間がかかる）
+        retries = 0
+        while not self.is_valid() and retries < RSS_VALIDITY_CHECK_MAX_RETRIES:
+            print("RSS関数のステータスが有効になるまで待機中...")
+            time.sleep(1)
+            retries += 1
+        
+        if retries >= RSS_VALIDITY_CHECK_MAX_RETRIES:
+            print(f"警告: RSS関数のタイムアウト ({RSS_VALIDITY_CHECK_MAX_RETRIES}秒経過)。データ品質に問題がある可能性があります")
+        
+        time.sleep(2)  # 少し待機してからデータを取得
+        
+        # データを取得（数式は既に設定済みなので値のみ読み取る）
+        retry_count = 0
+        data = None
+        while retry_count < RSS_DATA_FETCH_MAX_RETRIES:
+            try:
+                data = self.range.Value
+                break
+            except Exception as e:
+                print(f"Error getting range: {e}, 再試行中...")
                 time.sleep(1)
-                retries += 1
-            time.sleep(2)  # 少し待機してからデータを取得
-            # データを取得
-            while True:
-                try:
-                    # データを取得
-                    data = self.range.Value
-                    break  # 成功したらループを抜ける
-                except Exception as e:
-                    print(f"Error getting range: {e}, 再試行中...")
-                    time.sleep(1)
-            if data is None:
-                print("データが取得できませんでした。")
-                return pd.DataFrame(columns=headers)
-            # データフレームを作成
-            df = pd.DataFrame(data, columns=headers)
-            l_df.append(df)
-        return pd.concat(l_df, ignore_index=True)
+                retry_count += 1
+        
+        if retry_count >= RSS_DATA_FETCH_MAX_RETRIES:
+            print(f"警告: データ取得失敗")
+        
+        if data is None:
+            print("データが取得できませんでした。")
+            return pd.DataFrame(columns=headers)
+        
+        # データフレームを作成
+        df = pd.DataFrame(data, columns=headers)
+        return df
 
 
 class RssList(RssBase):

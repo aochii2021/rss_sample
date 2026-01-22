@@ -20,6 +20,10 @@ WATCHLIST_FILE = os.path.join(S_FILE_DIR, 'input', 'watchlist.csv')
 
 # グローバル変数として実行セッションのディレクトリを保持
 SESSION_DIR = None
+# RssMarketインスタンスを再利用するためのグローバル変数
+RSS_MARKET_INSTANCE = None
+# Excelワークシートオブジェクトを保持
+EXCEL_WS = None
 
 
 def get_rss_market(ws, stock_code: str, item_list: list[MarketStatusItem]) -> str:
@@ -44,9 +48,14 @@ def get_all_rss_market(ws, stock_code_list: list[str], item_list: list[MarketSta
     :param item_list: 取得したいマーケットステータスの項目
     :return: 取得したデータのDataFrame
     """
-    print(f"銘柄コードリスト: {stock_code_list}, 項目: {item_list}")
-    rss = RssMarket(ws, stock_code_list, item_list)
-    df = rss.get_dataframe()
+    global RSS_MARKET_INSTANCE
+    
+    # 初回のみインスタンスを作成、以降は再利用
+    if RSS_MARKET_INSTANCE is None:
+        print(f"銘柄コードリスト: {stock_code_list}, 項目: {item_list}")
+        RSS_MARKET_INSTANCE = RssMarket(ws, stock_code_list, item_list)
+    
+    df = RSS_MARKET_INSTANCE.get_dataframe()
     return df
 
 
@@ -68,21 +77,18 @@ def load_watchlist() -> list[str]:
 
 
 def record_market_data():
-    global SESSION_DIR
+    global SESSION_DIR, EXCEL_WS
     
     try:
-        xl = win32com.client.GetObject(Class="Excel.Application")
-    except Exception as e:
-        print(f"エラー: エクセルが開いていません。 {e}")
-        return
-
-    try:
-        xl.Visible = True
-        # ワークシートを毎回取得し直す
-        ws = xl.Worksheets('Sheet1')
+        # 初回のみワークシートを取得、以降は再利用
+        if EXCEL_WS is None:
+            xl = win32com.client.GetObject(Class="Excel.Application")
+            xl.Visible = True
+            EXCEL_WS = xl.Worksheets('Sheet1')
         
-        # シート全体をクリアして初期化
-        ws.Cells.ClearContents()
+        # 注: ClearContents()を削除
+        # RSS関数の数式は初回のみ設定され、以降はリアルタイム更新される
+        # 毎回クリアすると数式が消えてパフォーマンスが悪化する
 
         market_status_item_list = [
             item for item in MarketStatusItem  # 全てのマーケットステータス項目を取得
@@ -97,7 +103,7 @@ def record_market_data():
         print(f"\n[{current_time.strftime('%H:%M:%S')}] データ取得開始...")
 
         # 監視銘柄のみのマーケットデータを取得
-        df = get_all_rss_market(ws, stock_code_list, market_status_item_list)
+        df = get_all_rss_market(EXCEL_WS, stock_code_list, market_status_item_list)
         
         # タイムスタンプを追加
         df.insert(0, '記録日時', current_time.strftime('%Y-%m-%d %H:%M:%S'))
@@ -148,7 +154,7 @@ def create_session_info(session_dir: str, stock_code_list: list[str], start_time
 
 
 def main():
-    global SESSION_DIR
+    global SESSION_DIR, EXCEL_WS
     
     try:
         xl = win32com.client.GetObject(Class="Excel.Application")  # 今、開いている空白のブック
@@ -157,7 +163,7 @@ def main():
         return
 
     xl.Visible = True
-    ws = xl.Worksheets('Sheet1')
+    EXCEL_WS = xl.Worksheets('Sheet1')
 
     market_status_item_list = [
         item for item in MarketStatusItem  # 全てのマーケットステータス項目を取得
@@ -191,9 +197,14 @@ def main():
     # セッション情報ファイルを作成
     create_session_info(SESSION_DIR, stock_code_list, start_time)
     
-    # 初回データ取得
-    df = get_all_rss_market(ws, stock_code_list, market_status_item_list)
-    print("初回データ取得完了:")
+    # ★プログラム起動時に必ず1回だけシートクリア→数式設定を実施
+    print("シートをクリアして数式を設定中...")
+    used_range = EXCEL_WS.UsedRange
+    used_range.ClearContents()
+    
+    # 初回データ取得（この時点で数式が設定される）
+    df = get_all_rss_market(EXCEL_WS, stock_code_list, market_status_item_list)
+    print("初回データ取得完了（数式設定完了）:")
     print(df.head())  # 最初の5行を表示
     
     # タイムスタンプを追加
