@@ -10,6 +10,7 @@ import logging
 from datetime import datetime, time as dt_time
 from pathlib import Path
 import pandas as pd
+import win32com.client
 
 # 親ディレクトリをパスに追加
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -43,12 +44,25 @@ class TradingSystem:
         
         # コンポーネント初期化
         self.order_executor = OrderExecutor(dry_run=config.DRY_RUN)
-        self.data_collector = LiveDataCollector(self.symbols, rss=self.order_executor.rss)
+        
+        # データ取得用Excel（注文用とは別インスタンス）
+        self.excel_data = None
+        if not config.DRY_RUN:
+            try:
+                self.excel_data = win32com.client.Dispatch("Excel.Application")
+                self.excel_data.Visible = True
+                logger.info("Excel COM connection established (Data Collection)")
+            except Exception as e:
+                logger.error(f"Failed to connect to Excel for data collection: {e}")
+                raise
+        
+        self.data_collector = LiveDataCollector(self.symbols, excel_data=self.excel_data)
         self.signal_generator = SignalGenerator()
         
         # 状態管理
         self.is_running = False
         self.current_session = None
+        self.last_position_sync = datetime.now()
         
         logger.info("TradingSystem initialized")
     
@@ -65,6 +79,15 @@ class TradingSystem:
         except Exception as e:
             logger.error(f"Failed to load watchlist: {e}")
             return []
+    
+    def __del__(self):
+        """デストラクタでリソースをクリーンアップ"""
+        if self.excel_data:
+            try:
+                self.excel_data.Quit()
+                logger.info("Excel COM connection closed (Data Collection)")
+            except Exception as e:
+                logger.error(f"Error closing Excel (Data): {e}")
     
     def _is_trading_session(self) -> bool:
         """現在が取引時間内かチェック"""
@@ -116,8 +139,9 @@ class TradingSystem:
     def _check_signals(self, lob_data: dict):
         """シグナルチェックと注文実行"""
         current_time = datetime.now()
-        
-        # 新規エントリーチェック
+                # pending注文の約定確認（毎ループ）
+        self.order_executor.check_pending_orders()
+                # 新規エントリーチェック
         for symbol, lob_features in lob_data.items():
             current_price = lob_features.get("mid", 0)
             if current_price == 0:
@@ -161,6 +185,15 @@ class TradingSystem:
                     current_price,
                     exit_signal["reason"]
                 )
+        
+        # 1分ごとにポジション照合
+        if (datetime.now() - self.last_position_sync).total_seconds() >= 60:
+            sync_result = self.order_executor.sync_positions_with_rss()
+            if sync_result.get("missing_in_rss"):
+                logger.critical(f"Missing positions in RSS: {sync_result['missing_in_rss']}")
+            if sync_result.get("missing_in_local"):
+                logger.critical(f"Missing positions in local: {sync_result['missing_in_local']}")
+            self.last_position_sync = datetime.now()
     
     def _session_end_close_all(self):
         """セッション終了時に全ポジションクローズ"""

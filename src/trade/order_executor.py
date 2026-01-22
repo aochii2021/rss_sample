@@ -96,15 +96,19 @@ class OrderExecutor:
         self.max_drawdown_tick = 0.0
         self.peak_pnl_tick = 0.0
         
-        # Excel COM接続（DRY_RUN=Falseの場合）
-        self.excel = None
+        # pending注文管理（約定待ちリスト）
+        self.pending_orders: List[Dict[str, Any]] = []
+        self.order_id_counter = 0  # 注文IDカウンター（衝突回避）
+        
+        # Excel COM接続（DRY_RUN=Falseの場合）- 注文実行専用
+        self.excel_order = None
         self.rss = None
         if not dry_run:
             try:
-                self.excel = win32com.client.Dispatch("Excel.Application")
-                self.excel.Visible = True
-                self.rss = RSSFunctions(self.excel)
-                logger.info("Excel COM connection established")
+                self.excel_order = win32com.client.Dispatch("Excel.Application")
+                self.excel_order.Visible = True
+                self.rss = RSSFunctions(self.excel_order)
+                logger.info("Excel COM connection established (Order Execution)")
             except Exception as e:
                 logger.error(f"Failed to connect to Excel: {e}")
                 raise
@@ -259,8 +263,10 @@ class OrderExecutor:
             action = signal["action"]  # "buy" or "sell"
             price = signal["price"]
             
-            # 発注IDを生成（タイムスタンプベース）
-            order_id = int(datetime.now().strftime("%Y%m%d%H%M%S"))
+            # 発注IDを生成（マイクロ秒+カウンター方式、衝突回避）
+            self.order_id_counter += 1
+            timestamp_part = int(datetime.now().strftime("%Y%m%d%H%M%S%f")[:17])
+            order_id = timestamp_part + self.order_id_counter
             
             # 売買区分: 1=売建、3=買建
             trade_type = "3" if action == "buy" else "1"
@@ -283,7 +289,7 @@ class OrderExecutor:
             ]
             
             # RssMarginOpenOrder関数を呼び出し
-            result = self.excel.Run("RssMarginOpenOrder", *order_params)
+            result = self.excel_order.Run("RssMarginOpenOrder", *order_params)
             
             if result:
                 logger.info(
@@ -291,14 +297,15 @@ class OrderExecutor:
                     f"(OrderID: {order_id})"
                 )
                 
-                # 約定確認（最大5秒待機）
-                if self.rss and self.rss.check_order_filled(order_id, timeout_sec=5):
-                    logger.info(f"Order {order_id} filled successfully")
-                    return True
-                else:
-                    logger.warning(f"Order {order_id} not filled within timeout")
-                    # 約定未確認でも一旦Trueを返す（注文一覧で後から確認可能）
-                    return True
+                # pending注文リストに追加（約定待ち）
+                self.pending_orders.append({
+                    "order_id": order_id,
+                    "signal": signal,
+                    "timestamp": datetime.now(),
+                    "order_type": "open"
+                })
+                logger.debug(f"Added to pending orders: {order_id}")
+                return True
             else:
                 logger.error(f"Order failed: {symbol} {action} @ {price:.2f}")
                 return False
@@ -326,8 +333,10 @@ class OrderExecutor:
             symbol = position.symbol
             direction = position.direction
             
-            # 発注IDを生成
-            order_id = int(datetime.now().strftime("%Y%m%d%H%M%S"))
+            # 発注IDを生成（マイクロ秒+カウンター方式）
+            self.order_id_counter += 1
+            timestamp_part = int(datetime.now().strftime("%Y%m%d%H%M%S%f")[:17])
+            order_id = timestamp_part + self.order_id_counter
             
             # 売買区分: 1=売埋、3=買埋（新規と逆）
             trade_type = "1" if direction == "buy" else "3"
@@ -356,7 +365,7 @@ class OrderExecutor:
             ]
             
             # RssMarginCloseOrder関数を呼び出し
-            result = self.excel.Run("RssMarginCloseOrder", *order_params)
+            result = self.excel_order.Run("RssMarginCloseOrder", *order_params)
             
             if result:
                 logger.info(
@@ -364,13 +373,17 @@ class OrderExecutor:
                     f"(OrderID: {order_id}, Entry: {position.entry_price:.2f})"
                 )
                 
-                # 約定確認（最大5秒待機）
-                if self.rss and self.rss.check_order_filled(order_id, timeout_sec=5):
-                    logger.info(f"Close order {order_id} filled successfully")
-                    return True
-                else:
-                    logger.warning(f"Close order {order_id} not filled within timeout")
-                    return True
+                # pending注文リストに追加（約定待ち）
+                self.pending_orders.append({
+                    "order_id": order_id,
+                    "position": position,
+                    "price": price,
+                    "reason": reason,
+                    "timestamp": datetime.now(),
+                    "order_type": "close"
+                })
+                logger.debug(f"Added to pending close orders: {order_id}")
+                return True
             else:
                 logger.error(f"Close order failed: {symbol} @ {price:.2f}")
                 return False
@@ -382,6 +395,91 @@ class OrderExecutor:
     def get_open_positions(self) -> List[Position]:
         """保有中のポジションを取得"""
         return self.positions.copy()
+    
+    def check_pending_orders(self):
+        """
+        pending注文の約定状況をチェックし、約定済みならポジション作成/クローズ
+        
+        Returns:
+            処理済み注文数
+        """
+        if not self.rss:
+            return 0
+        
+        processed_count = 0
+        
+        for pending in self.pending_orders[:]:
+            order_id = pending["order_id"]
+            elapsed_sec = (datetime.now() - pending["timestamp"]).total_seconds()
+            
+            # 30秒経過しても約定しない→タイムアウト
+            if elapsed_sec > 30:
+                logger.error(
+                    f"Order {order_id} timeout (30s elapsed), "
+                    f"type={pending['order_type']}, status={self.rss.get_order_status(order_id)}"
+                )
+                self.pending_orders.remove(pending)
+                processed_count += 1
+                continue
+            
+            # 約定確認（タイムアウト1秒）
+            if self.rss.check_order_filled(order_id, timeout_sec=1):
+                if pending["order_type"] == "open":
+                    # 新規注文約定→Positionオブジェクト作成
+                    signal = pending["signal"]
+                    position = Position(
+                        symbol=signal["symbol"],
+                        direction=signal["action"],
+                        entry_price=signal["price"],
+                        size=config.RISK_PARAMS["position_size"],
+                        entry_time=datetime.now(),
+                        level=signal["level"],
+                        level_kind=signal.get("level_kind", "unknown"),
+                        level_strength=signal.get("level_strength", 0.0)
+                    )
+                    self.positions.append(position)
+                    logger.info(
+                        f"Position opened (filled): {signal['symbol']} {signal['action']} @ {signal['price']:.2f} "
+                        f"(OrderID: {order_id})"
+                    )
+                
+                elif pending["order_type"] == "close":
+                    # 決済注文約定→ポジションクローズ
+                    position = pending["position"]
+                    price = pending["price"]
+                    reason = pending["reason"]
+                    
+                    position.close(price, datetime.now(), reason)
+                    
+                    # 損益更新
+                    self.daily_pnl_tick += position.pnl_tick
+                    self.peak_pnl_tick = max(self.peak_pnl_tick, self.daily_pnl_tick)
+                    self.max_drawdown_tick = self.peak_pnl_tick - self.daily_pnl_tick
+                    
+                    # 連続損失カウント
+                    if position.pnl_tick < 0:
+                        self.consecutive_losses += 1
+                    else:
+                        self.consecutive_losses = 0
+                    
+                    # ポジションリストから削除
+                    if position in self.positions:
+                        self.positions.remove(position)
+                    self.closed_positions.append(position)
+                    
+                    logger.info(
+                        f"Position closed (filled): {position.symbol} "
+                        f"PnL={position.pnl_tick:.2f} tick ({reason}), "
+                        f"Daily PnL={self.daily_pnl_tick:.2f} tick (OrderID: {order_id})"
+                    )
+                
+                self.pending_orders.remove(pending)
+                processed_count += 1
+        
+        if processed_count > 0:
+            logger.debug(f"Processed {processed_count} pending orders")
+        
+        return processed_count
     
     def sync_positions_with_rss(self) -> Dict[str, Any]:
         """
@@ -436,6 +534,15 @@ class OrderExecutor:
         except Exception as e:
             logger.error(f"Error syncing positions: {e}")
             return {"error": str(e)}
+    
+    def __del__(self):
+        """デストラクタでExcelをクリーンアップ"""
+        if self.excel_order:
+            try:
+                self.excel_order.Quit()
+                logger.info("Excel COM connection closed (Order Execution)")
+            except Exception as e:
+                logger.error(f"Error closing Excel: {e}")
     
     def get_daily_stats(self) -> Dict[str, Any]:
         """本日の統計を取得"""

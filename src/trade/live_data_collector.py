@@ -24,14 +24,15 @@ logger = logging.getLogger(__name__)
 class LiveDataCollector:
     """リアルタイムデータ収集クラス"""
     
-    def __init__(self, symbols: list, rss: RSSFunctions = None):
+    def __init__(self, symbols: list, excel_data=None):
         """
         Args:
             symbols: 監視対象銘柄コードのリスト
-            rss: RSSFunctionsインスタンス（DRY_RUN=False時）
+            excel_data: データ取得専用Excelインスタンス（DRY_RUN=False時）
         """
         self.symbols = symbols
-        self.rss = rss
+        self.excel_data = excel_data
+        self.rss_data = RSSFunctions(excel_data) if excel_data else None
         self.roll_n = config.STRATEGY_PARAMS["roll_n"]
         self.k_depth = config.STRATEGY_PARAMS["k_depth"]
         
@@ -43,51 +44,53 @@ class LiveDataCollector:
     
     def fetch_board_data(self) -> pd.DataFrame:
         """
-        MarketSpeed II RSSから板情報を取得
+        MarketSpeed II RSSから板情報を取得（bid/ask各5本）
         
         Returns:
             板情報DataFrame（複数銘柄）
         """
         try:
             # DRY_RUNモード：ダミーデータを返す
-            if not self.rss:
+            if not self.excel_data:
                 logger.debug("DRY_RUN mode: returning dummy data")
                 return pd.DataFrame()
             
-            # 各銘柄の現在価格をRssMarketで取得
+            # 各銘柄の板情報をRssMarketで取得
             board_data = []
+            
             for symbol in self.symbols:
-                price = self.rss.get_market_price(symbol)
-                if price:
-                    board_data.append({
-                        "ts": datetime.now(),
-                        "symbol": symbol,
-                        "price": price,
-                        # TODO: 板情報（気配値）を取得
-                        # 現在はRssMarketで現在値のみ取得
-                    })
+                row_data = {
+                    "ts": datetime.now(),
+                    "symbol": symbol
+                }
+                
+                # RssMarketで板の気配値を取得（bid/ask各5本）
+                try:
+                    # 買気配（bid）1〜5
+                    for i in range(1, 6):
+                        bid_px = self.excel_data.Run("RssMarket", f"{symbol}.T", f"買気配値段{i}")
+                        bid_qty = self.excel_data.Run("RssMarket", f"{symbol}.T", f"買気配数量{i}")
+                        row_data[f"bid_px_{i}"] = bid_px if bid_px else None
+                        row_data[f"bid_qty_{i}"] = bid_qty if bid_qty else None
+                    
+                    # 売気配（ask）1〜5
+                    for i in range(1, 6):
+                        ask_px = self.excel_data.Run("RssMarket", f"{symbol}.T", f"売気配値段{i}")
+                        ask_qty = self.excel_data.Run("RssMarket", f"{symbol}.T", f"売気配数量{i}")
+                        row_data[f"ask_px_{i}"] = ask_px if ask_px else None
+                        row_data[f"ask_qty_{i}"] = ask_qty if ask_qty else None
+                    
+                    board_data.append(row_data)
+                except Exception as e:
+                    logger.warning(f"Failed to fetch board data for {symbol}: {e}")
             
             if board_data:
-                return pd.DataFrame(board_data)
+                df = pd.DataFrame(board_data)
+                logger.debug(f"Fetched board data for {len(board_data)} symbols")
+                return df
             else:
                 logger.warning("No board data fetched")
                 return pd.DataFrame()
-            logger.warning("fetch_board_data: Using dummy data (RSS not implemented)")
-            
-            # ダミーデータ（実装例）
-            dummy_data = []
-            for sym in self.symbols:
-                dummy_data.append({
-                    "記録日時": datetime.now(),
-                    "銘柄コード": sym,
-                    "現在値": 1000.0,
-                    "最良売気配値1": 1001.0,
-                    "最良売気配数量1": 100,
-                    "最良買気配値1": 999.0,
-                    "最良買気配数量1": 100,
-                })
-            
-            return pd.DataFrame(dummy_data)
             
         except Exception as e:
             logger.error(f"Failed to fetch board data: {e}")
