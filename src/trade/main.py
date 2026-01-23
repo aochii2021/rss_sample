@@ -20,7 +20,9 @@ from live_data_collector import LiveDataCollector
 from signal_generator import SignalGenerator
 from order_executor import OrderExecutor
 
-# ロギング設定
+# ロギング設定（ログディレクトリ自動作成）
+config.LOG_DIR.mkdir(parents=True, exist_ok=True)
+
 log_file = str(config.LOGGING_CONFIG["trade_log"]).format(date=datetime.now().strftime("%Y%m%d"))
 logging.basicConfig(
     level=getattr(logging, config.LOGGING_CONFIG["level"]),
@@ -299,6 +301,15 @@ def main():
     print("実トレードシステム (algo4_counter_trade)")
     print("=" * 60)
     print(f"DRY_RUN: {config.DRY_RUN}")
+    
+    # 設定値バリデーション
+    try:
+        config.validate_config()
+        logger.info("Configuration validation passed")
+    except ValueError as e:
+        logger.error(f"Configuration validation failed: {e}")
+        print(f"\n❌ 設定エラー:\n{e}\n")
+        return
     
     if not config.DRY_RUN:
         print("\n⚠️  WARNING: 本番モードで起動します ⚠️")

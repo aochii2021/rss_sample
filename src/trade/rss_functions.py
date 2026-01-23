@@ -284,7 +284,7 @@ class RSSFunctions:
     
     def check_order_filled(self, order_id: int, timeout_sec: int = 5) -> bool:
         """
-        注文が約定したかチェック
+        注文が約定したかチェック（堅牢化版）
         
         Args:
             order_id: 発注ID
@@ -296,17 +296,28 @@ class RSSFunctions:
         import time
         start_time = time.time()
         
+        # 約定状態文字列の定義（MarketSpeed II RSSの仕様）
+        FILLED_STATUSES = ["約定", "全部約定", "一部約定"]
+        FAILED_STATUSES = ["取消", "失効", "エラー", "却下", "訂正取消"]
+        
         while time.time() - start_time < timeout_sec:
             status = self.get_order_status(order_id)
             
             if status:
+                # 完全一致チェック（部分一致によるfalse positiveを回避）
+                status_stripped = status.strip()
+                
                 # 約定済み状態をチェック
-                if "約定" in status or "全部約定" in status:
-                    logger.info(f"Order {order_id} filled: {status}")
-                    return True
-                elif "取消" in status or "失効" in status or "エラー" in status:
-                    logger.warning(f"Order {order_id} cancelled/failed: {status}")
-                    return False
+                for filled_status in FILLED_STATUSES:
+                    if filled_status in status_stripped:
+                        logger.info(f"Order {order_id} filled: {status_stripped}")
+                        return True
+                
+                # 失敗/キャンセル状態をチェック
+                for failed_status in FAILED_STATUSES:
+                    if failed_status in status_stripped:
+                        logger.warning(f"Order {order_id} cancelled/failed: {status_stripped}")
+                        return False
             
             time.sleep(0.5)
         

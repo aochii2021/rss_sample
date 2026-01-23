@@ -412,18 +412,20 @@ class OrderExecutor:
             order_id = pending["order_id"]
             elapsed_sec = (datetime.now() - pending["timestamp"]).total_seconds()
             
-            # 30秒経過しても約定しない→タイムアウト
-            if elapsed_sec > 30:
+            # 設定値のタイムアウトで判定
+            timeout_sec = config.RSS_PARAMS["pending_order_timeout_sec"]
+            if elapsed_sec > timeout_sec:
                 logger.error(
-                    f"Order {order_id} timeout (30s elapsed), "
+                    f"Order {order_id} timeout ({timeout_sec}s elapsed), "
                     f"type={pending['order_type']}, status={self.rss.get_order_status(order_id)}"
                 )
                 self.pending_orders.remove(pending)
                 processed_count += 1
                 continue
             
-            # 約定確認（タイムアウト1秒）
-            if self.rss.check_order_filled(order_id, timeout_sec=1):
+            # 約定確認（タイムアウトは設定値）
+            check_timeout = config.RSS_PARAMS["order_filled_check_timeout_sec"]
+            if self.rss.check_order_filled(order_id, timeout_sec=check_timeout):
                 if pending["order_type"] == "open":
                     # 新規注文約定→Positionオブジェクト作成
                     signal = pending["signal"]
