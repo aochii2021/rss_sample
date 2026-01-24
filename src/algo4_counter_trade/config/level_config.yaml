@@ -102,7 +102,7 @@ common:
     min_weight: 0.3  # 重み0.3未満のレベルを除外
   
   # 銘柄単位のレベル上限
-  max_levels_per_symbol: 20  # 重みの高い順にトップ20まで
+  max_levels_per_symbol: 40  # 重みの高い順にトップ40まで
 
 # データリーク防止
 data_leak_prevention:
