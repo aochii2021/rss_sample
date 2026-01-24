@@ -169,7 +169,8 @@ class OutputManager:
                 raise ValueError("出力ディレクトリが未作成です")
             
             log_file_path = self.current_output_dir / log_file_name
-            file_handler = logging.FileHandler(log_file_path, encoding='utf-8')
+            # UTF-8 with BOMで保存（Windows PowerShellとの互換性向上）
+            file_handler = logging.FileHandler(log_file_path, encoding='utf-8-sig')
             file_handler.setLevel(numeric_level)
             file_handler.setFormatter(formatter)
             root_logger.addHandler(file_handler)

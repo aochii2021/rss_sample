@@ -323,20 +323,20 @@ def main():
         
         print()
         print("=" * 60)
-        print("✓ 正常終了")
+        print("[SUCCESS] 正常終了")
         print("=" * 60)
         
     except KeyboardInterrupt:
         print()
         print("=" * 60)
-        print("ユーザーによる中断")
+        print("[INTERRUPT] ユーザーによる中断")
         print("=" * 60)
         sys.exit(1)
         
     except Exception as e:
         print()
         print("=" * 60)
-        print("✗ エラー終了")
+        print("[ERROR] エラー終了")
         print("=" * 60)
         print(f"エラー: {e}")
         sys.exit(1)
