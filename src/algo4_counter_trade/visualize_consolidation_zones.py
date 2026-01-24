@@ -41,8 +41,11 @@ def visualize_consolidation_zones(trade_date_str, lookback_days=5):
     # トレードデータを読み込み
     trades_path = f"output/trades_5d_{trade_date_str}.csv"
     if not os.path.exists(trades_path):
-        print(f"トレードファイルが見つかりません: {trades_path}")
-        return
+        # バックテスト形式も試す
+        trades_path = f"output/backtest_{trade_date_str}/trades.csv"
+        if not os.path.exists(trades_path):
+            print(f"トレードファイルが見つかりません: output/trades_5d_{trade_date_str}.csv or output/backtest_{trade_date_str}/trades.csv")
+            return
     
     df_trades = pd.read_csv(trades_path)
     df_trades['entry_ts'] = pd.to_datetime(df_trades['entry_ts'])
@@ -50,6 +53,9 @@ def visualize_consolidation_zones(trade_date_str, lookback_days=5):
     
     # LOBデータを読み込み（価格データ）
     lob_path = f"output/lob_features_5d_{trade_date_str}.csv"
+    if not os.path.exists(lob_path):
+        # バックテスト形式も試す
+        lob_path = f"output/backtest_{trade_date_str}/lob_features.csv"
     df_lob = pd.read_csv(lob_path)
     df_lob['ts'] = pd.to_datetime(df_lob['ts'])
     
@@ -265,12 +271,20 @@ def visualize_consolidation_zones(trade_date_str, lookback_days=5):
         plt.close()
 
 def main():
+    import argparse
+    
+    parser = argparse.ArgumentParser(description='揉み合いゾーン可視化')
+    parser.add_argument('--date', type=str, default='20260123', help='取引日（YYYYMMDD形式）')
+    parser.add_argument('--lookback-days', type=int, default=5, help='過去何営業日のデータを表示するか')
+    
+    args = parser.parse_args()
+    
     # ========== 設定 ==========
-    LOOKBACK_DAYS = 3  # 過去何営業日のデータを表示するか
+    LOOKBACK_DAYS = args.lookback_days
     
     print(f"=== 揉み合いゾーン可視化（過去{LOOKBACK_DAYS}営業日） ===\n")
     
-    dates = ['20260119', '20260120']
+    dates = [args.date]
     
     for date in dates:
         print(f"\n■ {date[:4]}-{date[4:6]}-{date[6:]}")

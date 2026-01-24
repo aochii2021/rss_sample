@@ -29,7 +29,7 @@ DEFAULT_PARAMS = {
     
     # レベル強度の閾値（0.0-1.0）
     # この値以上の強度を持つレベルのみ使用
-    "strength_th": 0.3,
+    "strength_th": 0.5,
     
     # OFI/depth_imb計算用のローリング期間
     "roll_n": 20,
