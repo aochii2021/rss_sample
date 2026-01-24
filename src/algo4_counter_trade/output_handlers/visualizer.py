@@ -9,6 +9,7 @@ import logging
 from pathlib import Path
 from typing import Optional, List, Dict, Any
 import pandas as pd
+import numpy as np
 import matplotlib
 matplotlib.use('Agg')  # GUI不要のバックエンド
 import matplotlib.pyplot as plt
@@ -248,6 +249,308 @@ class Visualizer:
         
         logger.info(f"保有時間分布を出力: {output_path}")
         return output_path
+    
+    def plot_trade_chart(
+        self,
+        symbol: str,
+        chart_df: pd.DataFrame,
+        trades_df: pd.DataFrame,
+        levels: Optional[List[Dict[str, Any]]] = None
+    ) -> Optional[Path]:
+        """
+        トレード箇所を可視化したチャートを生成（ろうそく足 + 価格帯別出来高）
+        
+        Args:
+            symbol: 銘柄コード
+            chart_df: 価格チャートデータ（timestamp, open, high, low, close, volume列が必要）
+            trades_df: その銘柄のトレードデータ
+            levels: S/Rレベルリスト（オプション）
+            
+        Returns:
+            出力ファイルパス
+        """
+        if trades_df.empty:
+            return None
+        
+        # timestampをdatetimeに変換
+        chart_df = chart_df.copy()
+        chart_df['timestamp'] = pd.to_datetime(chart_df['timestamp'])
+        
+        # 価格帯別出来高を計算
+        volume_profile = self._calculate_volume_profile(chart_df, bin_size=1.0)
+        
+        # プロット作成（OHLC + 価格帯別出来高 + 時系列出来高）
+        fig = plt.figure(figsize=(18, 10))
+        gs = fig.add_gridspec(2, 2, width_ratios=[4, 1], height_ratios=[3, 1], 
+                             hspace=0.05, wspace=0.05)
+        
+        ax_ohlc = fig.add_subplot(gs[0, 0])  # OHLCチャート
+        ax_volume_profile = fig.add_subplot(gs[0, 1], sharey=ax_ohlc)  # 価格帯別出来高
+        ax_volume = fig.add_subplot(gs[1, 0], sharex=ax_ohlc)  # 時系列出来高
+        
+        # OHLCキャンドルスティック
+        bar_width = 0.6 / 24  # 5分足想定
+        if len(chart_df) > 1:
+            time_delta = (chart_df['timestamp'].max() - chart_df['timestamp'].min()).total_seconds()
+            bar_width = time_delta / len(chart_df) / 86400 * 0.6
+        
+        for idx, row in chart_df.iterrows():
+            date = row['timestamp']
+            open_price = row.get('open')
+            high = row.get('high')
+            low = row.get('low')
+            close = row.get('close')
+            
+            if pd.isna(open_price) or pd.isna(close):
+                continue
+            
+            color = 'red' if close >= open_price else 'blue'
+            
+            # ローソク足の実体
+            ax_ohlc.plot([date, date], [open_price, close], color=color, 
+                        linewidth=4, solid_capstyle='butt')
+            
+            # ヒゲ
+            if not pd.isna(high):
+                ax_ohlc.plot([date, date], [max(open_price, close), high], 
+                           color=color, linewidth=1)
+            if not pd.isna(low):
+                ax_ohlc.plot([date, date], [min(open_price, close), low], 
+                           color=color, linewidth=1)
+        
+        # S/Rレベル線を描画
+        level_colors = {
+            "recent_high": "red",
+            "recent_low": "green",
+            "vpoc": "purple",
+            "hvn": "magenta",
+            "swing_resistance": "darkred",
+            "swing_support": "darkgreen",
+            "prev_high": "orange",
+            "prev_low": "cyan",
+            "prev_close": "gray"
+        }
+        
+        drawn_levels = set()
+        level_annotations = {}  # レベル価格 → レベル情報のマッピング
+        
+        if levels:
+            for lv in levels:
+                kind = lv.get('kind', 'unknown')
+                level_price = lv.get('level', 0)
+                strength = lv.get('strength', 0.5)
+                
+                if level_price <= 0:
+                    continue
+                
+                if level_price in drawn_levels:
+                    continue
+                drawn_levels.add(level_price)
+                level_annotations[level_price] = lv
+                
+                color = level_colors.get(kind, 'gray')
+                alpha = 0.3 + 0.6 * strength
+                linewidth = 0.5 + 1.5 * strength
+                
+                ax_ohlc.axhline(y=level_price, color=color, linestyle='--', 
+                              linewidth=linewidth, alpha=alpha, zorder=1)
+        
+        # トレードデータ準備
+        trades_df = trades_df.copy()
+        trades_df['entry_ts'] = pd.to_datetime(trades_df['entry_ts'])
+        trades_df['exit_ts'] = pd.to_datetime(trades_df['exit_ts'])
+        
+        # トレードのエントリー・イグジットをプロット
+        buy_entries = []
+        sell_entries = []
+        profit_exits = []
+        loss_exits = []
+        lines_profit = []
+        lines_loss = []
+        
+        for _, trade in trades_df.iterrows():
+            entry_time = trade['entry_ts']
+            exit_time = trade['exit_ts']
+            entry_price = trade['entry_price']
+            exit_price = trade['exit_price']
+            position_type = trade.get('direction', 'buy')
+            pnl = trade.get('pnl_tick', 0)
+            
+            # エントリーに最も近いレベルを特定
+            closest_level = self._find_closest_level(entry_price, level_annotations)
+            
+            # エントリーポイント
+            if position_type == 'buy':
+                buy_entries.append((entry_time, entry_price, closest_level))
+            else:
+                sell_entries.append((entry_time, entry_price, closest_level))
+            
+            # イグジットポイント
+            if pnl >= 0:
+                profit_exits.append((exit_time, exit_price))
+                lines_profit.append(((entry_time, entry_price), (exit_time, exit_price)))
+            else:
+                loss_exits.append((exit_time, exit_price))
+                lines_loss.append(((entry_time, entry_price), (exit_time, exit_price)))
+        
+        # エントリーマーカーと根拠レベルのアノテーション
+        if buy_entries:
+            for i, (time, price, level_info) in enumerate(buy_entries):
+                ax_ohlc.scatter(time, price, color='limegreen', marker='^', s=200, 
+                              edgecolors='darkgreen', linewidths=1.5, zorder=5)
+                
+                # 根拠レベルをアノテーション（最初の3つのみ、重複を避ける）
+                if level_info and i < 3:
+                    kind = level_info.get('kind', 'unknown')
+                    level_price = level_info.get('level')
+                    ax_ohlc.annotate(f'{kind}\n{level_price:.1f}', 
+                                   xy=(time, price), xytext=(10, -30),
+                                   textcoords='offset points', fontsize=8,
+                                   bbox=dict(boxstyle='round,pad=0.3', 
+                                           facecolor='limegreen', alpha=0.7),
+                                   arrowprops=dict(arrowstyle='->', 
+                                                 connectionstyle='arc3,rad=0'))
+        
+        if sell_entries:
+            for i, (time, price, level_info) in enumerate(sell_entries):
+                ax_ohlc.scatter(time, price, color='orangered', marker='v', s=200,
+                              edgecolors='darkred', linewidths=1.5, zorder=5)
+                
+                if level_info and i < 3:
+                    kind = level_info.get('kind', 'unknown')
+                    level_price = level_info.get('level')
+                    ax_ohlc.annotate(f'{kind}\n{level_price:.1f}', 
+                                   xy=(time, price), xytext=(10, 30),
+                                   textcoords='offset points', fontsize=8,
+                                   bbox=dict(boxstyle='round,pad=0.3', 
+                                           facecolor='orangered', alpha=0.7),
+                                   arrowprops=dict(arrowstyle='->', 
+                                                 connectionstyle='arc3,rad=0'))
+        
+        # イグジットマーカー
+        if profit_exits:
+            times, prices = zip(*profit_exits)
+            ax_ohlc.scatter(times, prices, color='gold', marker='o', s=150,
+                          edgecolors='orange', linewidths=1.5, label='Exit (Profit)', zorder=5)
+        
+        if loss_exits:
+            times, prices = zip(*loss_exits)
+            ax_ohlc.scatter(times, prices, color='silver', marker='o', s=150,
+                          edgecolors='dimgray', linewidths=1.5, label='Exit (Loss)', zorder=5)
+        
+        # エントリー→イグジットの線
+        for (entry_time, entry_price), (exit_time, exit_price) in lines_profit:
+            ax_ohlc.plot([entry_time, exit_time], [entry_price, exit_price],
+                       color='green', linestyle='-', linewidth=1.5, alpha=0.6, zorder=3)
+        
+        for (entry_time, entry_price), (exit_time, exit_price) in lines_loss:
+            ax_ohlc.plot([entry_time, exit_time], [entry_price, exit_price],
+                       color='red', linestyle='--', linewidth=1.5, alpha=0.6, zorder=3)
+        
+        # 軸ラベル（OHLCチャート）
+        ax_ohlc.set_ylabel('価格', fontsize=12)
+        ax_ohlc.set_title(f'[{symbol}] トレードチャート ({len(trades_df)} trades)', 
+                         fontsize=14, fontweight='bold')
+        ax_ohlc.grid(True, alpha=0.3)
+        ax_ohlc.tick_params(labelbottom=False)
+        
+        # 凡例（重複除外）
+        handles, labels = ax_ohlc.get_legend_handles_labels()
+        if handles:
+            by_label = dict(zip(labels, handles))
+            ax_ohlc.legend(by_label.values(), by_label.keys(), loc='best', fontsize=8)
+        
+        # 価格帯別出来高を描画
+        if volume_profile:
+            prices = sorted(volume_profile.keys())
+            volumes = [volume_profile[p] for p in prices]
+            
+            ax_volume_profile.barh(prices, volumes, height=0.8, color='gray', alpha=0.5)
+            ax_volume_profile.set_xlabel('出来高', fontsize=10)
+            ax_volume_profile.tick_params(labelleft=False)
+            ax_volume_profile.grid(True, alpha=0.3, axis='y')
+            
+            # VPOC（Volume Point of Control）を表示
+            vpoc_price = max(volume_profile, key=volume_profile.get)
+            ax_volume_profile.axhline(y=vpoc_price, color='red', linestyle='-', 
+                                     linewidth=2, label='VPOC')
+            ax_ohlc.axhline(y=vpoc_price, color='red', linestyle='-', 
+                          linewidth=1, alpha=0.7)
+        
+        # 時系列出来高
+        if 'volume' in chart_df.columns:
+            ax_volume.bar(chart_df['timestamp'], chart_df['volume'], 
+                         color='gray', alpha=0.5, width=bar_width)
+            ax_volume.set_ylabel('出来高', fontsize=12)
+            ax_volume.grid(True, alpha=0.3)
+        
+        # X軸フォーマット
+        ax_volume.xaxis.set_major_formatter(mdates.DateFormatter('%m/%d %H:%M'))
+        ax_volume.xaxis.set_major_locator(mdates.AutoDateLocator())
+        plt.setp(ax_volume.xaxis.get_majorticklabels(), rotation=45, ha='right')
+        
+        # 銘柄コードの正規化（ファイル名用）
+        safe_symbol = str(symbol).replace('.0', '').replace('/', '_')
+        output_path = self.output_dir / f"trade_chart_{safe_symbol}.png"
+        plt.savefig(output_path, dpi=150, bbox_inches='tight')
+        plt.close()
+        
+        logger.info(f"トレードチャートを出力: {output_path}")
+        return output_path
+    
+    def _calculate_volume_profile(self, df: pd.DataFrame, bin_size: float = 1.0) -> dict:
+        """価格帯別出来高を計算
+        
+        Args:
+            df: チャートデータ
+            bin_size: 価格帯のビンサイズ
+            
+        Returns:
+            dict: {price: volume}
+        """
+        volume_profile = {}
+        
+        for _, row in df.iterrows():
+            high = row.get('high')
+            low = row.get('low')
+            volume = row.get('volume', 0)
+            
+            if pd.isna(high) or pd.isna(low) or pd.isna(volume) or volume == 0:
+                continue
+            
+            # 高値〜安値の範囲を分割
+            min_price = int(low / bin_size) * bin_size
+            max_price = int(high / bin_size) * bin_size + bin_size
+            
+            price_range = np.arange(min_price, max_price, bin_size)
+            vol_per_bin = volume / len(price_range) if len(price_range) > 0 else 0
+            
+            for price in price_range:
+                volume_profile[price] = volume_profile.get(price, 0) + vol_per_bin
+        
+        return volume_profile
+    
+    def _find_closest_level(self, entry_price: float, level_annotations: dict) -> dict:
+        """エントリー価格に最も近いレベルを特定
+        
+        Args:
+            entry_price: エントリー価格
+            level_annotations: レベル情報の辞書 {level_price: level_info}
+            
+        Returns:
+            dict: 最も近いレベルの情報
+        """
+        if not level_annotations:
+            return None
+        
+        closest_level_price = min(level_annotations.keys(), 
+                                 key=lambda x: abs(x - entry_price))
+        
+        # 価格差が大きすぎる場合はNoneを返す（閾値: 5円）
+        if abs(closest_level_price - entry_price) > 5.0:
+            return None
+        
+        return level_annotations[closest_level_price]
     
     def plot_all(self, trades_df: pd.DataFrame) -> Dict[str, Path]:
         """
