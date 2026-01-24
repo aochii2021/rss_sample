@@ -276,6 +276,9 @@ class Visualizer:
         chart_df = chart_df.copy()
         chart_df['timestamp'] = pd.to_datetime(chart_df['timestamp'])
         
+        # matplotlib用にdatetimeを数値に変換
+        chart_df['timestamp_num'] = mdates.date2num(chart_df['timestamp'])
+        
         # 価格帯別出来高を計算
         volume_profile = self._calculate_volume_profile(chart_df, bin_size=1.0)
         
@@ -295,7 +298,7 @@ class Visualizer:
             bar_width = time_delta / len(chart_df) / 86400 * 0.6
         
         for idx, row in chart_df.iterrows():
-            date = row['timestamp']
+            date = row['timestamp_num']
             open_price = row.get('open')
             high = row.get('high')
             low = row.get('low')
@@ -359,6 +362,8 @@ class Visualizer:
         trades_df = trades_df.copy()
         trades_df['entry_ts'] = pd.to_datetime(trades_df['entry_ts'])
         trades_df['exit_ts'] = pd.to_datetime(trades_df['exit_ts'])
+        trades_df['entry_ts_num'] = mdates.date2num(trades_df['entry_ts'])
+        trades_df['exit_ts_num'] = mdates.date2num(trades_df['exit_ts'])
         
         # トレードのエントリー・イグジットをプロット
         buy_entries = []
@@ -369,8 +374,8 @@ class Visualizer:
         lines_loss = []
         
         for _, trade in trades_df.iterrows():
-            entry_time = trade['entry_ts']
-            exit_time = trade['exit_ts']
+            entry_time = trade['entry_ts_num']
+            exit_time = trade['exit_ts_num']
             entry_price = trade['entry_price']
             exit_price = trade['exit_price']
             position_type = trade.get('direction', 'buy')
@@ -479,14 +484,20 @@ class Visualizer:
         
         # 時系列出来高
         if 'volume' in chart_df.columns:
-            ax_volume.bar(chart_df['timestamp'], chart_df['volume'], 
+            ax_volume.bar(chart_df['timestamp_num'], chart_df['volume'], 
                          color='gray', alpha=0.5, width=bar_width)
             ax_volume.set_ylabel('出来高', fontsize=12)
             ax_volume.grid(True, alpha=0.3)
         
-        # X軸フォーマット
-        ax_volume.xaxis.set_major_formatter(mdates.DateFormatter('%m/%d %H:%M'))
-        ax_volume.xaxis.set_major_locator(mdates.AutoDateLocator())
+        # X軸フォーマット（日付形式で表示）
+        date_fmt = mdates.DateFormatter('%m/%d %H:%M')
+        date_locator = mdates.AutoDateLocator()
+        
+        ax_ohlc.xaxis.set_major_formatter(date_fmt)
+        ax_ohlc.xaxis.set_major_locator(date_locator)
+        
+        ax_volume.xaxis.set_major_formatter(date_fmt)
+        ax_volume.xaxis.set_major_locator(date_locator)
         plt.setp(ax_volume.xaxis.get_majorticklabels(), rotation=45, ha='right')
         
         # 銘柄コードの正規化（ファイル名用）
