@@ -9,12 +9,13 @@ __pycache__/
 *.xlsx
 
 # Ignore output files
-src/*/output/*.csv
-src/*/output/*.png
-src/*/output/*.json
-src/*/output/*.html
+src/*/output/
+src/*/output/**/*
 
-src/*/output/*/*.csv
+# Ignore input data files (chart data, market data)
+src/*/input/chart_data/
+src/*/input/market_order_book/
+src/*/input/**/*.csv
 
 # Ignore paticular input files
 src/algo3_break_new_high/input/*/*.csv

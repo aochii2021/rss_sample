@@ -21,6 +21,22 @@ from core.strategy import CounterTradeStrategy, Position
 logger = logging.getLogger(__name__)
 
 
+def _normalize_symbol(symbol: str) -> str:
+    """
+    銘柄コードを正規化（.0を削除）
+    
+    Args:
+        symbol: 銘柄コード（例: "3350.0", "3350", "215A"）
+    
+    Returns:
+        正規化された銘柄コード（例: "3350", "215A"）
+    """
+    s = str(symbol)
+    if s.endswith('.0'):
+        return s[:-2]
+    return s
+
+
 class BacktestEngine:
     """
     バックテストエンジンクラス
@@ -68,18 +84,21 @@ class BacktestEngine:
             for symbol in symbols:
                 # 銘柄データとレベルを抽出
                 sym_df = lob_df[lob_df["symbol"] == symbol].copy().reset_index(drop=True)
+                
+                # 銘柄名を正規化して比較
+                norm_symbol = _normalize_symbol(symbol)
                 sym_levels = [
                     lv for lv in valid_levels 
-                    if lv.get("symbol", "") == str(symbol)
+                    if _normalize_symbol(lv.get("symbol", "")) == norm_symbol
                 ]
                 
                 if len(sym_levels) == 0:
                     logger.info(f"  {symbol}: レベルなし、スキップ")
                     continue
                 
-                # 銘柄別パラメータがあれば使用
-                if symbol_params and str(symbol) in symbol_params:
-                    sym_strategy = CounterTradeStrategy(symbol_params[str(symbol)])
+                # 銘柄別パラメータがあれば使用（正規化されたsymbolで検索）
+                if symbol_params and norm_symbol in symbol_params:
+                    sym_strategy = CounterTradeStrategy(symbol_params[norm_symbol])
                     logger.info(f"  {symbol}: 銘柄別パラメータ使用")
                 else:
                     sym_strategy = self.strategy
