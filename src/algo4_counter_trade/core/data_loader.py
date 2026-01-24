@@ -138,6 +138,16 @@ class DataLoader:
                         logger.warning(f"タイムスタンプカラムなし: {csv_file.name}")
                         continue
                     
+                    # カラム名正規化（日本語→英語）
+                    column_mapping = {
+                        '始値': 'open',
+                        '高値': 'high',
+                        '安値': 'low',
+                        '終値': 'close',
+                        '出来高': 'volume'
+                    }
+                    df.rename(columns=column_mapping, inplace=True)
+                    
                     # データリークチェック
                     if self.validate_no_future_data:
                         valid, error_msg = DateUtils.validate_no_future_data(
@@ -220,6 +230,16 @@ class DataLoader:
                         continue
                     
                     df['timestamp'] = pd.to_datetime(df[ts_col])
+                    
+                    # カラム名正規化（日本語→英語）
+                    column_mapping = {
+                        '始値': 'open',
+                        '高値': 'high',
+                        '安値': 'low',
+                        '終値': 'close',
+                        '出来高': 'volume'
+                    }
+                    df.rename(columns=column_mapping, inplace=True)
                     
                     # 銘柄コードカラム確認
                     symbol_col = '銘柄コード' if '銘柄コード' in df.columns else None
