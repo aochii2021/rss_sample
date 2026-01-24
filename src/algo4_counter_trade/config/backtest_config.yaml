@@ -1,0 +1,75 @@
+# ====================================================================
+# バックテスト全体設定
+# ====================================================================
+
+# 実行モード
+mode: backtest  # backtest | live
+
+# バックテスト期間
+backtest:
+  start_date: "2026-01-19"  # YYYY-MM-DD形式
+  end_date: "2026-01-23"
+  
+  # データリーク防止設定
+  prevent_data_leak: true
+  lookback_days: 5  # レベル生成に使用する過去営業日数
+  
+  # 各取引日のレベルは「その日より前」のデータのみから生成
+  # 例: 2026-01-20のバックテストでは、2026-01-19以前のデータのみ使用
+
+# データパス設定
+data:
+  chart_data_dir: input/chart_data
+  market_data_dir: input/market_order_book
+  output_base_dir: output
+  
+  # データ検証
+  validate_no_future_data: true  # 未来データ混入チェック
+  log_data_date_range: true      # 各Phase実行時にデータ期間をログ出力
+
+# 対象銘柄設定
+symbols:
+  # null: 全銘柄、リスト指定も可能
+  target_list: null
+  # target_list:
+  #   - "3350.0"
+  #   - "157A"
+  #   - "9501.0"
+  
+  # 除外銘柄リスト
+  exclude_list:
+    - "6315.0"  # TOWA（戦略不適合）
+
+# 取引時間フィルタ
+trading_hours:
+  enable_filter: true
+  sessions:
+    morning:
+      start: "09:00"
+      end: "11:30"
+    afternoon:
+      start: "12:30"
+      end: "15:00"
+  exclude_outside_hours: true  # 時間外データを除外
+
+# 出力設定
+output:
+  save_plots: true
+  save_intermediate_data: true  # LOB特徴量、OHLCを保存
+  create_performance_report: true
+  create_daily_breakdown: true
+  create_symbol_breakdown: true
+  
+  # 出力ディレクトリ命名
+  output_dir_format: "%Y%m%d_%H%M%S"  # strftimeフォーマット
+
+# ロギング設定
+logging:
+  level: INFO  # DEBUG | INFO | WARNING | ERROR
+  log_file: true
+  log_file_path: null  # nullなら output/YYYYMMDD_HHMMSS/backtest.log
+
+# パフォーマンス設定
+performance:
+  parallel_processing: false  # 並列処理（将来実装）
+  max_workers: 4

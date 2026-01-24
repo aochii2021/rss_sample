@@ -1,0 +1,116 @@
+# ====================================================================
+# サポート・レジスタンスレベル設定
+# ====================================================================
+
+# 各レベルタイプのON/OFF制御
+level_types:
+  pivot_sr:
+    enable: true
+    weight: 1.0
+    description: "Pivot高値・安値によるS/Rレベル"
+    
+  consolidation:
+    enable: true
+    weight: 1.0
+    description: "値固め（横ばい）ゾーンのS/Rレベル"
+    
+  psychological:
+    enable: true
+    weight: 0.8
+    description: "キリ番（100円単位、50円単位）のS/Rレベル"
+    
+  ma5:
+    enable: true
+    weight: 0.7
+    description: "5日移動平均線"
+    
+  ma25:
+    enable: true
+    weight: 0.7
+    description: "25日移動平均線"
+    
+  vpoc:
+    enable: false  # 将来実装
+    weight: 1.0
+    description: "Volume Profile POC（ボリュームピーク）"
+
+# Pivot S/R設定
+pivot_sr:
+  lookback_days: 5  # 過去N営業日のローソク足を見る
+  peak_detection:
+    min_distance: 2  # ピーク間の最小距離（本数）
+    prominence: 0.5  # ピーク検出の強度（相対値）
+  
+  # 同一価格帯のレベル統合
+  merge_threshold_percent: 0.3  # 0.3%以内のレベルを統合
+
+# Consolidation設定
+consolidation:
+  lookback_days: 5
+  detection:
+    min_duration: 3  # 最低3本の連続
+    max_price_range_percent: 0.5  # 価格レンジが0.5%以内
+  merge_threshold_percent: 0.3
+
+# Psychological（キリ番）設定
+psychological:
+  round_levels:
+    - 100  # 100円単位
+    - 50   # 50円単位
+    # - 10   # 10円単位（オプション）
+  
+  # 価格帯でキリ番の粒度を変更
+  price_ranges:
+    - min: 0
+      max: 1000
+      round_to: 50
+    - min: 1000
+      max: 5000
+      round_to: 100
+    - min: 5000
+      max: null  # 無制限
+      round_to: 500
+
+# 移動平均設定
+moving_average:
+  ma5:
+    period: 5
+    type: simple  # simple | exponential（将来対応）
+  ma25:
+    period: 25
+    type: simple
+
+# VPOC設定（将来実装）
+vpoc:
+  lookback_days: 5
+  bin_size: 10  # 価格ビンサイズ（ティック単位）
+  min_volume_percentile: 70  # 上位30%のボリュームゾーンを検出
+
+# 全レベル共通設定
+common:
+  # レベルの有効期限
+  level_expiry_days: 5  # N営業日経過したレベルは無効化
+  
+  # レベルの重み計算
+  weight_decay:
+    enable: true
+    half_life_days: 3  # 3営業日で重みが半減
+  
+  # レベルの品質フィルタ
+  quality_filter:
+    enable: true
+    min_weight: 0.3  # 重み0.3未満のレベルを除外
+  
+  # 銘柄単位のレベル上限
+  max_levels_per_symbol: 20  # 重みの高い順にトップ20まで
+
+# データリーク防止
+data_leak_prevention:
+  # レベル生成時、必ず「その日より前」のデータのみ使用
+  strict_cutoff: true
+  
+  # レベル生成ログ
+  log_level_generation: true  # 各レベルの生成日時とデータ範囲をログ
+  
+  # デバッグモード（全レベルの詳細をファイル出力）
+  debug_output: false
