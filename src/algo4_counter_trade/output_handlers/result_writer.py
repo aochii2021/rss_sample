@@ -158,6 +158,63 @@ class ResultWriter:
         logger.info(f"決済理由別サマリを出力: {output_path}")
         return output_path
     
+    def write_symbol_date_performance(self, trades_df: pd.DataFrame) -> Path:
+        """
+        銘柄別日別パフォーマンスをCSVで出力
+        
+        Args:
+            trades_df: トレード結果のDataFrame
+            
+        Returns:
+            出力ファイルパス
+        """
+        if 'symbol' not in trades_df.columns or 'entry_ts' not in trades_df.columns or len(trades_df) == 0:
+            logger.warning("銘柄別日別パフォーマンスをスキップ: 必要なカラムなしまたはデータなし")
+            return None
+        
+        # entry_tsから日付を抽出
+        trades_with_date = trades_df.copy()
+        trades_with_date['entry_ts'] = pd.to_datetime(trades_with_date['entry_ts'])
+        trades_with_date['date'] = trades_with_date['entry_ts'].dt.date
+        
+        # 銘柄×日付でグループ化
+        grouped = trades_with_date.groupby(['symbol', 'date'])
+        
+        # 集計
+        performance = grouped.agg({
+            'pnl_tick': ['count', 'sum', 'mean', 'max', 'min'],
+            'hold_bars': 'mean'
+        }).reset_index()
+        
+        # カラム名を整形
+        performance.columns = [
+            'symbol', 'date', 
+            'trades', 'total_pnl', 'avg_pnl', 'max_pnl', 'min_pnl',
+            'avg_hold_bars'
+        ]
+        
+        # 勝率を計算
+        wins = trades_with_date[trades_with_date['pnl_tick'] > 0].groupby(['symbol', 'date']).size()
+        performance['wins'] = performance.apply(
+            lambda row: wins.get((row['symbol'], row['date']), 0),
+            axis=1
+        )
+        performance['win_rate'] = performance['wins'] / performance['trades']
+        
+        # ソート（日付→銘柄の昇順）
+        performance = performance.sort_values(['date', 'symbol'])
+        
+        # カラムの順序を調整
+        performance = performance[[
+            'date', 'symbol', 'trades', 'wins', 'win_rate',
+            'total_pnl', 'avg_pnl', 'max_pnl', 'min_pnl', 'avg_hold_bars'
+        ]]
+        
+        output_path = self.output_dir / "performance_by_symbol_date.csv"
+        performance.to_csv(output_path, index=False, encoding='utf-8-sig')
+        logger.info(f"銘柄別日別パフォーマンスを出力: {output_path} ({len(performance)}行)")
+        return output_path
+    
     def write_all(
         self,
         trades_df: pd.DataFrame,
@@ -195,6 +252,11 @@ class ResultWriter:
         exit_reason_path = self.write_exit_reason_summary(trades_df)
         if exit_reason_path:
             output_files['exit_reason_summary'] = exit_reason_path
+        
+        # performance_by_symbol_date.csv（新規追加）
+        symbol_date_perf_path = self.write_symbol_date_performance(trades_df)
+        if symbol_date_perf_path:
+            output_files['performance_by_symbol_date'] = symbol_date_perf_path
         
         logger.info(f"全ての結果を出力完了: {self.output_dir}")
         return output_files

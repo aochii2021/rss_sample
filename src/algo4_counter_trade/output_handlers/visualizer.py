@@ -279,11 +279,12 @@ class Visualizer:
         # matplotlib用にdatetimeを数値に変換
         chart_df['timestamp_num'] = mdates.date2num(chart_df['timestamp'])
         
-        # 価格帯別出来高を計算
-        volume_profile = self._calculate_volume_profile(chart_df, bin_size=1.0)
+        # 価格帯別出来高を計算（価格帯ビン数を抑えて描画負荷を軽減）
+        volume_profile = self._calculate_volume_profile(chart_df)
         
         # プロット作成（OHLC + 価格帯別出来高 + 時系列出来高）
-        fig = plt.figure(figsize=(18, 10))
+        # アスペクト比を16:9に調整
+        fig = plt.figure(figsize=(16, 9))
         gs = fig.add_gridspec(2, 2, width_ratios=[4, 1], height_ratios=[3, 1], 
                              hspace=0.05, wspace=0.05)
         
@@ -365,6 +366,130 @@ class Visualizer:
         trades_df['entry_ts_num'] = mdates.date2num(trades_df['entry_ts'])
         trades_df['exit_ts_num'] = mdates.date2num(trades_df['exit_ts'])
         
+        # レベル価格から種類名へのマッピングを作成
+        level_kind_map = {}  # {price: kind}
+        level_meta_map = {}  # {price: (kind, timestamp)}
+        level_kind_japanese = {
+            "pivot_high": "ピボット高値",
+            "pivot_low": "ピボット安値",
+            "consolidation": "もみ合い",
+            "psychological": "心理的節目",
+            "recent_high": "直近高値",
+            "recent_low": "直近安値",
+            "vpoc": "出来高集中",
+            "hvn": "高出来高帯",
+            "swing_resistance": "スイング抵抗",
+            "swing_support": "スイングサポート",
+            "prev_high": "前日高値",
+            "prev_low": "前日安値",
+            "prev_close": "前日終値",
+            "ma5": "MA5",
+            "ma25": "MA25"
+        }
+        
+        if levels:
+            for lv in levels:
+                level_price = lv.get('level_now') or lv.get('level', 0)
+                kind = lv.get('kind', 'unknown')
+                timestamp = lv.get('timestamp', '')
+                
+                if level_price > 0:
+                    price = float(level_price)
+                    # 価格をそのまま、複数精度でマッピング
+                    level_kind_map[price] = kind
+                    level_meta_map[price] = (kind, timestamp)
+        
+        # トレードで使用されたレベルラインを収集（価格・種類・日付のペア）
+        trade_levels = {}  # {level_price: (kind, timestamp)}
+        if 'level' in trades_df.columns:
+            for level_price in trades_df['level'].dropna():
+                if level_price > 0:
+                    float_price = float(level_price)
+                    
+                    # 完全一致を優先的に検索
+                    if float_price in level_meta_map:
+                        trade_levels[float_price] = level_meta_map[float_price]
+                    else:
+                        # 完全一致がない場合、最も近いレベルを探す
+                        if level_meta_map:
+                            closest_price = min(level_meta_map.keys(), 
+                                              key=lambda x: abs(x - float_price))
+                            # 価格差が5.0以内なら採用
+                            if abs(closest_price - float_price) <= 5.0:
+                                trade_levels[float_price] = level_meta_map[closest_price]
+                            else:
+                                # 大きく異なる場合
+                                trade_levels[float_price] = ('unknown', '')
+                        else:
+                            trade_levels[float_price] = ('unknown', '')
+        
+        # トレードで使用されたレベルラインを赤の破線で描画（種類も表示）
+        # チャートデータのX軸範囲を取得
+        chart_x_min = chart_df['timestamp_num'].min()
+        chart_x_max = chart_df['timestamp_num'].max()
+        
+        for i, (level_price, (kind, timestamp)) in enumerate(trade_levels.items()):
+            ax_ohlc.axhline(y=level_price, color='red', linestyle='--', 
+                          linewidth=1.5, alpha=0.7, zorder=2)
+            
+            # レベルラインのラベルをチャート左端に表示
+            kind_jp = level_kind_japanese.get(kind, kind)
+            
+            # 周辺レベル（±0.5%以内）を検索
+            threshold = level_price * 0.005  # 0.5%
+            nearby_kinds = []
+            if level_meta_map:
+                for nearby_price, (nearby_kind, nearby_ts) in level_meta_map.items():
+                    if abs(nearby_price - level_price) <= threshold and nearby_price != level_price:
+                        nearby_kind_jp = level_kind_japanese.get(nearby_kind, nearby_kind)
+                        nearby_kinds.append(nearby_kind_jp)
+            
+            # タイムスタンプから日付と足種を抽出
+            timeframe_label = ''
+            if timestamp:
+                try:
+                    # Timestamp型を文字列に変換
+                    ts_str = str(timestamp)
+                    ts_parts = ts_str.split('T')
+                    ts_date = ts_parts[0]  # YYYY-MM-DD
+                    
+                    # 足種を判定（時刻が00:00:00なら日足、それ以外は分足）
+                    if len(ts_parts) > 1:
+                        ts_time = ts_parts[1].split('+')[0]  # タイムゾーン情報を除去
+                        if ts_time == '00:00:00':
+                            timeframe_label = f'({ts_date}\n日足)'
+                        else:
+                            timeframe_label = f'({ts_date}\n分足)'
+                    else:
+                        timeframe_label = f'({ts_date})'
+                except Exception as e:
+                    logger.debug(f"タイムスタンプ処理エラー: {e}, timestamp={timestamp}")
+                    timeframe_label = ''
+            
+            # 周辺レベルをラベルに追加
+            nearby_label = ''
+            if nearby_kinds:
+                nearby_label = '\n' + ','.join(nearby_kinds)
+            
+            # ラベルテキストを作成
+            if timeframe_label and kind != 'unknown':
+                label_text = f'{kind_jp}\n{timeframe_label}\n{level_price:.1f}{nearby_label}'
+            elif timeframe_label and kind == 'unknown':
+                label_text = f'{timeframe_label}\n{level_price:.1f}{nearby_label}'
+            elif kind != 'unknown':
+                label_text = f'{kind_jp}\n{level_price:.1f}'
+            else:
+                label_text = f'{level_price:.1f}'
+            
+            # チャートデータ範囲内の左端5%の位置にラベルを配置
+            label_x = chart_x_min + (chart_x_max - chart_x_min) * 0.02
+            
+            ax_ohlc.text(label_x, level_price, label_text,
+                       verticalalignment='center', horizontalalignment='left',
+                       fontsize=7, color='red', weight='bold',
+                       bbox=dict(boxstyle='round,pad=0.3', facecolor='white', 
+                               edgecolor='red', alpha=0.85))
+        
         # トレードのエントリー・イグジットをプロット
         buy_entries = []
         sell_entries = []
@@ -381,14 +506,19 @@ class Visualizer:
             position_type = trade.get('direction', 'buy')
             pnl = trade.get('pnl_tick', 0)
             
-            # エントリーに最も近いレベルを特定
-            closest_level = self._find_closest_level(entry_price, level_annotations)
+            # トレードで使用されたレベル価格と種類を取得
+            trade_level_price = trade.get('level', None)
+            trade_level_kind = None
+            if trade_level_price and not pd.isna(trade_level_price):
+                float_price = float(trade_level_price)
+                if float_price in trade_levels:
+                    trade_level_kind, _ = trade_levels[float_price]
             
             # エントリーポイント
             if position_type == 'buy':
-                buy_entries.append((entry_time, entry_price, closest_level))
+                buy_entries.append((entry_time, entry_price, trade_level_price, trade_level_kind))
             else:
-                sell_entries.append((entry_time, entry_price, closest_level))
+                sell_entries.append((entry_time, entry_price, trade_level_price, trade_level_kind))
             
             # イグジットポイント
             if pnl >= 0:
@@ -398,39 +528,18 @@ class Visualizer:
                 loss_exits.append((exit_time, exit_price))
                 lines_loss.append(((entry_time, entry_price), (exit_time, exit_price)))
         
-        # エントリーマーカーと根拠レベルのアノテーション
+        # エントリーマーカー（シンプルに）
         if buy_entries:
-            for i, (time, price, level_info) in enumerate(buy_entries):
+            for i, (time, price, level_price, level_kind) in enumerate(buy_entries):
                 ax_ohlc.scatter(time, price, color='limegreen', marker='^', s=200, 
-                              edgecolors='darkgreen', linewidths=1.5, zorder=5)
-                
-                # 根拠レベルをアノテーション（最初の3つのみ、重複を避ける）
-                if level_info and i < 3:
-                    kind = level_info.get('kind', 'unknown')
-                    level_price = level_info.get('level')
-                    ax_ohlc.annotate(f'{kind}\n{level_price:.1f}', 
-                                   xy=(time, price), xytext=(10, -30),
-                                   textcoords='offset points', fontsize=8,
-                                   bbox=dict(boxstyle='round,pad=0.3', 
-                                           facecolor='limegreen', alpha=0.7),
-                                   arrowprops=dict(arrowstyle='->', 
-                                                 connectionstyle='arc3,rad=0'))
+                              edgecolors='darkgreen', linewidths=1.5, zorder=5,
+                              label='Buy Entry' if i == 0 else '')
         
         if sell_entries:
-            for i, (time, price, level_info) in enumerate(sell_entries):
+            for i, (time, price, level_price, level_kind) in enumerate(sell_entries):
                 ax_ohlc.scatter(time, price, color='orangered', marker='v', s=200,
-                              edgecolors='darkred', linewidths=1.5, zorder=5)
-                
-                if level_info and i < 3:
-                    kind = level_info.get('kind', 'unknown')
-                    level_price = level_info.get('level')
-                    ax_ohlc.annotate(f'{kind}\n{level_price:.1f}', 
-                                   xy=(time, price), xytext=(10, 30),
-                                   textcoords='offset points', fontsize=8,
-                                   bbox=dict(boxstyle='round,pad=0.3', 
-                                           facecolor='orangered', alpha=0.7),
-                                   arrowprops=dict(arrowstyle='->', 
-                                                 connectionstyle='arc3,rad=0'))
+                              edgecolors='darkred', linewidths=1.5, zorder=5,
+                              label='Sell Entry' if i == 0 else '')
         
         # イグジットマーカー
         if profit_exits:
@@ -467,20 +576,21 @@ class Visualizer:
         
         # 価格帯別出来高を描画
         if volume_profile:
-            prices = sorted(volume_profile.keys())
-            volumes = [volume_profile[p] for p in prices]
-            
-            ax_volume_profile.barh(prices, volumes, height=0.8, color='gray', alpha=0.5)
-            ax_volume_profile.set_xlabel('出来高', fontsize=10)
-            ax_volume_profile.tick_params(labelleft=False)
-            ax_volume_profile.grid(True, alpha=0.3, axis='y')
-            
-            # VPOC（Volume Point of Control）を表示
-            vpoc_price = max(volume_profile, key=volume_profile.get)
-            ax_volume_profile.axhline(y=vpoc_price, color='red', linestyle='-', 
-                                     linewidth=2, label='VPOC')
-            ax_ohlc.axhline(y=vpoc_price, color='red', linestyle='-', 
-                          linewidth=1, alpha=0.7)
+            prices, volumes, bin_height = volume_profile
+            if prices and volumes:
+                ax_volume_profile.barh(prices, volumes, height=bin_height * 0.9,
+                                       color='gray', alpha=0.5)
+                ax_volume_profile.set_xlabel('出来高', fontsize=10)
+                ax_volume_profile.tick_params(labelleft=False)
+                ax_volume_profile.grid(True, alpha=0.3, axis='y')
+                
+                # VPOC（Volume Point of Control）を表示
+                vpoc_idx = int(np.argmax(volumes))
+                vpoc_price = prices[vpoc_idx]
+                ax_volume_profile.axhline(y=vpoc_price, color='red', linestyle='-',
+                                         linewidth=2, label='VPOC')
+                ax_ohlc.axhline(y=vpoc_price, color='red', linestyle='-',
+                              linewidth=1, alpha=0.7)
         
         # 時系列出来高
         if 'volume' in chart_df.columns:
@@ -509,37 +619,51 @@ class Visualizer:
         logger.info(f"トレードチャートを出力: {output_path}")
         return output_path
     
-    def _calculate_volume_profile(self, df: pd.DataFrame, bin_size: float = 1.0) -> dict:
-        """価格帯別出来高を計算
+    def _calculate_volume_profile(
+        self,
+        df: pd.DataFrame,
+        max_bins: int = 40
+    ) -> Optional[tuple]:
+        """価格帯別出来高を計算（ビン数を抑えて高速化）
         
         Args:
             df: チャートデータ
-            bin_size: 価格帯のビンサイズ
+            max_bins: 価格帯ビンの最大数
             
         Returns:
-            dict: {price: volume}
+            tuple: (prices, volumes, bin_height) またはNone
         """
-        volume_profile = {}
-        
-        for _, row in df.iterrows():
-            high = row.get('high')
-            low = row.get('low')
-            volume = row.get('volume', 0)
-            
-            if pd.isna(high) or pd.isna(low) or pd.isna(volume) or volume == 0:
-                continue
-            
-            # 高値〜安値の範囲を分割
-            min_price = int(low / bin_size) * bin_size
-            max_price = int(high / bin_size) * bin_size + bin_size
-            
-            price_range = np.arange(min_price, max_price, bin_size)
-            vol_per_bin = volume / len(price_range) if len(price_range) > 0 else 0
-            
-            for price in price_range:
-                volume_profile[price] = volume_profile.get(price, 0) + vol_per_bin
-        
-        return volume_profile
+        if df.empty or 'volume' not in df.columns:
+            return None
+        if df[['high', 'low']].isna().all().any():
+            return None
+        if df['volume'].fillna(0).sum() == 0:
+            return None
+
+        price_min = df['low'].min()
+        price_max = df['high'].max()
+        if pd.isna(price_min) or pd.isna(price_max):
+            return None
+        if price_min == price_max:
+            price_max += 1e-3  # 同一価格のみの場合に幅を確保
+
+        # ローソク足本数に応じてビン数を設定（上限max_bins）
+        adaptive_bins = min(max_bins, max(10, int(len(df) ** 0.5 * 4)))
+        bin_edges = np.linspace(price_min, price_max, adaptive_bins + 1)
+        bin_height = float(np.diff(bin_edges).mean())
+
+        # 代表価格（典型価格）に出来高を集約してヒストグラム化
+        typical_price = df[['high', 'low', 'close', 'open']].mean(axis=1)
+        volumes = df['volume'].fillna(0).to_numpy()
+        hist, edges = np.histogram(typical_price, bins=bin_edges, weights=volumes)
+
+        prices = ((edges[:-1] + edges[1:]) / 2).tolist()
+        volumes = hist.tolist()
+
+        if sum(volumes) == 0:
+            return None
+
+        return prices, volumes, bin_height
     
     def _find_closest_level(self, entry_price: float, level_annotations: dict) -> dict:
         """エントリー価格に最も近いレベルを特定

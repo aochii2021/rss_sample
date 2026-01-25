@@ -60,7 +60,8 @@ class DataLoader:
         self,
         cutoff_date: datetime,
         lookback_days: int = 5,
-        symbols: Optional[List[str]] = None
+        symbols: Optional[List[str]] = None,
+        allowed_timeframes: Optional[List[str]] = None
     ) -> Dict[str, pd.DataFrame]:
         """
         カットオフ日付以前のチャートデータを読み込み
@@ -69,6 +70,7 @@ class DataLoader:
             cutoff_date: カットオフ日付（この日付より後のデータは読み込まない）
             lookback_days: 過去何営業日分のデータを読み込むか
             symbols: 対象銘柄リスト（Noneなら全銘柄）
+            allowed_timeframes: 許可する足種（Noneなら全て）
             
         Returns:
             {銘柄コード: DataFrame} の辞書
@@ -114,6 +116,12 @@ class DataLoader:
             
             # ディレクトリ内のCSVファイルを読み込み
             for csv_file in date_dir.glob("stock_chart_*.csv"):
+                parts = csv_file.stem.split('_')
+                timeframe = parts[2] if len(parts) >= 3 else None
+                if allowed_timeframes is not None and timeframe not in allowed_timeframes:
+                    logger.debug(f"タイムフレーム除外: {csv_file.name}")
+                    continue
+
                 # ファイル名から銘柄コードを抽出
                 # 例: stock_chart_3M_215A_20251208_20260119.csv
                 try:
@@ -131,12 +139,18 @@ class DataLoader:
                 try:
                     df = self._read_csv_safe(csv_file)
                     
-                    # タイムスタンプカラム確認
-                    if 'timestamp' not in df.columns and '日付' in df.columns:
-                        df['timestamp'] = pd.to_datetime(df['日付'])
-                    elif 'timestamp' not in df.columns:
-                        logger.warning(f"タイムスタンプカラムなし: {csv_file.name}")
-                        continue
+                    # タイムスタンプ生成（分足は日付+時刻を結合）
+                    if 'timestamp' not in df.columns:
+                        if '日付' in df.columns:
+                            if '時刻' in df.columns:
+                                df['timestamp'] = pd.to_datetime(
+                                    df['日付'].astype(str) + ' ' + df['時刻'].fillna('00:00')
+                                )
+                            else:
+                                df['timestamp'] = pd.to_datetime(df['日付'])
+                        else:
+                            logger.warning(f"タイムスタンプカラムなし: {csv_file.name}")
+                            continue
                     
                     # カラム名正規化（日本語→英語）
                     column_mapping = {
@@ -147,6 +161,16 @@ class DataLoader:
                         '出来高': 'volume'
                     }
                     df.rename(columns=column_mapping, inplace=True)
+
+                    # 数値変換と欠損行の簡易除去
+                    price_cols = ['open', 'high', 'low', 'close']
+                    for col in price_cols + ['volume']:
+                        if col in df.columns:
+                            df[col] = pd.to_numeric(df[col], errors='coerce')
+                    if set(price_cols).issubset(df.columns):
+                        df = df[df[price_cols].notna().any(axis=1)]
+                    if 'volume' in df.columns:
+                        df['volume'] = df['volume'].fillna(0)
                     
                     # データリークチェック
                     if self.validate_no_future_data:

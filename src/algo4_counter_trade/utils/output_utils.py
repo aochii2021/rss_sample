@@ -66,21 +66,25 @@ class OutputManager:
         if self.current_output_dir is None:
             raise ValueError("出力ディレクトリが未作成です。create_timestamped_output_dir()を先に呼んでください")
         
+        # inputサブディレクトリ作成
+        input_dir = self.current_output_dir / "input"
+        input_dir.mkdir(parents=True, exist_ok=True)
+        
         # バックテスト設定保存
-        backtest_config_path = self.current_output_dir / "backtest_config_snapshot.yaml"
+        backtest_config_path = input_dir / "backtest_config.yaml"
         with open(backtest_config_path, 'w', encoding='utf-8') as f:
             yaml.dump(backtest_config, f, allow_unicode=True, default_flow_style=False)
         logger.info(f"バックテスト設定を保存: {backtest_config_path}")
         
         # レベル設定保存
-        level_config_path = self.current_output_dir / "level_config_snapshot.yaml"
+        level_config_path = input_dir / "level_config.yaml"
         with open(level_config_path, 'w', encoding='utf-8') as f:
             yaml.dump(level_config, f, allow_unicode=True, default_flow_style=False)
         logger.info(f"レベル設定を保存: {level_config_path}")
         
         # トレードパラメータ保存（あれば）
         if trade_params is not None:
-            trade_params_path = self.current_output_dir / "trade_params_snapshot.json"
+            trade_params_path = input_dir / "trade_params.json"
             with open(trade_params_path, 'w', encoding='utf-8') as f:
                 json.dump(trade_params, f, ensure_ascii=False, indent=2)
             logger.info(f"トレードパラメータを保存: {trade_params_path}")
@@ -112,9 +116,23 @@ class OutputManager:
             shutil.copytree(self.current_output_dir, latest_path)
             logger.info(f"latestディレクトリをコピー作成: {latest_path}")
     
+    def get_output_dir(self) -> Path:
+        """
+        outputサブディレクトリのパスを取得（存在しなければ作成）
+        
+        Returns:
+            outputディレクトリのパス
+        """
+        if self.current_output_dir is None:
+            raise ValueError("出力ディレクトリが未作成です")
+        
+        output_dir = self.current_output_dir / "output"
+        output_dir.mkdir(parents=True, exist_ok=True)
+        return output_dir
+    
     def get_output_path(self, filename: str) -> Path:
         """
-        出力ファイルのフルパスを取得
+        出力ファイルのフルパスを取得（output/サブディレクトリ内）
         
         Args:
             filename: ファイル名
@@ -122,10 +140,8 @@ class OutputManager:
         Returns:
             フルパス
         """
-        if self.current_output_dir is None:
-            raise ValueError("出力ディレクトリが未作成です")
-        
-        return self.current_output_dir / filename
+        output_dir = self.get_output_dir()
+        return output_dir / filename
     
     def setup_logging(
         self,
@@ -168,7 +184,9 @@ class OutputManager:
             if self.current_output_dir is None:
                 raise ValueError("出力ディレクトリが未作成です")
             
-            log_file_path = self.current_output_dir / log_file_name
+            # output/サブディレクトリに配置
+            output_dir = self.get_output_dir()
+            log_file_path = output_dir / log_file_name
             # UTF-8 with BOMで保存（Windows PowerShellとの互換性向上）
             file_handler = logging.FileHandler(log_file_path, encoding='utf-8-sig')
             file_handler.setLevel(numeric_level)

@@ -40,6 +40,22 @@ import pandas as pd
 logger = logging.getLogger(__name__)
 
 
+def _normalize_symbol(symbol: str) -> str:
+    """
+    銘柄コードを正規化（.0を削除）
+    
+    Args:
+        symbol: 銘柄コード
+        
+    Returns:
+        正規化された銘柄コード
+    """
+    s = str(symbol)
+    if s.endswith('.0'):
+        return s[:-2]
+    return s
+
+
 class UnifiedBacktest:
     """統合バックテストシステム"""
     
@@ -117,11 +133,11 @@ class UnifiedBacktest:
         logger.info("=" * 60)
         
         # OutputManager初期化
-        output_base = self.backtest_config['data']['output_base_dir']
+        output_base = self.backtest_config['data']['runs_base_dir']
         self.output_manager = OutputManager(output_base)
         
         # タイムスタンプ付きディレクトリ作成
-        output_format = self.backtest_config['output'].get('output_dir_format', '%Y%m%d_%H%M%S')
+        output_format = self.backtest_config['output'].get('run_dir_format', '%Y%m%d_%H%M%S')
         output_dir = self.output_manager.create_timestamped_output_dir(output_format)
         
         # ロギング再設定（ファイル出力追加）
@@ -140,6 +156,23 @@ class UnifiedBacktest:
             self.level_config
         )
         logger.info("✓ 設定スナップショット保存完了")
+        
+        # target_symbols.csvをinput/に保存
+        self._save_target_symbols_snapshot()
+    
+    def _save_target_symbols_snapshot(self) -> None:
+        """target_symbols.csvのスナップショットを保存"""
+        import shutil
+        
+        source_path = self.base_dir / "config" / "target_symbols.csv"
+        if source_path.exists():
+            input_dir = self.output_manager.current_output_dir / "input"
+            input_dir.mkdir(parents=True, exist_ok=True)
+            dest_path = input_dir / "target_symbols.csv"
+            shutil.copy2(source_path, dest_path)
+            logger.info(f"✓ 対象銘柄リスト保存: {dest_path}")
+        else:
+            logger.warning(f"target_symbols.csvが見つかりません: {source_path}")
     
     def phase1_load_data(self, target_date: datetime) -> Dict[str, Any]:
         """
@@ -274,10 +307,11 @@ class UnifiedBacktest:
         all_levels_list = []
         
         for symbol, df in lob_features.items():
+            norm_symbol = _normalize_symbol(symbol)
             if not df.empty:
                 all_lob_rows.append(df)
-            if symbol in levels:
-                all_levels_list.extend(levels[symbol])
+            if norm_symbol in levels:
+                all_levels_list.extend(levels[norm_symbol])
         
         if not all_lob_rows:
             logger.warning("有効なLOB特徴量データなし")
@@ -359,8 +393,9 @@ class UnifiedBacktest:
         for symbol, symbol_levels in all_levels.items():
             levels_list.extend(symbol_levels)
         
-        # ResultWriter: ファイル出力
-        writer = ResultWriter(self.output_manager.current_output_dir)
+        # ResultWriter: ファイル出力（output/サブディレクトリに保存）
+        output_dir = self.output_manager.get_output_dir()
+        writer = ResultWriter(output_dir)
         writer.write_all(
             trades_df=trades_df,
             metrics=metrics,
@@ -368,17 +403,88 @@ class UnifiedBacktest:
         )
         logger.info("✓ ResultWriter出力完了")
         
-        # Visualizer: グラフ生成
+        # Visualizer: グラフ生成（output/サブディレクトリに保存）
         if not trades_df.empty:
-            visualizer = Visualizer(self.output_manager.current_output_dir)
+            visualizer = Visualizer(output_dir)
             visualizer.plot_all(trades_df)
             logger.info("✓ Visualizer出力完了")
+            
+            # トレードチャート生成
+            self._generate_trade_charts(trades_df, all_levels, visualizer)
         else:
             logger.warning("トレードなし: グラフ生成スキップ")
         
         # latestリンク/コピー作成
         self.output_manager.create_latest_link()
         logger.info("✓ 最新結果へのリンク作成完了")
+    
+    def _generate_trade_charts(
+        self,
+        trades_df: pd.DataFrame,
+        all_levels: Dict[str, List[Dict]],
+        visualizer: 'Visualizer'
+    ) -> None:
+        """
+        銘柄別トレードチャートを生成
+        
+        Args:
+            trades_df: 全トレードDataFrame
+            all_levels: 銘柄別レベル辞書
+            visualizer: Visualizerインスタンス
+        """
+        # 可視化範囲（バックテスト期間）を設定
+        start_dt = pd.to_datetime(self.backtest_config['backtest']['start_date'])
+        end_dt = pd.to_datetime(self.backtest_config['backtest']['end_date'])
+        lookback_days = len(DateUtils.get_business_days_between(start_dt, end_dt))
+
+        # トレードがあった銘柄を取得
+        symbols_with_trades = trades_df['symbol'].unique()
+        norm_symbols = [_normalize_symbol(s) for s in symbols_with_trades]
+        logger.info(f"トレードチャート生成: {len(symbols_with_trades)}銘柄")
+
+        # 可視化用チャートデータは板情報と同じ時間帯の分足系のみを読み込み、バックテスト期間の営業日分だけ取得
+        chart_data = self.data_loader.load_chart_data_until(
+            cutoff_date=end_dt,
+            lookback_days=lookback_days,
+            symbols=norm_symbols,
+            allowed_timeframes=['1M', '2M', '3M', '4M', '5M', '10M', '15M', '30M', '60M', '2H', '4H', '8H']
+        )
+        
+        for symbol in symbols_with_trades:
+            try:
+                # その銘柄のトレードを抽出
+                symbol_trades = trades_df[trades_df['symbol'] == symbol].copy()
+
+                # 正規化されたシンボルでチャートデータを検索
+                norm_symbol = _normalize_symbol(symbol)
+                if norm_symbol in chart_data:
+                    chart_df = chart_data[norm_symbol]
+                elif symbol in chart_data:
+                    chart_df = chart_data[symbol]
+                else:
+                    logger.warning(f"  {symbol}: チャートデータなし、スキップ")
+                    continue
+
+                # バックテスト期間に切り詰め（開始～終了当日まで）
+                end_dt_exclusive = end_dt + pd.Timedelta(days=1)
+                chart_df = chart_df[(chart_df['timestamp'] >= start_dt) & (chart_df['timestamp'] < end_dt_exclusive)]
+                if chart_df.empty:
+                    logger.warning(f"  {symbol}: 指定期間のチャートデータなし、スキップ")
+                    continue
+                
+                # その銘柄のレベルを取得
+                symbol_levels = all_levels.get(norm_symbol, [])
+                
+                # トレードチャート生成
+                visualizer.plot_trade_chart(
+                    symbol=symbol,
+                    chart_df=chart_df,
+                    trades_df=symbol_trades,
+                    levels=symbol_levels
+                )
+                
+            except Exception as e:
+                logger.warning(f"  {symbol}: トレードチャート生成失敗 - {e}")
     
     def _calculate_metrics(self, trades_df: pd.DataFrame) -> Dict[str, Any]:
         """
