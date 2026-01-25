@@ -19,3 +19,7 @@ src/*/input/**/*.csv
 
 # Ignore paticular input files
 src/algo3_break_new_high/input/*/*.csv
+
+# Ignore all runs except sample_test
+src/algo4_counter_trade/runs/*/
+!src/algo4_counter_trade/runs/sample_test/
