@@ -14,7 +14,7 @@ import numpy as np
 
 # algo4_counter_tradeのモジュールをインポート
 sys.path.insert(0, str(Path(__file__).parent.parent / "algo4_counter_trade"))
-from lob_features import compute_features_ms2
+from lob_features_legacy import compute_features_ms2
 
 import config
 from rss_functions import RSSFunctions

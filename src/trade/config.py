@@ -128,6 +128,22 @@ DRY_RUN = True  # 初期値は安全のためTrue
 # リスト: 指定銘柄のみ（例: ["3350", "9501"]）
 TARGET_SYMBOLS = None
 
+# ========================================
+# レベル設定
+# ========================================
+LEVEL_CONFIG = {
+    "level_types": {
+        "pivot_sr": {"enable": True, "left": 3, "right": 3},
+        "consolidation": {"enable": True, "window": 20},
+        "psychological": {"enable": True},
+        "ma5": {"enable": True},
+        "ma25": {"enable": True},
+    },
+    "common": {
+        "strength_threshold": 0.5,
+        "min_distance": 3.0,
+    }
+}
 
 # ========================================
 # 設定値バリデーション

@@ -11,13 +11,15 @@ from datetime import datetime, time as dt_time
 from pathlib import Path
 import pandas as pd
 import win32com.client
+from typing import Protocol, Any, List, Dict, Optional
 
 # 親ディレクトリをパスに追加
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import config
 from live_data_collector import LiveDataCollector
-from signal_generator import SignalGenerator
+from core.strategy import CounterTradeStrategy
+from core.level_generator import LevelGenerator
 from order_executor import OrderExecutor
 
 # ロギング設定（ログディレクトリ自動作成）
@@ -36,38 +38,45 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+class IStrategy(Protocol):
+    def check_entry(self, current_bar: pd.Series, levels: List[Any]) -> Optional[Dict]: ...
+    def check_exit(self, position: Any, current_bar: pd.Series) -> Optional[Dict]: ...
+
+class ILevelGenerator(Protocol):
+    def generate(self, symbol: str, ohlc_df: pd.DataFrame) -> List[Any]: ...
+
+class IDataCollector(Protocol):
+    def update(self) -> Dict[str, Dict]: ...
+    def get_history(self, symbol: str, lookback_bars: int) -> pd.DataFrame: ...
+
+class IOrderExecutor(Protocol):
+    def open_position(self, entry_info: Dict): ...
+    def close_position(self, position: Any, price: float, reason: str): ...
+    def get_open_positions(self) -> List[Any]: ...
+    def check_pending_orders(self): ...
+    def get_daily_stats(self) -> Dict[str, Any]: ...
+    def sync_positions_with_rss(self) -> Dict[str, Any]: ...
+    def save_logs(self, date_str: str): ...
+
+
 class TradingSystem:
-    """実トレードシステム"""
-    
-    def __init__(self):
-        # 監視対象銘柄の読み込み
+    """実トレードシステム（抽象インターフェース依存）"""
+    def __init__(self,
+                 strategy: IStrategy,
+                 level_generator: ILevelGenerator,
+                 data_collector: IDataCollector,
+                 order_executor: IOrderExecutor):
         self.symbols = self._load_symbols()
         logger.info(f"Target symbols: {len(self.symbols)}")
-        
-        # コンポーネント初期化
-        self.order_executor = OrderExecutor(dry_run=config.DRY_RUN)
-        
-        # データ取得用Excel（注文用とは別インスタンス）
-        self.excel_data = None
-        if not config.DRY_RUN:
-            try:
-                self.excel_data = win32com.client.Dispatch("Excel.Application")
-                self.excel_data.Visible = True
-                logger.info("Excel COM connection established (Data Collection)")
-            except Exception as e:
-                logger.error(f"Failed to connect to Excel for data collection: {e}")
-                raise
-        
-        self.data_collector = LiveDataCollector(self.symbols, excel_data=self.excel_data)
-        self.signal_generator = SignalGenerator()
-        
-        # 状態管理
+        self.strategy = strategy
+        self.level_generator = level_generator
+        self.data_collector = data_collector
+        self.order_executor = order_executor
         self.is_running = False
         self.current_session = None
         self.last_position_sync = datetime.now()
-        
-        logger.info("TradingSystem initialized")
-    
+        logger.info("TradingSystem initialized (interface-based)")
+
     def _load_symbols(self) -> list:
         """対象銘柄を読み込み"""
         if config.TARGET_SYMBOLS:
@@ -113,20 +122,16 @@ class TradingSystem:
     
     def _update_data_and_levels(self):
         """データ更新とレベル更新"""
-        # リアルタイムデータ取得
         lob_data = self.data_collector.update()
         
-        # 各銘柄のレベルを更新
         for symbol in self.symbols:
-            # OHLC履歴を取得（サポート/レジスタンス検出用）
             ohlc_history = self.data_collector.get_history(
-                symbol, 
-                lookback_bars=config.STRATEGY_PARAMS["lookback_bars"]
+                symbol,
+                lookback_bars=self.strategy_params["lookback_bars"]
             )
             
             if not ohlc_history.empty:
-                # TODO: OHLCデータが必要（現在はLOB特徴量のみ）
-                # 暫定: midをcloseとして使用
+                # OHLCデータ生成
                 ohlc_df = pd.DataFrame({
                     "timestamp": ohlc_history["ts"],
                     "open": ohlc_history["mid"],
@@ -136,29 +141,36 @@ class TradingSystem:
                     "volume": 0
                 })
                 
-                self.signal_generator.update_levels(symbol, ohlc_df)
+                # レベル生成
+                levels = self.level_generator.generate(symbol, ohlc_df)
+                # レベル情報を戦略にセット
+                # self.strategy.set_levels(symbol, levels) # 必要に応じて
     
     def _check_signals(self, lob_data: dict):
         """シグナルチェックと注文実行"""
         current_time = datetime.now()
-                # pending注文の約定確認（毎ループ）
+        
+        # pending注文の約定確認（毎ループ）
         self.order_executor.check_pending_orders()
-                # 新規エントリーチェック
+        
+        # 新規エントリーチェック
         for symbol, lob_features in lob_data.items():
             current_price = lob_features.get("mid", 0)
             if current_price == 0:
                 continue
             
-            # エントリーシグナルチェック
-            signal = self.signal_generator.check_entry_signal(
-                symbol, 
-                current_price,
-                lob_features
-            )
-            
-            if signal:
-                logger.info(f"Entry signal: {signal}")
-                self.order_executor.open_position(signal)
+            # レベル情報取得（仮: self.level_generatorから取得）
+            levels = [] # TODO: 実装に合わせて取得
+            for level in levels:
+                for direction in ["buy", "sell"]:
+                    if self.strategy.check_entry_signal(pd.Series(lob_features), level, direction):
+                        logger.info(f"Entry signal: {symbol} {direction} @ {level}")
+                        self.order_executor.open_position({
+                            "symbol": symbol,
+                            "direction": direction,
+                            "entry_price": current_price,
+                            "level": level
+                        })
         
         # 保有ポジションの決済チェック
         for position in self.order_executor.get_open_positions():
@@ -295,6 +307,29 @@ class TradingSystem:
         logger.info("Trading system stopped")
 
 
+# DI: 実装選択（algo4固有実装を注入）
+def create_trading_system():
+    # パラメータ取得
+    strategy_params = config.STRATEGY_PARAMS
+    level_config = config.LEVEL_CONFIG
+    symbols = config.TARGET_SYMBOLS or []
+    excel_data = None
+    if not config.DRY_RUN:
+        try:
+            excel_data = win32com.client.Dispatch("Excel.Application")
+            excel_data.Visible = True
+            logger.info("Excel COM connection established (Data Collection)")
+        except Exception as e:
+            logger.error(f"Failed to connect to Excel for data collection: {e}")
+            raise
+    # 実装注入
+    strategy = CounterTradeStrategy(strategy_params)
+    level_generator = LevelGenerator(level_config)
+    data_collector = LiveDataCollector(symbols, excel_data=excel_data)
+    order_executor = OrderExecutor(dry_run=config.DRY_RUN)
+    return TradingSystem(strategy, level_generator, data_collector, order_executor)
+
+
 def main():
     """エントリーポイント"""
     print("=" * 60)
@@ -321,7 +356,7 @@ def main():
     print("\nシステムを起動します...")
     print("停止: Ctrl+C\n")
     
-    system = TradingSystem()
+    system = create_trading_system()
     system.run()
 
 
