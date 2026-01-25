@@ -60,6 +60,37 @@ class IOrderExecutor(Protocol):
 
 
 class TradingSystem:
+    def _setup_excel_sheet(self):
+        """Sheet1をクリアし、板情報数式を設定する（初回のみ）"""
+        ws = self.excel_book.Worksheets('Sheet1')
+        ws.UsedRange.ClearContents()
+        # 板情報数式設定（get_rss_market_order_book/main.pyのロジックを移植）
+        from common.rss import MarketStatusItem, RssMarket
+        # 監視銘柄リスト
+        stock_code_list = self.symbols
+        # 項目リスト
+        item_list = [item for item in MarketStatusItem]
+        # RssMarketでExcel数式を設定（get_rss_market_order_bookと同じ）
+        self.rss_market = RssMarket(ws, stock_code_list, item_list)
+        self.excel_ws = ws
+        # 初回データ取得（数式設定確認）
+        self._record_market_data(first=True)
+
+    def _record_market_data(self, first=False):
+        """板情報をExcelから取得し、csvに追記"""
+        import pandas as pd
+        from datetime import datetime
+        now = datetime.now()
+        # DataFrame取得（get_rss_market_order_bookのget_all_rss_market相当）
+        df = self.rss_market.get_dataframe()
+        df.insert(0, '記録日時', now.strftime('%Y-%m-%d %H:%M:%S'))
+        output_file = self.session_csv_path
+        if first or not Path(output_file).exists():
+            df.to_csv(output_file, index=False, encoding='utf-8-sig')
+        else:
+            df.to_csv(output_file, mode='a', header=False, index=False, encoding='utf-8-sig')
+        print(f"[{now.strftime('%H:%M:%S')}] 板情報をCSVに保存しました: {output_file}")
+
     """実トレードシステム（抽象インターフェース依存）"""
     def __init__(self,
                  strategy: IStrategy,
@@ -75,7 +106,32 @@ class TradingSystem:
         self.is_running = False
         self.current_session = None
         self.last_position_sync = datetime.now()
-        logger.info("TradingSystem initialized (interface-based)")
+        # Excelインスタンス生成・一意名でワークブック保存
+        import win32com.client
+        now = datetime.now()
+        try:
+            try:
+                # 既存Excelに接続
+                self.excel_data = win32com.client.GetObject(Class="Excel.Application")
+                logger.info("Excel instance found (GetObject)")
+            except Exception:
+                # 未起動なら新規起動
+                self.excel_data = win32com.client.Dispatch("Excel.Application")
+                self.excel_data.Visible = True
+                logger.info("Excel instance started (Dispatch)")
+            self.excel_book_name = f"TradeBoard_{now.strftime('%Y%m%d_%H%M%S')}.xlsx"
+            self.excel_book = self.excel_data.Workbooks.Add()
+            self.excel_book.SaveAs(str(config.LOG_DIR / self.excel_book_name))
+            logger.info(f"Excel COM connection established (Data Collection), book: {self.excel_book_name}")
+        except Exception as e:
+            logger.error(f"Failed to connect to Excel: {e}")
+            raise
+        # セッションディレクトリ・csvパス生成
+        self.session_dir = Path(config.LOG_DIR) / f"session_{now.strftime('%Y%m%d_%H%M')}"
+        self.session_dir.mkdir(exist_ok=True)
+        self.session_csv_path = str(self.session_dir / "rss_market_data.csv")
+        # Excelシート初期化・数式設定
+        self._setup_excel_sheet()
 
     def _load_symbols(self) -> list:
         """対象銘柄を読み込み"""
@@ -231,24 +287,35 @@ class TradingSystem:
         logger.info(f"DRY_RUN: {config.DRY_RUN}")
         logger.info(f"Symbols: {len(self.symbols)}")
         logger.info("=" * 50)
-        
+
         last_session_active = False
-        
+
         try:
+            import time
+            interval_sec = 60  # 1分ごとに固定
+            last_record_minute = None
+
             while self.is_running:
+                now_dt = datetime.now()
+                now_minute = now_dt.replace(second=0, microsecond=0)
+                # 毎分00秒に記録
+                if last_record_minute is None or now_minute > last_record_minute:
+                    try:
+                        logger.info("[板情報記録トリガー] 1分ごとに板情報を記録します")
+                        self._record_market_data()
+                    except Exception as e:
+                        logger.error(f"板情報記録エラー: {e}", exc_info=True)
+                    last_record_minute = now_minute
+
                 # 取引時間チェック
                 in_session = self._is_trading_session()
-                
                 if in_session:
                     # データ更新とレベル更新
                     self._update_data_and_levels()
-                    
                     # リアルタイムデータ取得
                     lob_data = self.data_collector.update()
-                    
                     # シグナルチェックと注文実行
                     self._check_signals(lob_data)
-                    
                     # 統計表示
                     stats = self.order_executor.get_daily_stats()
                     logger.info(
@@ -257,21 +324,17 @@ class TradingSystem:
                         f"PnL={stats['daily_pnl_tick']:.2f} tick, "
                         f"Open={stats['open_positions']}"
                     )
-                    
                     last_session_active = True
-                    
                 else:
                     # セッション終了直後の処理
                     if last_session_active:
                         self._session_end_close_all()
                         last_session_active = False
-                    
                     # 取引時間外は待機
                     logger.debug("Outside trading hours, waiting...")
-                
                 # 更新間隔待機
-                time.sleep(config.RSS_PARAMS["update_interval_sec"])
-                
+                time.sleep(1)
+
         except KeyboardInterrupt:
             logger.info("Interrupted by user")
         except Exception as e:
@@ -313,19 +376,10 @@ def create_trading_system():
     strategy_params = config.STRATEGY_PARAMS
     level_config = config.LEVEL_CONFIG
     symbols = config.TARGET_SYMBOLS or []
-    excel_data = None
-    if not config.DRY_RUN:
-        try:
-            excel_data = win32com.client.Dispatch("Excel.Application")
-            excel_data.Visible = True
-            logger.info("Excel COM connection established (Data Collection)")
-        except Exception as e:
-            logger.error(f"Failed to connect to Excel for data collection: {e}")
-            raise
     # 実装注入
     strategy = CounterTradeStrategy(strategy_params)
     level_generator = LevelGenerator(level_config)
-    data_collector = LiveDataCollector(symbols, excel_data=excel_data)
+    data_collector = LiveDataCollector(symbols)
     order_executor = OrderExecutor(dry_run=config.DRY_RUN)
     return TradingSystem(strategy, level_generator, data_collector, order_executor)
 

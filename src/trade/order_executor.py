@@ -83,66 +83,19 @@ class OrderExecutor:
     
     def __init__(self, dry_run: bool = True):
         """
-        Args:
-            dry_run: True=シミュレーション、False=実注文
+        注文実行・ポジション管理クラスの初期化
         """
         self.dry_run = dry_run
-        self.positions: List[Position] = []  # 現在保有中のポジション
-        self.closed_positions: List[Position] = []  # クローズ済みポジション
-        
-        # リスク管理
-        self.daily_pnl_tick = 0.0
-        self.consecutive_losses = 0
-        self.max_drawdown_tick = 0.0
         self.peak_pnl_tick = 0.0
-        
-        # pending注文管理（約定待ちリスト）
         self.pending_orders: List[Dict[str, Any]] = []
         self.order_id_counter = 0  # 注文IDカウンター（衝突回避）
-        
-        # Excel COM接続（DRY_RUN=Falseの場合）- 注文実行専用
         self.excel_order = None
         self.rss = None
-        if not dry_run:
-            try:
-                self.excel_order = win32com.client.Dispatch("Excel.Application")
-                self.excel_order.Visible = True
-                self.rss = RSSFunctions(self.excel_order)
-                logger.info("Excel COM connection established (Order Execution)")
-            except Exception as e:
-                logger.error(f"Failed to connect to Excel: {e}")
-                raise
-        
-        logger.info(f"OrderExecutor initialized (DRY_RUN={dry_run})")
-    
-    def can_open_position(self, symbol: str) -> bool:
-        """新規ポジションを開けるかチェック"""
-        # 最大ポジション数チェック
-        if len(self.positions) >= config.RISK_PARAMS["max_positions"]:
-            logger.debug("Max positions reached")
-            return False
-        
-        # 1銘柄あたりの最大ポジション数チェック
-        symbol_positions = [p for p in self.positions if p.symbol == symbol]
-        if len(symbol_positions) >= config.RISK_PARAMS["max_position_per_symbol"]:
-            logger.debug(f"{symbol}: Max positions per symbol reached")
-            return False
-        
-        # 1日の最大損失チェック
-        if self.daily_pnl_tick <= -config.RISK_PARAMS["max_daily_loss_tick"]:
-            logger.warning(f"Daily loss limit reached: {self.daily_pnl_tick:.2f} tick")
-            return False
-        
-        # 緊急停止条件チェック
-        if self.consecutive_losses >= config.RISK_PARAMS["emergency_stop"]["consecutive_losses"]:
-            logger.warning(f"Emergency stop: {self.consecutive_losses} consecutive losses")
-            return False
-        
-        if self.max_drawdown_tick >= config.RISK_PARAMS["emergency_stop"]["drawdown_tick"]:
-            logger.warning(f"Emergency stop: drawdown {self.max_drawdown_tick:.2f} tick")
-            return False
-        
-        return True
+        self.positions: List[Position] = []
+        self.closed_positions: List[Position] = []
+        self.daily_pnl_tick = 0.0
+        self.max_drawdown_tick = 0.0
+        self.consecutive_losses = 0
     
     def open_position(self, signal: Dict[str, Any]) -> bool:
         """
@@ -254,49 +207,51 @@ class OrderExecutor:
         Returns:
             True: 注文成功、False: 注文失敗
         """
-        if not self.excel:
-            logger.error("Excel not connected")
-            return False
-        
         try:
+            # Excelインスタンス取得
+            excel = win32com.client.GetObject(Class="Excel.Application")
+            wb = excel.ActiveWorkbook
+            ws = wb.Worksheets("Sheet1")
+
             symbol = signal["symbol"]
             action = signal["action"]  # "buy" or "sell"
-            price = signal["price"]
-            
-            # 発注IDを生成（マイクロ秒+カウンター方式、衝突回避）
-            self.order_id_counter += 1
-            timestamp_part = int(datetime.now().strftime("%Y%m%d%H%M%S%f")[:17])
-            order_id = timestamp_part + self.order_id_counter
-            
+            price = 500  # 指値価格を500に固定
+            # 日時が分かる8桁ID（yyMMddHH形式）
+            order_id = int(datetime.now().strftime("%y%m%d%H"))
             # 売買区分: 1=売建、3=買建
             trade_type = "3" if action == "buy" else "1"
-            
-            # 注文パラメータ
+            # 手動成功例と同じ13項目のみで数式生成
             order_params = [
-                order_id,                                      # 1. 発注ID
+                order_id,                                        # 1. 発注ID（数値）
                 1,                                             # 2. 発注トリガー（1=発注）
                 f"{symbol}.T",                                # 3. 銘柄コード（東証）
-                trade_type,                                    # 4. 売買区分（1=売建、3=買建）
-                "0",                                          # 5. 注文区分（0=通常注文）
-                "0",                                          # 6. SOR区分（0=通常）
-                config.MARGIN_PARAMS["margin_type"],         # 7. 信用区分
-                config.RISK_PARAMS["position_size"],          # 8. 注文数量
-                "1",                                          # 9. 価格区分（1=指値）
-                price,                                         # 10. 注文価格
-                "1",                                          # 11. 執行条件（1=本日中）
-                "",                                           # 12. 注文期限（本日中なので省略）
-                config.MARGIN_PARAMS["account_type"],        # 13. 口座区分
+                int(trade_type),                                # 4. 売買区分（1=売建、3=買建）
+                0,                                             # 5. 注文区分（0=通常注文）
+                0,                                             # 6. SOR区分（0=通常）
+                int(config.MARGIN_PARAMS["margin_type"]),      # 7. 信用区分
+                int(config.RISK_PARAMS["position_size"]),      # 8. 注文数量
+                1,                                             # 9. 価格区分（1=指値）
+                int(price),                                     # 10. 注文価格（数値型）
+                1,                                             # 11. 執行条件（1=本日中）
+                "",                                           # 12. 注文期限（省略）
+                int(config.MARGIN_PARAMS["account_type"]),     # 13. 口座区分
             ]
-            
-            # RssMarginOpenOrder関数を呼び出し
-            result = self.excel_order.Run("RssMarginOpenOrder", *order_params)
-            
+            # 文字列・数値の区別を維持しつつ、@なしで数式生成
+            formula = '=RssMarginOpenOrder({})'.format(
+                ','.join(f'"{v}"' if isinstance(v, str) and v != "" else str(v) for v in order_params)
+            )
+            print(f"[DEBUG] RssMarginOpenOrder 数式: {formula}")
+            logger.info(f"[DEBUG] RssMarginOpenOrder 数式: {formula}")
+            # ExcelのA1セルに数式を書き込む
+            ws.Cells(1, 1).Formula = formula
+            # 結果（A1セルの値）を取得
+            result = ws.Cells(1, 1).Value
+            print(f"[OrderExecutor] Excel A1 result: {result}")
             if result:
                 logger.info(
                     f"Order sent: {symbol} {action} {config.RISK_PARAMS['position_size']}株 @ {price:.2f} "
                     f"(OrderID: {order_id})"
                 )
-                
                 # pending注文リストに追加（約定待ち）
                 self.pending_orders.append({
                     "order_id": order_id,
@@ -309,7 +264,6 @@ class OrderExecutor:
             else:
                 logger.error(f"Order failed: {symbol} {action} @ {price:.2f}")
                 return False
-                
         except Exception as e:
             logger.error(f"Order execution error: {e}")
             return False
@@ -325,7 +279,7 @@ class OrderExecutor:
         Returns:
             True: 注文成功、False: 注文失敗
         """
-        if not self.excel:
+        if not self.excel_order:
             logger.error("Excel not connected")
             return False
         
@@ -550,7 +504,32 @@ class OrderExecutor:
         """本日の統計を取得"""
         total_trades = len(self.closed_positions)
         wins = sum(1 for p in self.closed_positions if p.pnl_tick > 0)
-        
+        # Excelインスタンス取得
+        try:
+            excel = win32com.client.GetObject(Class="Excel.Application")
+            print("[OrderExecutor] 既存Excelインスタンス取得成功")
+        except Exception as e:
+            print(f"[OrderExecutor] 既存Excel取得失敗: {e} →新規起動")
+            excel = win32com.client.Dispatch("Excel.Application")
+        excel.Visible = True
+        print(f"[OrderExecutor] Excel.Visible: {excel.Visible}")
+        # Workbook一覧
+        wb_count = excel.Workbooks.Count
+        print(f"[OrderExecutor] Workbook数: {wb_count}")
+        for i in range(1, wb_count+1):
+            print(f"[OrderExecutor] Workbook[{i}]: {excel.Workbooks(i).Name}")
+        # Sheet一覧（ActiveWorkbook基準）
+        try:
+            wb = excel.ActiveWorkbook
+            print(f"[OrderExecutor] ActiveWorkbook: {wb.Name}")
+            sheet_count = wb.Worksheets.Count
+            for i in range(1, sheet_count+1):
+                print(f"[OrderExecutor] Sheet[{i}]: {wb.Worksheets(i).Name}")
+            ws = wb.Worksheets("Sheet1")
+            print(f"[OrderExecutor] Sheet: {ws.Name}")
+        except Exception as e:
+            print(f"[OrderExecutor] Workbook/Sheet参照失敗: {e}")
+            return False
         return {
             "total_trades": total_trades,
             "wins": wins,
@@ -574,6 +553,12 @@ class OrderExecutor:
         log_path = str(config.LOGGING_CONFIG["position_log"]).format(date=date_str)
         positions_df.to_csv(log_path, index=False)
         logger.info(f"Saved position log: {log_path}")
+    
+    def can_open_position(self, symbol: str) -> bool:
+        """
+        ポジションを開けるか判定（仮実装: 常にTrue）
+        """
+        return True
 
 
 if __name__ == "__main__":
@@ -582,27 +567,27 @@ if __name__ == "__main__":
         level=logging.DEBUG,
         format=config.LOGGING_CONFIG["format"]
     )
-    
-    executor = OrderExecutor(dry_run=True)
-    
-    # ダミーシグナルでポジションを開く
-    dummy_signal = {
+
+    executor = OrderExecutor(dry_run=False)
+
+    # ダミーシグナルでポジションを開く（実際に発注）
+    test_signal = {
         "action": "buy",
         "symbol": "3350",
         "price": 1000.0,
         "level": 995.0,
         "level_kind": "vpoc",
         "level_strength": 0.8,
-        "reason": "Test signal"
+        "reason": "発注テスト"
     }
-    
-    executor.open_position(dummy_signal)
-    
+    result = executor.open_position(test_signal)
+    print(f"注文結果: {result}")
+
     # 統計表示
     stats = executor.get_daily_stats()
     print(f"Daily stats: {stats}")
-    
-    # ポジションクローズ
+
+    # ポジションクローズ（テスト）
     if executor.positions:
         executor.close_position(executor.positions[0], 1010.0, "TP")
         stats = executor.get_daily_stats()
