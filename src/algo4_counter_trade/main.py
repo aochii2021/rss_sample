@@ -443,8 +443,10 @@ class UnifiedBacktest:
         logger.info(f"トレードチャート生成: {len(symbols_with_trades)}銘柄")
 
         # 可視化用チャートデータは板情報と同じ時間帯の分足系のみを読み込み、バックテスト期間の営業日分だけ取得
+        # 可視化時は当日データを含めるため、cutoff_dateを1日進める
+        cutoff_for_visualization = end_dt + pd.Timedelta(days=1)
         chart_data = self.data_loader.load_chart_data_until(
-            cutoff_date=end_dt,
+            cutoff_date=cutoff_for_visualization,
             lookback_days=lookback_days,
             symbols=norm_symbols,
             allowed_timeframes=['1M', '2M', '3M', '4M', '5M', '10M', '15M', '30M', '60M', '2H', '4H', '8H']
