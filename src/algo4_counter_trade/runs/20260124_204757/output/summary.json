@@ -1,0 +1,14 @@
+{
+  "total_trades": 22,
+  "win_trades": 13,
+  "loss_trades": 9,
+  "win_rate": 0.5909090909090909,
+  "total_pnl": 36.949999999999704,
+  "avg_pnl": 1.6795454545454411,
+  "avg_win": 6.176923076923065,
+  "avg_loss": -4.8166666666666815,
+  "max_win": 10.5,
+  "max_loss": -10.0,
+  "profit_factor": 1.852364475201836,
+  "avg_hold_time_minutes": 31.258333333333333
+}

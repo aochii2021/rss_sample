@@ -1,0 +1,75 @@
+common:
+  level_expiry_days: 5
+  max_levels_per_symbol: 20
+  quality_filter:
+    enable: true
+    min_weight: 0.3
+  weight_decay:
+    enable: true
+    half_life_days: 3
+consolidation:
+  detection:
+    max_price_range_percent: 0.5
+    min_duration: 3
+  lookback_days: 5
+  merge_threshold_percent: 0.3
+data_leak_prevention:
+  debug_output: false
+  log_level_generation: true
+  strict_cutoff: true
+level_types:
+  consolidation:
+    description: 値固め（横ばい）ゾーンのS/Rレベル
+    enable: true
+    weight: 1.0
+  ma25:
+    description: 25日移動平均線
+    enable: true
+    weight: 0.7
+  ma5:
+    description: 5日移動平均線
+    enable: true
+    weight: 0.7
+  pivot_sr:
+    description: Pivot高値・安値によるS/Rレベル
+    enable: true
+    weight: 1.0
+  psychological:
+    description: キリ番（100円単位、50円単位）のS/Rレベル
+    enable: true
+    weight: 0.8
+  vpoc:
+    description: Volume Profile POC（ボリュームピーク）
+    enable: false
+    weight: 1.0
+moving_average:
+  ma25:
+    period: 25
+    type: simple
+  ma5:
+    period: 5
+    type: simple
+pivot_sr:
+  lookback_days: 5
+  merge_threshold_percent: 0.3
+  peak_detection:
+    min_distance: 2
+    prominence: 0.5
+psychological:
+  price_ranges:
+  - max: 1000
+    min: 0
+    round_to: 50
+  - max: 5000
+    min: 1000
+    round_to: 100
+  - max: null
+    min: 5000
+    round_to: 500
+  round_levels:
+  - 100
+  - 50
+vpoc:
+  bin_size: 10
+  lookback_days: 5
+  min_volume_percentile: 70

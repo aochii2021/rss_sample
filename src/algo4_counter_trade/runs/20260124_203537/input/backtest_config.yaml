@@ -1,0 +1,41 @@
+backtest:
+  end_date: '2026-01-23'
+  lookback_days: 5
+  prevent_data_leak: true
+  start_date: '2026-01-19'
+data:
+  chart_data_dir: market_data/chart_data
+  log_data_date_range: true
+  market_data_dir: market_data/market_order_book
+  runs_base_dir: runs
+  validate_no_future_data: true
+logging:
+  level: INFO
+  log_file: true
+  log_file_path: null
+mode: backtest
+output:
+  create_daily_breakdown: true
+  create_performance_report: true
+  create_symbol_breakdown: true
+  run_dir_format: '%Y%m%d_%H%M%S'
+  save_intermediate_data: true
+  save_plots: true
+performance:
+  max_workers: 4
+  parallel_processing: false
+symbols:
+  csv_file: config/target_symbols.csv
+  exclude_list:
+  - '6315'
+  target_list: null
+trading_hours:
+  enable_filter: true
+  exclude_outside_hours: true
+  sessions:
+    afternoon:
+      end: '15:00'
+      start: '12:30'
+    morning:
+      end: '11:30'
+      start: 09:00
