@@ -53,7 +53,23 @@ def retry_on_error(max_retries: int = 3, delay_seconds: float = 1.0):
 
 
 class RSSFunctions:
-    """MarketSpeed II RSS関数ラッパークラス"""
+    def get_all_order_ids(self) -> list:
+        """
+        全注文の発注IDリスト（int）を返す。該当列がなければ空リスト。
+        デバッグ用にDataFrame内容・IDリストをログ出力
+        """
+        try:
+            df = self.get_order_list()
+            logger.debug(f"[get_all_order_ids] order_list DataFrame: columns={list(df.columns)}, shape={df.shape}")
+            if not df.empty and '発注ID' in df.columns:
+                id_list = [int(x) for x in df['発注ID'] if str(x).isdigit()]
+                logger.debug(f"[get_all_order_ids] 発注IDリスト: {id_list}")
+                return id_list
+            else:
+                logger.debug(f"[get_all_order_ids] 発注ID列なし or DataFrame空")
+        except Exception as e:
+            logger.warning(f"get_all_order_ids失敗: {e}")
+        return []
     
     def __init__(self, excel):
         """

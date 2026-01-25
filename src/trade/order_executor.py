@@ -79,8 +79,12 @@ class Position:
 
 
 class OrderExecutor:
-    """注文実行・ポジション管理クラス"""
-    
+    def _generate_order_id(self) -> int:
+        """
+        注文IDを1からインクリメント（OrderExecutorインスタンス内で一意管理）
+        """
+        self.order_id_counter += 1
+        return self.order_id_counter
     def __init__(self, dry_run: bool = True):
         """
         注文実行・ポジション管理クラスの初期化
@@ -90,7 +94,14 @@ class OrderExecutor:
         self.pending_orders: List[Dict[str, Any]] = []
         self.order_id_counter = 0  # 注文IDカウンター（衝突回避）
         self.excel_order = None
-        self.rss = None
+        # Excelインスタンス取得
+        try:
+            import win32com.client
+            excel = win32com.client.GetObject(Class="Excel.Application")
+        except Exception:
+            excel = win32com.client.Dispatch("Excel.Application")
+        from rss_functions import RSSFunctions
+        self.rss = RSSFunctions(excel)
         self.positions: List[Position] = []
         self.closed_positions: List[Position] = []
         self.daily_pnl_tick = 0.0
@@ -216,8 +227,8 @@ class OrderExecutor:
             symbol = signal["symbol"]
             action = signal["action"]  # "buy" or "sell"
             price = 500  # 指値価格を500に固定
-            # 日時が分かる8桁ID（yyMMddHH形式）
-            order_id = int(datetime.now().strftime("%y%m%d%H"))
+            # 注文IDを1からインクリメント
+            order_id = self._generate_order_id()
             # 売買区分: 1=売建、3=買建
             trade_type = "3" if action == "buy" else "1"
             # 手動成功例と同じ13項目のみで数式生成
@@ -242,11 +253,11 @@ class OrderExecutor:
             )
             print(f"[DEBUG] RssMarginOpenOrder 数式: {formula}")
             logger.info(f"[DEBUG] RssMarginOpenOrder 数式: {formula}")
-            # ExcelのA1セルに数式を書き込む
-            ws.Cells(1, 1).Formula = formula
-            # 結果（A1セルの値）を取得
-            result = ws.Cells(1, 1).Value
-            print(f"[OrderExecutor] Excel A1 result: {result}")
+            # ExcelのA{order_id}セルに数式を書き込む（IDと行番号連動）
+            ws.Cells(order_id, 1).Formula = formula
+            # 結果（A{order_id}セルの値）を取得
+            result = ws.Cells(order_id, 1).Value
+            print(f"[OrderExecutor] Excel A{order_id} result: {result}")
             if result:
                 logger.info(
                     f"Order sent: {symbol} {action} {config.RISK_PARAMS['position_size']}株 @ {price:.2f} "
@@ -570,25 +581,46 @@ if __name__ == "__main__":
 
     executor = OrderExecutor(dry_run=False)
 
-    # ダミーシグナルでポジションを開く（実際に発注）
-    test_signal = {
-        "action": "buy",
-        "symbol": "3350",
-        "price": 1000.0,
-        "level": 995.0,
-        "level_kind": "vpoc",
-        "level_strength": 0.8,
-        "reason": "発注テスト"
-    }
-    result = executor.open_position(test_signal)
-    print(f"注文結果: {result}")
+    # 複数注文テスト
+    test_signals = [
+        {
+            "action": "buy",
+            "symbol": "3350",
+            "price": 1000.0,
+            "level": 995.0,
+            "level_kind": "vpoc",
+            "level_strength": 0.8,
+            "reason": "発注テスト1"
+        },
+        {
+            "action": "buy",
+            "symbol": "5016",
+            "price": 2000.0,
+            "level": 1995.0,
+            "level_kind": "vpoc",
+            "level_strength": 0.7,
+            "reason": "発注テスト2"
+        },
+        {
+            "action": "sell",
+            "symbol": "6526",
+            "price": 3000.0,
+            "level": 2995.0,
+            "level_kind": "vpoc",
+            "level_strength": 0.6,
+            "reason": "発注テスト3"
+        }
+    ]
+    for sig in test_signals:
+        result = executor.open_position(sig)
+        print(f"注文結果: {result}")
 
     # 統計表示
     stats = executor.get_daily_stats()
     print(f"Daily stats: {stats}")
 
     # ポジションクローズ（テスト）
-    if executor.positions:
-        executor.close_position(executor.positions[0], 1010.0, "TP")
-        stats = executor.get_daily_stats()
-        print(f"After close: {stats}")
+    for pos in executor.positions:
+        executor.close_position(pos, pos.entry_price + 10, "TP")
+    stats = executor.get_daily_stats()
+    print(f"After close: {stats}")
