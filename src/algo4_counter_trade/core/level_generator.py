@@ -333,10 +333,13 @@ class LevelGenerator:
             return []
         
         current_price = float(df.iloc[-1]['close'] if 'close' in df.columns else df.iloc[-1]['mid'])
-        
+        # NoneやNaNの場合はスキップ
+        if current_price is None or (isinstance(current_price, float) and np.isnan(current_price)):
+            return []
+
         config = self.level_config['psychological']
         weight = self.level_types['psychological']['weight']
-        
+
         # 価格帯に応じたキリ番粒度を決定
         round_to = None
         for range_config in config['price_ranges']:

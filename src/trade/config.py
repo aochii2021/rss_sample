@@ -13,6 +13,17 @@ TRADE_DIR = Path(__file__).parent
 LOG_DIR = TRADE_DIR / "logs"
 LOG_DIR.mkdir(exist_ok=True)
 
+
+# ========================================
+# 注文用Excelファイルパス
+# ========================================
+ORDER_EXCEL_PATH = PROJECT_ROOT / "order_execution.xlsx"
+
+# ========================================
+# DRY_RUN設定（True: 試験モード, False: 本番Excel入力）
+# ========================================
+DRY_RUN = False
+
 # algo4_counter_tradeへのパス
 ALGO_DIR = PROJECT_ROOT / "src" / "algo4_counter_trade"
 
@@ -114,12 +125,6 @@ LOGGING_CONFIG = {
     "order_log": LOG_DIR / "order_{date}.csv",
 }
 
-# ========================================
-# 動作モード
-# ========================================
-# DRY_RUN = True: シミュレーションモード（注文実行しない）
-# DRY_RUN = False: 本番モード（実際に注文実行）
-DRY_RUN = True  # 初期値は安全のためTrue
 
 # ========================================
 # 対象銘柄

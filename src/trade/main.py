@@ -22,6 +22,10 @@ from core.strategy import CounterTradeStrategy
 from core.level_generator import LevelGenerator
 from order_executor import OrderExecutor
 
+import config
+print("=== config.py path ===", config.__file__)
+print("=== DRY_RUN value ===", config.DRY_RUN)
+
 # ロギング設定（ログディレクトリ自動作成）
 config.LOG_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -106,6 +110,14 @@ class TradingSystem:
         self.is_running = False
         self.current_session = None
         self.last_position_sync = datetime.now()
+        # strategy_paramsを保持
+        if hasattr(strategy, 'params'):
+            self.strategy_params = strategy.params
+        elif hasattr(strategy, 'strategy_params'):
+            self.strategy_params = strategy.strategy_params
+        else:
+            # create_trading_system()から渡す場合は引数追加が必要
+            self.strategy_params = {}
         # Excelインスタンス生成・一意名でワークブック保存
         import win32com.client
         now = datetime.now()
@@ -180,10 +192,11 @@ class TradingSystem:
         """データ更新とレベル更新"""
         lob_data = self.data_collector.update()
         
+        lookback_bars = self.strategy_params.get("lookback_bars", 60)
         for symbol in self.symbols:
             ohlc_history = self.data_collector.get_history(
                 symbol,
-                lookback_bars=self.strategy_params["lookback_bars"]
+                lookback_bars=lookback_bars
             )
             
             if not ohlc_history.empty:
@@ -289,6 +302,8 @@ class TradingSystem:
         logger.info("=" * 50)
 
         last_session_active = False
+        test_order_sent = False
+        start_time = datetime.now()
 
         try:
             import time
@@ -306,6 +321,21 @@ class TradingSystem:
                     except Exception as e:
                         logger.error(f"板情報記録エラー: {e}", exc_info=True)
                     last_record_minute = now_minute
+
+                # 5分経過後に1度だけテスト注文
+                if not test_order_sent and (now_dt - start_time).total_seconds() >= 120:
+                    logger.info("[TEST] 5分経過したのでテスト注文を発行します (3350, 450円)")
+                    test_signal = {
+                        "symbol": "3350",
+                        "action": "buy",
+                        "price": 450,
+                        "level": 450,
+                        "level_kind": "manual_test",
+                        "level_strength": 1.0,
+                        "reason": "manual test trigger after 5min"
+                    }
+                    self.order_executor.open_position(test_signal)
+                    test_order_sent = True
 
                 # 取引時間チェック
                 in_session = self._is_trading_session()
@@ -410,7 +440,52 @@ def main():
     print("\nシステムを起動します...")
     print("停止: Ctrl+C\n")
     
+    # セッションごとにディレクトリを作成し、その中に注文用Excelを保存
+    from datetime import datetime
+    import os
+    session_time = datetime.now().strftime('%Y%m%d_%H%M')
+    session_dir = os.path.join(str(config.LOG_DIR), f"session_{session_time}")
+    os.makedirs(session_dir, exist_ok=True)
+    session_excel_name = f"order_execution_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+    session_excel_path = os.path.join(session_dir, session_excel_name)
+    config.ORDER_EXCEL_PATH = session_excel_path
+    # 空のExcelファイルを新規作成（存在しない場合）
+    if not os.path.exists(session_excel_path):
+        import win32com.client
+        excel = None
+        try:
+            excel = win32com.client.GetObject(Class="Excel.Application")
+        except Exception:
+            try:
+                excel = win32com.client.Dispatch("Excel.Application")
+            except Exception as e:
+                print(f"Excel起動失敗: {e}")
+                raise
+        if not hasattr(excel, "Workbooks"):
+            print("Excelインスタンス取得失敗: Workbooks属性がありません")
+            raise RuntimeError("Excel COMオブジェクトのWorkbooks属性取得に失敗しました")
+        wb = excel.Workbooks.Add()
+        wb.SaveAs(session_excel_path)
+        wb.Close()
+        excel.Quit()
+    print(f"[INFO] 注文用Excelファイル: {session_excel_path}")
+
     system = create_trading_system()
+
+    # --- テスト用: ダミー注文を1件だけ強制発行（本番ロジックに影響なし） ---
+    print("[TEST] ダミー注文を1件だけ発行します（本番ロジックには影響しません）")
+    test_signal = {
+        "symbol": "6758",  # ソニー等、任意の上場銘柄コード
+        "action": "buy",
+        "price": 500,
+        "level": 500,
+        "level_kind": "test",
+        "level_strength": 1.0,
+        "reason": "manual test trigger"
+    }
+    system.order_executor.open_position(test_signal)
+    print("[TEST] ダミー注文発行完了。以降は本来のシステム処理に移行します。\n")
+
     system.run()
 
 

@@ -27,7 +27,12 @@ class Position:
         entry_time: datetime,
         level: float,
         level_kind: str,
-        level_strength: float
+        level_strength: float,
+        order_id: Optional[int] = None,
+        order_formula: Optional[str] = None,
+        order_time: Optional[datetime] = None,
+        order_result: Optional[str] = None,
+        level_reason: Optional[str] = None
     ):
         self.symbol = symbol
         self.direction = direction  # "buy" or "sell"
@@ -37,7 +42,11 @@ class Position:
         self.level = level
         self.level_kind = level_kind
         self.level_strength = level_strength
-        
+        self.order_id = order_id
+        self.order_formula = order_formula
+        self.order_time = order_time
+        self.order_result = order_result
+        self.level_reason = level_reason
         self.exit_price: Optional[float] = None
         self.exit_time: Optional[datetime] = None
         self.pnl_tick: float = 0.0
@@ -61,7 +70,7 @@ class Position:
         return int((current_time - self.entry_time).total_seconds() / 60)
     
     def to_dict(self) -> Dict[str, Any]:
-        """辞書形式で返す"""
+        """辞書形式で返す（発注履歴・根拠・数式・約定有無も含む）"""
         return {
             "symbol": self.symbol,
             "direction": self.direction,
@@ -75,6 +84,11 @@ class Position:
             "level": self.level,
             "level_kind": self.level_kind,
             "level_strength": self.level_strength,
+            "order_id": self.order_id,
+            "order_formula": self.order_formula,
+            "order_time": self.order_time,
+            "order_result": self.order_result,
+            "level_reason": self.level_reason,
         }
 
 
@@ -94,12 +108,27 @@ class OrderExecutor:
         self.pending_orders: List[Dict[str, Any]] = []
         self.order_id_counter = 0  # 注文IDカウンター（衝突回避）
         self.excel_order = None
-        # Excelインスタンス取得
+        # 注文用Excelファイルを明示的に開く
+        import win32com.client
+        import os
+        excel = None
+        order_excel_path = str(config.ORDER_EXCEL_PATH)
         try:
-            import win32com.client
             excel = win32com.client.GetObject(Class="Excel.Application")
+            # 既に開かれている場合はそのまま、なければOpen
+            wb = None
+            for i in range(1, excel.Workbooks.Count+1):
+                if os.path.abspath(excel.Workbooks(i).FullName) == os.path.abspath(order_excel_path):
+                    wb = excel.Workbooks(i)
+                    break
+            if wb is None:
+                wb = excel.Workbooks.Open(order_excel_path)
         except Exception:
             excel = win32com.client.Dispatch("Excel.Application")
+            wb = excel.Workbooks.Open(order_excel_path)
+        excel.Visible = True
+        self.excel_order = excel
+        self.order_wb = wb
         from rss_functions import RSSFunctions
         self.rss = RSSFunctions(excel)
         self.positions: List[Position] = []
@@ -125,34 +154,41 @@ class OrderExecutor:
         
         try:
             # 注文実行
+            order_id = None
+            order_formula = None
+            order_time = datetime.now()
+            order_result = None
             if self.dry_run:
                 logger.info(f"[DRY RUN] Opening {signal['action']} position: {symbol} @ {signal['price']:.2f}")
                 success = True
+                order_id = 0
+                order_formula = "DRY_RUN"
+                order_result = "DRY_RUN"
             else:
-                # TODO: 実際の注文実行（MarketSpeed II経由）
                 logger.info(f"[LIVE] Opening {signal['action']} position: {symbol} @ {signal['price']:.2f}")
-                success = self._execute_order(signal)
-            
+                # _execute_orderでorder_id, formula, resultを返すよう修正
+                success, order_id, order_formula, order_result = self._execute_order(signal)
             if success:
-                # ポジション作成
                 position = Position(
                     symbol=symbol,
                     direction=signal["action"],
                     entry_price=signal["price"],
                     size=config.RISK_PARAMS["position_size"],
-                    entry_time=datetime.now(),
+                    entry_time=order_time,
                     level=signal["level"],
                     level_kind=signal.get("level_kind", "unknown"),
-                    level_strength=signal.get("level_strength", 0.0)
+                    level_strength=signal.get("level_strength", 0.0),
+                    order_id=order_id,
+                    order_formula=order_formula,
+                    order_time=order_time,
+                    order_result=order_result,
+                    level_reason=signal.get("reason", "")
                 )
                 self.positions.append(position)
-                
                 logger.info(f"Position opened: {symbol} {signal['action']} @ {signal['price']:.2f}")
                 return True
-            
         except Exception as e:
             logger.error(f"Failed to open position: {e}")
-        
         return False
     
     def close_position(self, position: Position, current_price: float, reason: str) -> bool:
@@ -208,7 +244,7 @@ class OrderExecutor:
         
         return False
     
-    def _execute_order(self, signal: Dict[str, Any]) -> bool:
+    def _execute_order(self, signal: Dict[str, Any]):
         """
         信用新規注文実行（MarketSpeed II RSS）
         
@@ -219,9 +255,9 @@ class OrderExecutor:
             True: 注文成功、False: 注文失敗
         """
         try:
-            # Excelインスタンス取得
-            excel = win32com.client.GetObject(Class="Excel.Application")
-            wb = excel.ActiveWorkbook
+            # 注文用ExcelファイルのWorkbook/Sheetを利用
+            excel = self.excel_order
+            wb = self.order_wb
             ws = wb.Worksheets("Sheet1")
 
             symbol = signal["symbol"]
@@ -271,13 +307,14 @@ class OrderExecutor:
                     "order_type": "open"
                 })
                 logger.debug(f"Added to pending orders: {order_id}")
-                return True
+                return True, order_id, formula, str(result)
             else:
                 logger.error(f"Order failed: {symbol} {action} @ {price:.2f}")
-                return False
+                return False, order_id, formula, str(result)
         except Exception as e:
             logger.error(f"Order execution error: {e}")
-            return False
+            print(f"[OrderExecutor][ERROR] Order execution error: {e}")
+            return False, None, None, str(e)
     
     def _execute_close_order(self, position: Position, price: float) -> bool:
         """
@@ -525,10 +562,16 @@ class OrderExecutor:
         excel.Visible = True
         print(f"[OrderExecutor] Excel.Visible: {excel.Visible}")
         # Workbook一覧
-        wb_count = excel.Workbooks.Count
-        print(f"[OrderExecutor] Workbook数: {wb_count}")
-        for i in range(1, wb_count+1):
-            print(f"[OrderExecutor] Workbook[{i}]: {excel.Workbooks(i).Name}")
+        try:
+            wb_count = excel.Workbooks.Count
+            print(f"[OrderExecutor] Workbook数: {wb_count}")
+            for i in range(1, wb_count+1):
+                try:
+                    print(f"[OrderExecutor] Workbook[{i}]: {excel.Workbooks(i).Name}")
+                except Exception as e:
+                    print(f"[OrderExecutor] Workbook[{i}]参照失敗: {e}")
+        except Exception as e:
+            print(f"[OrderExecutor] Workbooks一覧取得失敗: {e}")
         # Sheet一覧（ActiveWorkbook基準）
         try:
             wb = excel.ActiveWorkbook
@@ -553,17 +596,18 @@ class OrderExecutor:
         }
     
     def save_logs(self, date_str: str):
-        """ログをCSV保存"""
-        if not self.closed_positions:
+        """全ポジション（open/closed両方）をCSV保存"""
+        all_positions = self.positions + self.closed_positions
+        if not all_positions:
+            logger.info("No positions to save.")
             return
-        
-        # ポジションログ
-        positions_data = [p.to_dict() for p in self.closed_positions]
+        positions_data = [p.to_dict() for p in all_positions]
         positions_df = pd.DataFrame(positions_data)
-        
-        log_path = str(config.LOGGING_CONFIG["position_log"]).format(date=date_str)
-        positions_df.to_csv(log_path, index=False)
-        logger.info(f"Saved position log: {log_path}")
+        import os
+        os.makedirs("output", exist_ok=True)
+        log_path = f"output/trade_history_{date_str}.csv"
+        positions_df.to_csv(log_path, index=False, encoding="utf-8-sig")
+        logger.info(f"Trade history saved: {log_path}")
     
     def can_open_position(self, symbol: str) -> bool:
         """
