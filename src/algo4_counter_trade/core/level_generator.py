@@ -350,10 +350,20 @@ class LevelGenerator:
         for range_config in config['price_ranges']:
             min_price = range_config.get('min', 0)
             max_price = range_config.get('max', float('inf'))
-            
-            if min_price <= current_price < max_price:
-                round_to = range_config['round_to']
-                break
+            if max_price is None:
+                max_price = float('inf')
+            # デバッグ出力: 型・値
+            try:
+                if min_price <= current_price < max_price:
+                    round_to = range_config['round_to']
+                    break
+            except Exception as e:
+                import traceback
+                logger.error(f"[DEBUG] symbol={symbol} target_date={target_date}")
+                logger.error(f"[DEBUG] min_price={min_price} ({type(min_price)}), current_price={current_price} ({type(current_price)}), max_price={max_price} ({type(max_price)})")
+                logger.error(f"[DEBUG] df.tail():\n{df.tail()}\nrange_config={range_config}")
+                logger.error(f"[DEBUG] Exception: {e}\n{traceback.format_exc()}")
+                raise
         
         if round_to is None:
             return []

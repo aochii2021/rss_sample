@@ -68,7 +68,7 @@ psychological:
       max: 5000
       round_to: 100
     - min: 5000
-      max: null  # 無制限
+      max: 99999999  # 無制限相当
       round_to: 500
 
 # 移動平均設定

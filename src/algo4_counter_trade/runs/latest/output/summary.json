@@ -1,14 +1,14 @@
 {
-  "total_trades": 1282,
-  "win_trades": 555,
-  "loss_trades": 727,
-  "win_rate": 0.4329173166926677,
-  "total_pnl": 385.0500000000002,
-  "avg_pnl": 0.30035101404056175,
-  "avg_win": 10.247837837837839,
-  "avg_loss": -7.293672627235213,
-  "max_win": 43.0,
-  "max_loss": -73.5,
-  "profit_factor": 1.0726166902404526,
-  "avg_hold_time_minutes": 14.518863754550182
+  "total_trades": 2010,
+  "win_trades": 878,
+  "loss_trades": 1132,
+  "win_rate": 0.4368159203980099,
+  "total_pnl": 823.5500000000002,
+  "avg_pnl": 0.40972636815920405,
+  "avg_win": 13.161788154897494,
+  "avg_loss": -9.48100706713781,
+  "max_win": 80.0,
+  "max_loss": -105.0,
+  "profit_factor": 1.0767342184952247,
+  "avg_hold_time_minutes": 10.211218905472636
 }
