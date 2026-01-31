@@ -61,12 +61,17 @@ class LOBProcessor:
         
         features = {}
         for symbol, df in market_data.items():
+            # symbolを常に4桁str化
+            norm_symbol = str(symbol)
+            if norm_symbol.endswith('.0'):
+                norm_symbol = norm_symbol[:-2]
+            norm_symbol = norm_symbol.zfill(4)
             try:
-                feat_df = self._compute_features_for_symbol(df, symbol)
-                features[symbol] = feat_df
-                logger.info(f"  {symbol}: {len(feat_df)}行の特徴量生成")
+                feat_df = self._compute_features_for_symbol(df, norm_symbol)
+                features[norm_symbol] = feat_df
+                logger.info(f"  {norm_symbol}: {len(feat_df)}行の特徴量生成")
             except Exception as e:
-                logger.error(f"  {symbol}: 特徴量計算エラー - {e}")
+                logger.error(f"  {norm_symbol}: 特徴量計算エラー - {e}")
                 continue
         
         logger.info(f"LOB特徴量計算完了: {len(features)}銘柄")
@@ -124,7 +129,12 @@ class LOBProcessor:
         # 特徴量DataFrame作成
         out = pd.DataFrame()
         out['ts'] = df[ts_col]
-        out['symbol'] = symbol
+        # symbolを常に4桁str化
+        norm_symbol = str(symbol)
+        if norm_symbol.endswith('.0'):
+            norm_symbol = norm_symbol[:-2]
+        norm_symbol = norm_symbol.zfill(4)
+        out['symbol'] = norm_symbol
         
         # 基本特徴量
         out['spread'] = ask_px - bid_px

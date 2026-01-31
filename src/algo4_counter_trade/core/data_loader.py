@@ -64,140 +64,91 @@ class DataLoader:
         allowed_timeframes: Optional[List[str]] = None
     ) -> Dict[str, pd.DataFrame]:
         """
-        カットオフ日付以前のチャートデータを読み込み
-        
-        Args:
-            cutoff_date: カットオフ日付（この日付より後のデータは読み込まない）
-            lookback_days: 過去何営業日分のデータを読み込むか
-            symbols: 対象銘柄リスト（Noneなら全銘柄）
-            allowed_timeframes: 許可する足種（Noneなら全て）
-            
-        Returns:
-            {銘柄コード: DataFrame} の辞書
-            
-        Raises:
-            DataLeakError: 未来データが検出された場合
+        集約CSV（all_3M.csv, all_D.csv等）からチャートデータを読み込む
+        Args/Returns/Raisesは従来通り
         """
         logger.info(f"チャートデータ読み込み: cutoff_date={cutoff_date.strftime('%Y-%m-%d')}")
-        
-        # 過去N営業日を取得
         target_dates = DateUtils.get_previous_business_days(cutoff_date, lookback_days)
         logger.info(f"対象期間: {lookback_days}営業日")
         for d in target_dates:
             logger.debug(f"  - {d.strftime('%Y-%m-%d')}")
-        
-        # チャートデータディレクトリを探索
-        # 想定構造: chart_data/3M_3000_YYYYMMDD/stock_chart_3M_{symbol}_*.csv
+
+        # 集約CSVファイルを全て探索
         chart_data = {}
-        
-        for date_dir in self.chart_data_dir.iterdir():
-            if not date_dir.is_dir():
+        for csv_file in self.chart_data_dir.glob("all_*.csv"):
+            # タイムフレーム判定
+            parts = csv_file.stem.split('_')
+            timeframe = parts[1] if len(parts) >= 2 else None
+            if allowed_timeframes is not None and timeframe not in allowed_timeframes:
+                logger.debug(f"タイムフレーム除外: {csv_file.name}")
                 continue
-            
-            # ディレクトリ名から日付を抽出（例: 3M_3000_20260119）
             try:
-                date_str = date_dir.name.split('_')[-1]  # 最後の部分が日付
-                dir_date = datetime.strptime(date_str, '%Y%m%d')
-            except (ValueError, IndexError):
-                logger.debug(f"日付解析失敗: {date_dir.name}")
-                continue
-            
-            # カットオフ日付より前のディレクトリのみ処理
-            if dir_date >= cutoff_date:
-                logger.debug(f"スキップ（未来データ）: {date_dir.name}")
-                continue
-            
-            # 対象期間内のディレクトリのみ処理
-            if dir_date not in target_dates:
-                logger.debug(f"スキップ（期間外）: {date_dir.name}")
-                continue
-            
-            logger.info(f"読み込み中: {date_dir.name}")
-            
-            # ディレクトリ内のCSVファイルを読み込み
-            for csv_file in date_dir.glob("stock_chart_*.csv"):
-                parts = csv_file.stem.split('_')
-                timeframe = parts[2] if len(parts) >= 3 else None
-                if allowed_timeframes is not None and timeframe not in allowed_timeframes:
-                    logger.debug(f"タイムフレーム除外: {csv_file.name}")
-                    continue
-
-                # ファイル名から銘柄コードを抽出
-                # 例: stock_chart_3M_215A_20251208_20260119.csv
-                try:
-                    parts = csv_file.stem.split('_')
-                    symbol = parts[3]  # stock_chart_3M_{symbol}_...
-                except IndexError:
-                    logger.warning(f"銘柄コード抽出失敗: {csv_file.name}")
-                    continue
-                
-                # 銘柄フィルタリング
-                if symbols is not None and symbol not in symbols:
-                    continue
-                
-                # CSVファイル読み込み
-                try:
-                    df = self._read_csv_safe(csv_file)
-                    
-                    # タイムスタンプ生成（分足は日付+時刻を結合）
-                    if 'timestamp' not in df.columns:
-                        if '日付' in df.columns:
-                            if '時刻' in df.columns:
-                                df['timestamp'] = pd.to_datetime(
-                                    df['日付'].astype(str) + ' ' + df['時刻'].fillna('00:00')
-                                )
-                            else:
-                                df['timestamp'] = pd.to_datetime(df['日付'])
+                df = self._read_csv_safe(csv_file)
+                # 必須カラム: 'timestamp', 'symbol' or '銘柄コード'
+                if 'timestamp' not in df.columns:
+                    # 日付+時刻から生成
+                    if '日付' in df.columns:
+                        if '時刻' in df.columns:
+                            df['timestamp'] = pd.to_datetime(
+                                df['日付'].astype(str) + ' ' + df['時刻'].fillna('00:00')
+                            )
                         else:
-                            logger.warning(f"タイムスタンプカラムなし: {csv_file.name}")
-                            continue
-                    
-                    # カラム名正規化（日本語→英語）
-                    column_mapping = {
-                        '始値': 'open',
-                        '高値': 'high',
-                        '安値': 'low',
-                        '終値': 'close',
-                        '出来高': 'volume'
-                    }
-                    df.rename(columns=column_mapping, inplace=True)
-
-                    # 数値変換と欠損行の簡易除去
-                    price_cols = ['open', 'high', 'low', 'close']
-                    for col in price_cols + ['volume']:
-                        if col in df.columns:
-                            df[col] = pd.to_numeric(df[col], errors='coerce')
-                    if set(price_cols).issubset(df.columns):
-                        df = df[df[price_cols].notna().any(axis=1)]
-                    if 'volume' in df.columns:
-                        df['volume'] = df['volume'].fillna(0)
-                    
-                    # データリークチェック
-                    if self.validate_no_future_data:
-                        valid, error_msg = DateUtils.validate_no_future_data(
-                            df, cutoff_date, 'timestamp'
-                        )
-                        if not valid:
-                            raise DataLeakError(error_msg)
-                    
-                    # データ範囲ログ
-                    if self.log_data_range:
-                        DateUtils.log_data_date_range(df, f"  {symbol}", 'timestamp')
-                    
-                    # 既存データに追加
-                    if symbol in chart_data:
-                        chart_data[symbol] = pd.concat([chart_data[symbol], df], ignore_index=True)
+                            df['timestamp'] = pd.to_datetime(df['日付'])
                     else:
-                        chart_data[symbol] = df
-                
-                except Exception as e:
-                    logger.error(f"ファイル読み込みエラー: {csv_file.name} - {e}")
-                    continue
-        
-        # 各銘柄のデータを時系列でソート
+                        logger.warning(f"タイムスタンプカラムなし: {csv_file.name}")
+                        continue
+                # 銘柄コード正規化
+                if 'symbol' not in df.columns:
+                    if '銘柄コード' in df.columns:
+                        df['symbol'] = df['銘柄コード']
+                    else:
+                        logger.warning(f"銘柄コードカラムなし: {csv_file.name}")
+                        continue
+                # カラム名正規化
+                column_mapping = {
+                    '始値': 'open',
+                    '高値': 'high',
+                    '安値': 'low',
+                    '終値': 'close',
+                    '出来高': 'volume'
+                }
+                df.rename(columns=column_mapping, inplace=True)
+                price_cols = ['open', 'high', 'low', 'close']
+                for col in price_cols + ['volume']:
+                    if col in df.columns:
+                        df[col] = pd.to_numeric(df[col], errors='coerce')
+                if set(price_cols).issubset(df.columns):
+                    df = df[df[price_cols].notna().any(axis=1)]
+                if 'volume' in df.columns:
+                    df['volume'] = df['volume'].fillna(0)
+                # 日付・銘柄フィルタ
+                df = df[df['timestamp'] < cutoff_date]
+                df = df[df['timestamp'].dt.normalize().isin([d.date() for d in target_dates])]
+                if symbols is not None:
+                    df = df[df['symbol'].isin(symbols)]
+                # データリークチェック
+                if self.validate_no_future_data:
+                    valid, error_msg = DateUtils.validate_no_future_data(
+                        df, cutoff_date, 'timestamp'
+                    )
+                    if not valid:
+                        raise DataLeakError(error_msg)
+                # データ範囲ログ
+                if self.log_data_range:
+                    for symbol, group in df.groupby('symbol'):
+                        DateUtils.log_data_date_range(group, f"  {symbol}", 'timestamp')
+                # 銘柄ごとに格納
+                for symbol, group in df.groupby('symbol'):
+                    if symbol in chart_data:
+                        chart_data[symbol] = pd.concat([chart_data[symbol], group], ignore_index=True)
+                    else:
+                        chart_data[symbol] = group.reset_index(drop=True)
+            except Exception as e:
+                logger.error(f"集約CSV読み込みエラー: {csv_file.name} - {e}")
+                continue
+        # ソート
         for symbol in chart_data:
             chart_data[symbol] = chart_data[symbol].sort_values('timestamp').reset_index(drop=True)
-        
         logger.info(f"チャートデータ読み込み完了: {len(chart_data)}銘柄")
         return chart_data
     
@@ -207,126 +158,80 @@ class DataLoader:
         symbols: Optional[List[str]] = None
     ) -> Dict[str, pd.DataFrame]:
         """
-        指定日の板情報データを読み込み
-        
-        Args:
-            target_date: 対象日
-            symbols: 対象銘柄リスト（Noneなら全銘柄）
-            
-        Returns:
-            {銘柄コード: DataFrame} の辞書
+        集約CSV（all_market_order_book.csv）から板情報データを読み込む
+        Args/Returnsは従来通り
         """
         logger.info(f"板情報データ読み込み: target_date={target_date.strftime('%Y-%m-%d')}")
-        
-        # 板情報ディレクトリを探索
-        # 想定構造: market_order_book/YYYYMMDD/*.csv または market_order_book/YYYYMMDD_HHMM/*.csv
-        date_str = target_date.strftime('%Y%m%d')
         market_data = {}
-        
-        # 日付に一致するディレクトリを探す
-        matching_dirs = list(self.market_data_dir.glob(f"{date_str}*"))
-        
-        if not matching_dirs:
-            logger.warning(f"板情報ディレクトリが見つかりません: {date_str}")
-            return market_data
-        
-        for data_dir in matching_dirs:
-            if not data_dir.is_dir():
-                continue
-            
-            logger.info(f"読み込み中: {data_dir.name}")
-            
-            # ディレクトリ内のCSVファイルを読み込み
-            csv_files = list(data_dir.glob("*.csv"))
-            
-            if not csv_files:
-                logger.warning(f"CSVファイルが見つかりません: {data_dir.name}")
-                continue
-            
-            for csv_file in csv_files:
-                try:
-                    df = self._read_csv_safe(csv_file)
-                    
-                    # タイムスタンプカラム確認・変換
-                    ts_col = self._find_timestamp_column(df)
-                    if ts_col is None:
-                        logger.warning(f"タイムスタンプカラムなし: {csv_file.name}")
-                        continue
-                    
-                    df['timestamp'] = pd.to_datetime(df[ts_col])
-                    
-                    # カラム名正規化（日本語→英語）
-                    column_mapping = {
-                        '始値': 'open',
-                        '高値': 'high',
-                        '安値': 'low',
-                        '終値': 'close',
-                        '出来高': 'volume'
-                    }
-                    df.rename(columns=column_mapping, inplace=True)
-                    
-                    # 銘柄コードカラム確認
-                    symbol_col = '銘柄コード' if '銘柄コード' in df.columns else None
-                    
-                    if symbol_col is None:
-                        # ファイル名から銘柄コード推測
-                        symbol = csv_file.stem
-                        df['銘柄コード'] = symbol
-                    
-                    # 銘柄ごとに分割
-                    if symbol_col or '銘柄コード' in df.columns:
-                        for symbol, group in df.groupby('銘柄コード'):
-                            if pd.isna(symbol) or symbol == "":
-                                continue
-                            
-                            # 銘柄フィルタリング
-                            if symbols is not None and symbol not in symbols:
-                                continue
-                            
-                            # データ範囲ログ
-                            if self.log_data_range:
-                                DateUtils.log_data_date_range(group, f"  {symbol}", 'timestamp')
-                            
-                            # 既存データに追加
-                            if symbol in market_data:
-                                market_data[symbol] = pd.concat([market_data[symbol], group], ignore_index=True)
-                            else:
-                                market_data[symbol] = group
-                    
-                except Exception as e:
-                    logger.error(f"ファイル読み込みエラー: {csv_file.name} - {e}")
+        for csv_file in self.market_data_dir.glob("all_*.csv"):
+            try:
+                df = self._read_csv_safe(csv_file)
+                # タイムスタンプカラム
+                ts_col = self._find_timestamp_column(df)
+                if ts_col is None:
+                    logger.warning(f"タイムスタンプカラムなし: {csv_file.name}")
                     continue
-        
-        # 各銘柄のデータを時系列でソート
+                df['timestamp'] = pd.to_datetime(df[ts_col])
+                # 銘柄コード正規化
+                if 'symbol' not in df.columns:
+                    if '銘柄コード' in df.columns:
+                        df['symbol'] = df['銘柄コード']
+                    else:
+                        logger.warning(f"銘柄コードカラムなし: {csv_file.name}")
+                        continue
+                # カラム名正規化
+                column_mapping = {
+                    '始値': 'open',
+                    '高値': 'high',
+                    '安値': 'low',
+                    '終値': 'close',
+                    '出来高': 'volume'
+                }
+                df.rename(columns=column_mapping, inplace=True)
+                # 日付・銘柄フィルタ（date型同士で比較）
+                date_only = target_date.date()
+                df = df[df['timestamp'].dt.date == date_only]
+                if symbols is not None:
+                    df = df[df['symbol'].isin(symbols)]
+                # データ範囲ログ
+                if self.log_data_range:
+                    for symbol, group in df.groupby('symbol'):
+                        DateUtils.log_data_date_range(group, f"  {symbol}", 'timestamp')
+                # 銘柄ごとに格納
+                for symbol, group in df.groupby('symbol'):
+                    if symbol in market_data:
+                        market_data[symbol] = pd.concat([market_data[symbol], group], ignore_index=True)
+                    else:
+                        market_data[symbol] = group.reset_index(drop=True)
+            except Exception as e:
+                logger.error(f"集約CSV読み込みエラー: {csv_file.name} - {e}")
+                continue
+        # ソート
         for symbol in market_data:
             market_data[symbol] = market_data[symbol].sort_values('timestamp').reset_index(drop=True)
-        
         logger.info(f"板情報データ読み込み完了: {len(market_data)}銘柄")
         return market_data
     
     def _read_csv_safe(self, file_path: Path) -> pd.DataFrame:
         """
-        複数のエンコーディングを試してCSVを読み込み
-        
+        複数のエンコーディングを試してCSVを読み込み、銘柄コードカラムをstr型で強制
         Args:
             file_path: CSVファイルパス
-            
         Returns:
             DataFrame
         """
         encodings = ["utf-8-sig", "utf-8", "cp932", "shift-jis"]
-        
+        dtype_dict = {"銘柄コード": str, "symbol": str}
         for encoding in encodings:
             try:
-                return pd.read_csv(file_path, encoding=encoding)
+                return pd.read_csv(file_path, encoding=encoding, dtype=dtype_dict)
             except (UnicodeDecodeError, UnicodeError):
                 continue
             except Exception as e:
                 # エンコーディング以外のエラーは即座に発生
                 raise
-        
         # 全て失敗した場合はデフォルトで試行
-        return pd.read_csv(file_path)
+        return pd.read_csv(file_path, dtype=dtype_dict)
     
     def _find_timestamp_column(self, df: pd.DataFrame) -> Optional[str]:
         """

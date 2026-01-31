@@ -65,28 +65,33 @@ class LevelGenerator:
         logger.info(f"レベル生成開始: target_date={target_date.strftime('%Y-%m-%d')}")
         
         all_levels = {}
-        symbols = set(chart_data.keys()) | set(ohlc_data.keys())
-        
+        # symbol keyをstr型・4桁ゼロ埋めで統一
+        symbols = set(str(s).zfill(4) if isinstance(s, (int, float)) and str(int(s)) == str(float(s)).split('.')[0] else str(s) for s in (list(chart_data.keys()) + list(ohlc_data.keys())))
+
         for symbol in symbols:
             try:
+                # dictアクセスは4桁strのみ、値がNone/空DataFrameならスキップ
+                chart_df = chart_data.get(symbol)
+                if chart_df is not None and hasattr(chart_df, 'empty') and chart_df.empty:
+                    chart_df = None
+                ohlc_df = ohlc_data.get(symbol)
+                if ohlc_df is not None and hasattr(ohlc_df, 'empty') and ohlc_df.empty:
+                    ohlc_df = None
                 symbol_levels = self._generate_for_symbol(
                     symbol,
                     target_date,
-                    chart_data.get(symbol),
-                    ohlc_data.get(symbol)
+                    chart_df,
+                    ohlc_df
                 )
-                
                 # 品質フィルタリング
                 symbol_levels = self._filter_levels(symbol_levels, symbol)
-                
                 all_levels[symbol] = symbol_levels
                 logger.info(f"  {symbol}: {len(symbol_levels)}個のレベル生成")
-                
             except Exception as e:
                 import traceback
                 logger.error(f"  {symbol}: レベル生成エラー - {e}\n{traceback.format_exc()}")
                 all_levels[symbol] = []
-        
+
         logger.info(f"レベル生成完了: {sum(len(v) for v in all_levels.values())}個")
         return all_levels
     

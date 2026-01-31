@@ -1,12 +1,12 @@
 backtest:
-  end_date: '2026-01-23'
+  end_date: '2026-01-27'
   lookback_days: 5
   prevent_data_leak: true
   start_date: '2026-01-19'
 data:
-  chart_data_dir: market_data/chart_data
+  chart_data_dir: ../../data/01_processed/chart_data
   log_data_date_range: true
-  market_data_dir: market_data/market_order_book
+  market_data_dir: ../../data/01_processed/market_order_book
   runs_base_dir: runs
   validate_no_future_data: true
 logging:

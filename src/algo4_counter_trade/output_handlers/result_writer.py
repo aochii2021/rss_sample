@@ -21,6 +21,37 @@ class ResultWriter:
     trades.csv, summary.json, levels.jsonlを出力し、
     設定スナップショットを保存する。
     """
+
+    def write_levels(self, levels: List[Dict[str, Any]]) -> Path:
+        """
+        レベル情報をJSONLで出力
+        Args:
+            levels: レベル情報のリスト（各要素はdict）
+        Returns:
+            出力ファイルパス
+        """
+        def convert_obj(obj):
+            # pandas.Timestampやdatetime等をstr化
+            import datetime
+            import pandas as pd
+            if isinstance(obj, (pd.Timestamp, datetime.datetime, datetime.date)):
+                return str(obj)
+            return obj
+        output_path = self.output_dir / "levels.jsonl"
+        with open(output_path, "w", encoding="utf-8") as f:
+            for level in levels:
+                # dict内の値を再帰的にstr化
+                def convert_dict(d):
+                    if isinstance(d, dict):
+                        return {k: convert_dict(v) for k, v in d.items()}
+                    elif isinstance(d, list):
+                        return [convert_dict(x) for x in d]
+                    else:
+                        return convert_obj(d)
+                safe_level = convert_dict(level)
+                f.write(json.dumps(safe_level, ensure_ascii=False) + "\n")
+        logger.info(f"レベル情報を出力: {output_path} ({len(levels)}個)")
+        return output_path
     
     def __init__(self, output_dir: Path):
         """
@@ -34,17 +65,65 @@ class ResultWriter:
     
     def write_trades(self, trades_df: pd.DataFrame) -> Path:
         """
-        トレード結果をCSVで出力
-        
+        トレード結果をCSVで出力（symbol列を常にstr型・ゼロ埋め4桁＋英字形式で出力）
         Args:
             trades_df: トレード結果のDataFrame
-            
         Returns:
             出力ファイルパス
         """
         output_path = self.output_dir / "trades.csv"
-        trades_df.to_csv(output_path, index=False, encoding='utf-8-sig')
-        logger.info(f"トレード結果を出力: {output_path} ({len(trades_df)}件)")
+        df = trades_df.copy()
+        # symbol列を必ずstr型に変換（float混入対策）
+        if 'symbol' in df.columns:
+            df['symbol'] = df['symbol'].astype(str)
+        if 'symbol' in df.columns:
+            def normalize_symbol(x):
+                if pd.isnull(x):
+                    return ''
+                # float型はintに変換してからstr化
+                if isinstance(x, float):
+                    return str(int(x)).zfill(4)
+                # int型はstr化してゼロ埋め
+                if isinstance(x, int):
+                    return str(x).zfill(4)
+                s = str(x)
+                # 末尾が.0なら除去
+                if s.endswith('.0'):
+                    s = s[:-2]
+                # 英字付き（例: 215A）はそのまま
+                if s.isalnum() and not s.isdigit():
+                    return s
+                # 完全に数字のみならゼロ埋め4桁
+                if s.isdigit():
+                    return s.zfill(4)
+                # 小数点付き（例: 3350.5等）は整数部のみ抽出
+                if '.' in s:
+                    int_part = s.split('.')[0]
+                    if int_part.isdigit():
+                        return int_part.zfill(4)
+                # それ以外はstr化
+                return s
+            # 必ずstrで返すようにapply時にラップ
+            df['symbol'] = df['symbol'].apply(lambda x: str(normalize_symbol(x)))
+            print('DEBUG: symbol列 after normalize_symbol:', df['symbol'].unique())
+            print('DEBUG: symbol列 dtype after normalize_symbol:', df['symbol'].dtype)
+            print('DEBUG: df.head(10) after normalize_symbol:')
+            print(df.head(10))
+            df['symbol'] = df['symbol'].astype(str)
+            print('DEBUG: symbol列 after astype(str):', df['symbol'].unique())
+            print('DEBUG: symbol列 dtype after astype(str):', df['symbol'].dtype)
+            print('DEBUG: df.head(10) after astype(str):')
+            print(df.head(10))
+            # さらに全要素をstr化（float混入対策）
+            df['symbol'] = df['symbol'].map(str)
+            print('DEBUG: symbol列 after map(str):', df['symbol'].unique())
+            print('DEBUG: symbol列 dtype after map(str):', df['symbol'].dtype)
+            print('DEBUG: df.head(10) after map(str):')
+            print(df.head(10))
+        print('DEBUG: df.head(10) just before to_csv:')
+        print(df.head(10))
+        df.to_csv(output_path, index=False, encoding='utf-8-sig')
+        logger.info(f"トレード結果を出力: {output_path} ({len(df)}件)")
         return output_path
     
     def write_summary(self, metrics: Dict[str, Any]) -> Path:
@@ -58,35 +137,9 @@ class ResultWriter:
             出力ファイルパス
         """
         output_path = self.output_dir / "summary.json"
-        
-        # メトリクスを出力用に整形（float64等をfloatに変換）
-        formatted_metrics = self._format_metrics(metrics)
-        
-        with open(output_path, 'w', encoding='utf-8') as f:
-            json.dump(formatted_metrics, f, ensure_ascii=False, indent=2)
-        
+        with open(output_path, "w", encoding="utf-8") as f:
+            json.dump(metrics, f, ensure_ascii=False, indent=2)
         logger.info(f"サマリを出力: {output_path}")
-        return output_path
-    
-    def write_levels(self, levels: List[Dict[str, Any]]) -> Path:
-        """
-        レベル情報をJSONL（JSON Lines）形式で出力
-        
-        Args:
-            levels: レベル辞書のリスト
-            
-        Returns:
-            出力ファイルパス
-        """
-        output_path = self.output_dir / "levels.jsonl"
-        
-        with open(output_path, 'w', encoding='utf-8') as f:
-            for level in levels:
-                # 各レベルを1行のJSONとして書き込み
-                formatted_level = self._format_level(level)
-                f.write(json.dumps(formatted_level, ensure_ascii=False) + '\n')
-        
-        logger.info(f"レベル情報を出力: {output_path} ({len(levels)}個)")
         return output_path
     
     def write_symbol_summary(self, trades_df: pd.DataFrame) -> Path:

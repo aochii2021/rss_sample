@@ -384,6 +384,11 @@ class UnifiedBacktest:
         
         # 全トレードDataFrameを結合
         trades_df = pd.concat(all_trades_dfs, ignore_index=True) if all_trades_dfs else pd.DataFrame()
+        # symbol列をstr型・4桁ゼロ埋めで正規化
+        if not trades_df.empty and 'symbol' in trades_df.columns:
+            trades_df['symbol'] = trades_df['symbol'].apply(lambda s: str(int(float(s))).zfill(4) if str(s).replace('.0','').isdigit() else str(s))
+            print('DEBUG: trades_df symbol dtype after normalization:', trades_df['symbol'].dtype)
+            print('DEBUG: trades_df symbol unique after normalization:', trades_df['symbol'].unique())
         
         # 評価指標計算
         metrics = self._calculate_metrics(trades_df)

@@ -16,8 +16,8 @@ backtest:
 
 # データパス設定
 data:
-  chart_data_dir: market_data/chart_data
-  market_data_dir: market_data/market_order_book
+  chart_data_dir: ../../data/01_processed/chart_data
+  market_data_dir: ../../data/01_processed/market_order_book
   runs_base_dir: runs
   validate_no_future_data: true
   log_data_date_range: true
