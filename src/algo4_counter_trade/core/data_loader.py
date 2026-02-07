@@ -193,6 +193,8 @@ class DataLoader:
                 df = df[df['timestamp'].dt.date == date_only]
                 if symbols is not None:
                     df = df[df['symbol'].isin(symbols)]
+                # trade_date列を追加（EnvironmentFilterで使用）
+                df['trade_date'] = target_date.strftime('%Y-%m-%d')
                 # データ範囲ログ
                 if self.log_data_range:
                     for symbol, group in df.groupby('symbol'):

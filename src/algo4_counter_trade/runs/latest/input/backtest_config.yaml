@@ -1,5 +1,5 @@
 backtest:
-  end_date: '2026-01-27'
+  end_date: '2026-02-05'
   lookback_days: 5
   prevent_data_leak: true
   start_date: '2026-01-19'

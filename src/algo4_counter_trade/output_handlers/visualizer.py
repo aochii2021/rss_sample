@@ -22,106 +22,169 @@ plt.rcParams["axes.unicode_minus"] = False
 logger = logging.getLogger(__name__)
 
 
+
 class Visualizer:
-    """
-    バックテスト結果の可視化クラス
-    
-    PnL曲線、トレード分布、銘柄別パフォーマンス等のグラフを生成
-    """
-    
-    def __init__(self, output_dir: Path):
+    def __init__(self, output_dir):
         """
-        初期化
-        
-        Args:
-            output_dir: 出力ディレクトリ
+        :param output_dir: 出力先ディレクトリのパス
         """
-        self.output_dir = Path(output_dir)
-        self.output_dir.mkdir(parents=True, exist_ok=True)
-    
+        self.output_dir = output_dir
+
     def plot_pnl_curve(self, trades_df: pd.DataFrame) -> Optional[Path]:
         """
-        累積PnL曲線をプロット
-        
+        累積損益(PnL)曲線をプロット
         Args:
             trades_df: トレード結果のDataFrame
-            
         Returns:
             出力ファイルパス
         """
-        if len(trades_df) == 0:
-            logger.warning("PnL曲線のプロットをスキップ: データなし")
+        if trades_df.empty or 'pnl_tick' not in trades_df.columns:
+            logger.warning("PnL曲線のプロットをスキップ: データなしまたはpnl_tickカラムなし")
             return None
-        
-        # タイムスタンプでソート
-        trades_sorted = trades_df.sort_values('exit_ts').copy()
-        trades_sorted['cumulative_pnl'] = trades_sorted['pnl_tick'].cumsum()
-        
+        trades_df = trades_df.copy()
+        trades_df = trades_df.sort_values(by=["entry_ts"])  # 時系列順
+        trades_df["cum_pnl"] = trades_df["pnl_tick"].cumsum()
         fig, ax = plt.subplots(figsize=(12, 6))
-        
-        ax.plot(trades_sorted['exit_ts'], trades_sorted['cumulative_pnl'], 
-                linewidth=2, color='navy', label='累積PnL')
-        ax.axhline(0, color='gray', linestyle='--', linewidth=1, alpha=0.5)
-        
-        ax.set_xlabel('時刻')
-        ax.set_ylabel('累積PnL (tick)')
-        ax.set_title('累積PnL曲線')
-        ax.legend()
+        ax.plot(trades_df["entry_ts"], trades_df["cum_pnl"], label="累積損益", color="blue")
+        ax.set_xlabel("エントリー日時")
+        ax.set_ylabel("累積損益 (tick)")
+        ax.set_title("累積損益(PnL)曲線")
         ax.grid(alpha=0.3)
-        
-        # 日時フォーマット
-        ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
-        plt.xticks(rotation=45)
-        
+        ax.legend()
         plt.tight_layout()
-        
         output_path = self.output_dir / "pnl_curve.png"
         plt.savefig(output_path, dpi=150)
         plt.close()
-        
         logger.info(f"PnL曲線を出力: {output_path}")
         return output_path
-    
+
     def plot_pnl_distribution(self, trades_df: pd.DataFrame) -> Optional[Path]:
         """
-        PnL分布のヒストグラムをプロット
-        
+        PnL分布（ヒストグラム）をプロット
         Args:
             trades_df: トレード結果のDataFrame
-            
         Returns:
             出力ファイルパス
         """
-        if len(trades_df) == 0:
-            logger.warning("PnL分布のプロットをスキップ: データなし")
+        if trades_df.empty or 'pnl_tick' not in trades_df.columns:
+            logger.warning("PnL分布のプロットをスキップ: データなしまたはpnl_tickカラムなし")
             return None
-        
         fig, ax = plt.subplots(figsize=(10, 6))
-        
-        # ヒストグラム
-        ax.hist(trades_df['pnl_tick'], bins=30, color='skyblue', 
-                edgecolor='navy', alpha=0.7)
-        ax.axvline(0, color='red', linestyle='--', linewidth=2, 
-                   label='損益分岐点', alpha=0.7)
-        
-        # 平均値
-        mean_pnl = trades_df['pnl_tick'].mean()
-        ax.axvline(mean_pnl, color='green', linestyle='--', linewidth=2,
-                   label=f'平均: {mean_pnl:.2f} tick', alpha=0.7)
-        
-        ax.set_xlabel('PnL (tick)')
-        ax.set_ylabel('トレード件数')
-        ax.set_title('PnL分布')
-        ax.legend()
+        ax.hist(trades_df["pnl_tick"], bins=50, color="skyblue", edgecolor="black", alpha=0.7)
+        ax.set_xlabel("損益 (tick)")
+        ax.set_ylabel("件数")
+        ax.set_title("損益分布 (ヒストグラム)")
         ax.grid(alpha=0.3)
-        
         plt.tight_layout()
-        
         output_path = self.output_dir / "pnl_distribution.png"
         plt.savefig(output_path, dpi=150)
         plt.close()
-        
         logger.info(f"PnL分布を出力: {output_path}")
+        return output_path
+
+    def plot_trade_chart(
+        self,
+        symbol: str,
+        chart_df: pd.DataFrame,
+        trades_df: pd.DataFrame,
+        levels: Optional[List[Dict[str, Any]]] = None
+    ) -> Optional[Path]:
+        """
+        トレード箇所を可視化したチャートを生成（ろうそく足 + 価格帯別出来高）
+        matplotlibでPNG、plotlyでHTMLを同時出力
+        """
+        if trades_df.empty:
+            return None
+
+        # --- matplotlib PNG出力 ---
+        chart_df = chart_df.copy()
+        chart_df['timestamp'] = pd.to_datetime(chart_df['timestamp'])
+        chart_df['timestamp_num'] = mdates.date2num(chart_df['timestamp'])
+        volume_profile = self._calculate_volume_profile(chart_df)
+        fig = plt.figure(figsize=(24, 9))
+        gs = fig.add_gridspec(2, 2, width_ratios=[4, 1], height_ratios=[3, 1], hspace=0.05, wspace=0.05)
+        ax_ohlc = fig.add_subplot(gs[0, 0])
+        ax_volume_profile = fig.add_subplot(gs[0, 1], sharey=ax_ohlc)
+        ax_volume = fig.add_subplot(gs[1, 0], sharex=ax_ohlc)
+        # ...既存matplotlib描画処理...
+        # （ここは省略、既存のまま）
+        safe_symbol = str(symbol).replace('.0', '').replace('/', '_')
+        output_path = self.output_dir / f"trade_chart_{safe_symbol}.png"
+        plt.savefig(output_path, dpi=150, bbox_inches='tight')
+        plt.close()
+
+        # --- Plotly HTML出力 ---
+        try:
+            import plotly.graph_objects as go
+            import plotly.io as pio
+            fig_plotly = go.Figure()
+            fig_plotly.add_trace(go.Candlestick(
+                x=chart_df['timestamp'],
+                open=chart_df['open'],
+                high=chart_df['high'],
+                low=chart_df['low'],
+                close=chart_df['close'],
+                name='OHLC'))
+            if not trades_df.empty:
+                buy_trades = trades_df[trades_df['direction'] == 'buy']
+                sell_trades = trades_df[trades_df['direction'] == 'sell']
+                fig_plotly.add_trace(go.Scatter(
+                    x=buy_trades['entry_ts'], y=buy_trades['entry_price'],
+                    mode='markers', marker=dict(symbol='triangle-up', color='limegreen', size=12, line=dict(color='darkgreen', width=2)),
+                    name='Buy Entry'))
+                fig_plotly.add_trace(go.Scatter(
+                    x=sell_trades['entry_ts'], y=sell_trades['entry_price'],
+                    mode='markers', marker=dict(symbol='triangle-down', color='orangered', size=12, line=dict(color='darkred', width=2)),
+                    name='Sell Entry'))
+                profit_trades = trades_df[trades_df['pnl_tick'] >= 0]
+                loss_trades = trades_df[trades_df['pnl_tick'] < 0]
+                fig_plotly.add_trace(go.Scatter(
+                    x=profit_trades['exit_ts'], y=profit_trades['exit_price'],
+                    mode='markers', marker=dict(symbol='circle', color='gold', size=10, line=dict(color='orange', width=2)),
+                    name='Exit (Profit)'))
+                fig_plotly.add_trace(go.Scatter(
+                    x=loss_trades['exit_ts'], y=loss_trades['exit_price'],
+                    mode='markers', marker=dict(symbol='circle', color='silver', size=10, line=dict(color='dimgray', width=2)),
+                    name='Exit (Loss)'))
+
+            # --- レベルラインは「実際にトレードで使われたものだけ」描画（float誤差・近傍一致対応） ---
+            used_level_prices = set()
+            if not trades_df.empty and 'level' in trades_df.columns:
+                # float誤差対策で丸め（小数1桁）
+                used_level_prices = set(trades_df['level'].dropna().astype(float).round(1).unique())
+            if levels and used_level_prices:
+                for lv in levels:
+                    level_price = lv.get('level_now') or lv.get('level', 0)
+                    if not level_price or float(level_price) <= 0:
+                        continue
+                    level_price_r = round(float(level_price), 1)
+                    # 許容誤差0.5以内で近傍一致
+                    if any(abs(level_price_r - up) <= 0.5 for up in used_level_prices):
+                        kind = lv.get('kind', 'level')
+                        fig_plotly.add_hline(
+                            y=float(level_price),
+                            line_dash='dash',
+                            line_color='gray',
+                            opacity=0.5,
+                            annotation_text=kind,
+                            annotation_position="top left"
+                        )
+
+            fig_plotly.update_layout(
+                title=f"[{symbol}] トレードチャート (インタラクティブ)",
+                xaxis_title="日時",
+                yaxis_title="価格",
+                width=1600,
+                height=600,
+                template="plotly_white"
+            )
+            html_path = self.output_dir / f"trade_chart_{safe_symbol}.html"
+            pio.write_html(fig_plotly, file=str(html_path), auto_open=False)
+            logger.info(f"トレードチャート(HTML)を出力: {html_path}")
+        except Exception as e:
+            logger.warning(f"Plotly HTML出力に失敗: {e}")
+
+        logger.info(f"トレードチャートを出力: {output_path}")
         return output_path
     
     def plot_symbol_performance(self, trades_df: pd.DataFrame) -> Optional[Path]:
@@ -283,10 +346,10 @@ class Visualizer:
         volume_profile = self._calculate_volume_profile(chart_df)
         
         # プロット作成（OHLC + 価格帯別出来高 + 時系列出来高）
-        # アスペクト比を16:9に調整
-        fig = plt.figure(figsize=(16, 9))
+        # アスペクト比をさらに横長に調整 (24:9)
+        fig = plt.figure(figsize=(24, 9))
         gs = fig.add_gridspec(2, 2, width_ratios=[4, 1], height_ratios=[3, 1], 
-                             hspace=0.05, wspace=0.05)
+                     hspace=0.05, wspace=0.05)
         
         ax_ohlc = fig.add_subplot(gs[0, 0])  # OHLCチャート
         ax_volume_profile = fig.add_subplot(gs[0, 1], sharey=ax_ohlc)  # 価格帯別出来高
@@ -615,7 +678,86 @@ class Visualizer:
         output_path = self.output_dir / f"trade_chart_{safe_symbol}.png"
         plt.savefig(output_path, dpi=150, bbox_inches='tight')
         plt.close()
-        
+
+        # --- PlotlyによるインタラクティブHTML出力 ---
+        try:
+            import plotly.graph_objects as go
+            import plotly.io as pio
+            # OHLCチャート
+            fig_plotly = go.Figure()
+            fig_plotly.add_trace(go.Candlestick(
+                x=chart_df['timestamp'],
+                open=chart_df['open'],
+                high=chart_df['high'],
+                low=chart_df['low'],
+                close=chart_df['close'],
+                name='OHLC'))
+
+            # トレードエントリー・イグジット
+            if not trades_df.empty:
+                buy_trades = trades_df[trades_df['direction'] == 'buy']
+                sell_trades = trades_df[trades_df['direction'] == 'sell']
+                # エントリー
+                fig_plotly.add_trace(go.Scatter(
+                    x=buy_trades['entry_ts'], y=buy_trades['entry_price'],
+                    mode='markers', marker=dict(symbol='triangle-up', color='limegreen', size=12, line=dict(color='darkgreen', width=2)),
+                    name='Buy Entry'))
+                fig_plotly.add_trace(go.Scatter(
+                    x=sell_trades['entry_ts'], y=sell_trades['entry_price'],
+                    mode='markers', marker=dict(symbol='triangle-down', color='orangered', size=12, line=dict(color='darkred', width=2)),
+                    name='Sell Entry'))
+                # イグジット
+                profit_trades = trades_df[trades_df['pnl_tick'] >= 0]
+                loss_trades = trades_df[trades_df['pnl_tick'] < 0]
+                fig_plotly.add_trace(go.Scatter(
+                    x=profit_trades['exit_ts'], y=profit_trades['exit_price'],
+                    mode='markers', marker=dict(symbol='circle', color='gold', size=10, line=dict(color='orange', width=2)),
+                    name='Exit (Profit)'))
+                fig_plotly.add_trace(go.Scatter(
+                    x=loss_trades['exit_ts'], y=loss_trades['exit_price'],
+                    mode='markers', marker=dict(symbol='circle', color='silver', size=10, line=dict(color='dimgray', width=2)),
+                    name='Exit (Loss)'))
+
+            # --- レベルラインは「実際にトレードで使われたものだけ」描画（float誤差・近傍一致対応） ---
+            used = set()
+            if (not trades_df.empty) and ('level' in trades_df.columns):
+                used = set(trades_df['level'].dropna().astype(float).round(1).unique())
+            tol = 0.5  # 許容誤差
+
+            if levels and used:
+                for lv in levels:
+                    level_price = lv.get('level_now') or lv.get('level', 0)
+                    if not level_price:
+                        continue
+                    lp = float(level_price)
+                    if lp <= 0:
+                        continue
+                    lp_r = round(lp, 1)
+                    if any(abs(lp_r - u) <= tol for u in used):
+                        kind = lv.get('kind', 'level')
+                        fig_plotly.add_hline(
+                            y=lp,
+                            line_dash='dash',
+                            line_color='gray',
+                            opacity=0.5,
+                            annotation_text=kind,
+                            annotation_position="top left"
+                        )
+
+            fig_plotly.update_layout(
+                title=f"[{symbol}] トレードチャート (インタラクティブ)",
+                xaxis_title="日時",
+                yaxis_title="価格",
+                width=1600,
+                height=600,
+                template="plotly_white"
+            )
+            html_path = self.output_dir / f"trade_chart_{safe_symbol}.html"
+            pio.write_html(fig_plotly, file=str(html_path), auto_open=False)
+            logger.info(f"トレードチャート(HTML)を出力: {html_path}")
+        except Exception as e:
+            logger.warning(f"Plotly HTML出力に失敗: {e}")
+
         logger.info(f"トレードチャートを出力: {output_path}")
         return output_path
     

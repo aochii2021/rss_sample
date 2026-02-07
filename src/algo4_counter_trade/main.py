@@ -33,6 +33,7 @@ from processors.lob_processor import LOBProcessor
 from processors.ohlc_processor import OHLCProcessor
 from core.strategy import CounterTradeStrategy, Position
 from core.backtest_engine import BacktestEngine
+from core.entry_filter import EnvironmentFilter, EnvFilterThresholds
 from output_handlers.result_writer import ResultWriter
 from output_handlers.visualizer import Visualizer
 import pandas as pd
@@ -64,9 +65,10 @@ class UnifiedBacktest:
         初期化
         
         Args:
-            base_dir: ベースディレクトリ（デフォルトはスクリプト実行位置）
+            base_dir: ベースディレクトリ（デフォルトはalgo4_counter_trade配下）
         """
-        self.base_dir = base_dir or Path(__file__).parent
+        # algo4_counter_tradeディレクトリに固定
+        self.base_dir = Path(__file__).parent
         self.backtest_config: Dict[str, Any] = {}
         self.level_config: Dict[str, Any] = {}
         self.output_manager: OutputManager = None
@@ -332,8 +334,22 @@ class UnifiedBacktest:
         }
         strategy = CounterTradeStrategy(params=default_params)
         
+        # 環境フィルタ設定（実験③：support距離緩和による機会増）
+        # 理論: 板の厚み（買い板優勢）→ 逃げやすさ → 小負け削減
+        filter_thresholds = EnvFilterThresholds(
+            min_prev_day_volume_ratio_20d=1.07,
+            min_prev_day_last30min_return=-0.0135,
+            max_daily_support_dist_atr=0.025,  # 実験③: 0.02→0.025（機会増）
+            board_indicator='micro_bias',  # 板バイアス（買い板/売り板の厚み比）
+            board_window='10m',            # 寄り後10分窓（リークなし）
+            min_board_threshold=-0.05,     # 固定（コア条件）
+            entry_start_time='09:10:00'    # 9:10以降エントリー開始（窓整合）
+        )
+        env_filter = EnvironmentFilter(thresholds=filter_thresholds)
+        logger.info(f"フィルタ設定: 板指標={filter_thresholds.board_indicator}, 窓={filter_thresholds.board_window}, 閾値={filter_thresholds.min_board_threshold}, エントリー開始={filter_thresholds.entry_start_time}")
+        
         # BacktestEngine初期化して実行
-        engine = BacktestEngine(strategy=strategy)
+        engine = BacktestEngine(strategy=strategy, env_filter=env_filter)
         trades_df = engine.run(
             lob_df=lob_df,
             levels=all_levels_list,

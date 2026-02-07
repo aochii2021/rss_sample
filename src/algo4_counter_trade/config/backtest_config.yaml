@@ -8,7 +8,7 @@ mode: backtest  # backtest | live
 # バックテスト期間
 backtest:
   start_date: "2026-01-19"
-  end_date: "2026-01-27"
+  end_date: "2026-02-05"
   
   # データリーク防止設定
   prevent_data_leak: true

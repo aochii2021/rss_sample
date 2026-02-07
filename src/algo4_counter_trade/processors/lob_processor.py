@@ -136,6 +136,10 @@ class LOBProcessor:
         norm_symbol = norm_symbol.zfill(4)
         out['symbol'] = norm_symbol
         
+        # trade_date列が存在すればコピー（フィルタリング用）
+        if 'trade_date' in df.columns:
+            out['trade_date'] = df['trade_date']
+        
         # 基本特徴量
         out['spread'] = ask_px - bid_px
         out['mid'] = (ask_px + bid_px) / 2.0

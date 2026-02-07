@@ -17,6 +17,8 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from core.strategy import CounterTradeStrategy, Position
+from core.entry_filter import EnvironmentFilter
+from core.feature_store import load_symbol_day_features
 
 logger = logging.getLogger(__name__)
 
@@ -44,12 +46,30 @@ class BacktestEngine:
     複数銘柄に対してバックテストを実行し、トレード結果を返す。
     """
     
-    def __init__(self, strategy: CounterTradeStrategy):
+    def __init__(self, strategy: CounterTradeStrategy, features_csv: str = None, env_filter: EnvironmentFilter = None):
         """
         Args:
             strategy: CounterTradeStrategy instance
+            features_csv: symbol_day_features.csvのパス（Noneの場合はデフォルトパス使用）
+            env_filter: EnvironmentFilterインスタンス（Noneの場合はデフォルト設定）
         """
         self.strategy = strategy
+        # 日次特徴量フィルタ
+        self.env_filter = env_filter if env_filter is not None else EnvironmentFilter()
+        logger.info(f"EnvironmentFilter設定: 板指標={self.env_filter.th.board_indicator}, 窓={self.env_filter.th.board_window}, 閾値={self.env_filter.th.min_board_threshold}, エントリー開始={self.env_filter.th.entry_start_time}")
+        # features_csvパスの解決
+        if features_csv is None:
+            # デフォルト: src/analysis/symbol_day_features.csv
+            from pathlib import Path
+            base_dir = Path(__file__).parent.parent.parent.parent  # mksp2_sample/
+            features_csv = str(base_dir / "src" / "analysis" / "symbol_day_features.csv")
+        logger.info(f"Loading features from: {features_csv}")
+        self.features_dict = load_symbol_day_features(features_csv)
+        logger.info(f"Loaded {len(self.features_dict)} feature records")
+        # サンプル表示（デバッグ用）
+        if self.features_dict:
+            sample_keys = list(self.features_dict.keys())[:3]
+            logger.info(f"Sample feature keys: {sample_keys}")
     
     def run(
         self,
@@ -143,9 +163,37 @@ class BacktestEngine:
         position: Optional[Position] = None
         current_session: Optional[str] = None
         
+        # フィルタ統計用
+        filter_skipped_count = 0
+        filter_checked_count = 0
+        total_bar_count = 0
+
         for i, row in lob_df.iterrows():
+            total_bar_count += 1
+            # --- 日次環境フィルタ ---
+            trade_date = str(row.get('trade_date', '')) if 'trade_date' in row.index else None
+            if trade_date:
+                filter_checked_count += 1
+                fkey = (str(symbol), trade_date)
+                features = self.features_dict.get(fkey)
+                if features is not None:
+                    if not self.env_filter.allow(features):
+                        filter_skipped_count += 1
+                        continue  # フィルタNGなら当日スキップ
             price = row["mid"]
             current_time = row["ts"]
+            
+            # --- 時間整合性チェック（環境フィルタのOFI窓と整合させる） ---
+            # フィルタがofi_open_10m_meanを使う場合、9:10以降のみエントリー可
+            entry_start_time_str = self.env_filter.th.entry_start_time
+            if entry_start_time_str:
+                try:
+                    from datetime import datetime, time as dt_time
+                    entry_start_time = datetime.strptime(entry_start_time_str, '%H:%M:%S').time()
+                    if current_time.time() < entry_start_time:
+                        continue  # エントリー開始時刻前はスキップ
+                except:
+                    pass  # パース失敗時は制限なし
             
             # セッション判定
             session = strategy.get_trading_session(current_time)
@@ -193,6 +241,12 @@ class BacktestEngine:
             trades.append(self.create_trade_record(
                 position, last_row, last_price, pnl_tick, "EOD"
             ))
+        
+        # フィルタ統計をログ出力
+        if filter_checked_count > 0:
+            logger.info(f"    EnvironmentFilter: {filter_checked_count}本チェック, {filter_skipped_count}本スキップ ({filter_skipped_count/filter_checked_count*100:.1f}%)")
+        else:
+            logger.warning(f"    EnvironmentFilter: trade_date列が存在しないため、フィルタ未適用")
         
         return trades
     
